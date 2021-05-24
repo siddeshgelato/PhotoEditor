@@ -56,5 +56,3 @@ ext {
     PUBLISH_VERSION = '1.1.2'
     PUBLISH_ARTIFACT_ID = 'photoeditor'
 }
-
-apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
