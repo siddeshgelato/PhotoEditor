@@ -55,6 +55,8 @@ public class PhotoEditor implements BrushViewChangeListener {
     private boolean isTextPinchScalable;
     private Typeface mDefaultTextTypeface;
     private Typeface mDefaultEmojiTypeface;
+    private float posX = -1;
+    private float posY = -1;
 
 
     protected PhotoEditor(Builder builder) {
@@ -97,8 +99,11 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param desiredImage bitmap image you want to add
      */
-    public void addImage(Bitmap desiredImage) {
+    public void addImage(Bitmap desiredImage, float x, float y, String uuid) {
+        posX = x;
+        posY = y;
         final View imageRootView = getLayout(ViewType.IMAGE);
+        imageRootView.setTag(uuid);
         final ImageView imageView = imageRootView.findViewById(R.id.imgPhotoEditorImage);
         final FrameLayout frmBorder = imageRootView.findViewById(R.id.frmBorder);
         final ImageView imgClose = imageRootView.findViewById(R.id.imgPhotoEditorClose);
@@ -127,6 +132,11 @@ public class PhotoEditor implements BrushViewChangeListener {
         addViewToParent(imageRootView, ViewType.IMAGE);
         viewState.setCurrentSelectedView(imageRootView);
     }
+
+    public void addImage(Bitmap desiredImage) {
+        addImage(desiredImage, -1, -1, null);
+    }
+
 
     /**
      * This add the text on the {@link PhotoEditorView} with provided parameters
@@ -169,8 +179,15 @@ public class PhotoEditor implements BrushViewChangeListener {
      */
     @SuppressLint("ClickableViewAccessibility")
     public void addText(String text, @Nullable TextStyleBuilder styleBuilder) {
+        addText(text, styleBuilder, -1, -1, null);
+    }
+
+    public void addText(String text, TextStyleBuilder styleBuilder, float x, float y, String uuid) {
+        posX = x;
+        posY = y;
         brushDrawingView.setBrushDrawingMode(false);
         final View textRootView = getLayout(ViewType.TEXT);
+        textRootView.setTag(uuid);
         final TextView textInputTv = textRootView.findViewById(R.id.tvPhotoEditorText);
         final ImageView imgClose = textRootView.findViewById(R.id.imgPhotoEditorClose);
         final FrameLayout frmBorder = textRootView.findViewById(R.id.frmBorder);
@@ -319,7 +336,16 @@ public class PhotoEditor implements BrushViewChangeListener {
     private void addViewToParent(View rootView, ViewType viewType) {
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        if (posX != -1 && posY != -1) {
+            //params.setMargins(posX, posY, posX + rootView.getMeasuredWidth(), posY + rootView.getMeasuredHeight());
+            rootView.setX(posX);
+            rootView.setY(posY);
+
+            posX = -1;
+            posY = -1;
+        } else {
+            params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        }
         parentView.addView(rootView, params);
         viewState.addAddedView(rootView);
         if (mOnPhotoEditorListener != null)

@@ -4,6 +4,8 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import androidx.annotation.NonNull;
+
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
@@ -50,6 +52,10 @@ public class TextStyleBuilder {
         values.put(TextStyle.FONT_FAMILY, textTypeface);
     }
 
+    public void withTextFontFile(String path) {
+        values.put(TextStyle.FONT_FILE, path);
+    }
+
     /**
      * Set this gravity style
      *
@@ -86,6 +92,15 @@ public class TextStyleBuilder {
         values.put(TextStyle.TEXT_APPEARANCE, textAppearance);
     }
 
+    public void withTextHeight(@NonNull int height) {
+        values.put(TextStyle.TEXT_HEIGHT, height);
+    }
+
+
+    public void withTextWidth(@NonNull int width) {
+        values.put(TextStyle.TEXT_WIDTH, width);
+    }
+
     /**
      * Method to apply all the style setup on this Builder}
      *
@@ -109,6 +124,12 @@ public class TextStyleBuilder {
                 case FONT_FAMILY: {
                     final Typeface typeface = (Typeface) entry.getValue();
                     applyFontFamily(textView, typeface);
+                }
+                break;
+
+                case FONT_FILE: {
+                    final String filename = (String) entry.getValue();
+                    applyFontFamilyWithFile(textView, filename);
                 }
                 break;
 
@@ -136,13 +157,43 @@ public class TextStyleBuilder {
                         applyTextAppearance(textView, styleAppearance);
                     }
                 }
+
+                case TEXT_HEIGHT: {
+                    if (entry.getValue() instanceof Integer) {
+                        final int height = (Integer)entry.getValue();
+                        applyTextHeight(textView, height);
+                    }
+                }
+
+                case TEXT_WIDTH: {
+                    if (entry.getValue() instanceof Integer) {
+                        final int width = (Integer)entry.getValue();
+                        applyTextWidth(textView, width);
+                    }
+                }
                 break;
             }
         }
     }
 
+    private void applyFontFamilyWithFile(TextView textView, String filename) {
+        textView.setTypeface(Typeface.createFromAsset(
+                textView.getContext().getAssets(),
+                "fonts/" + filename+ ".ttf"
+        ));
+        textView.setTag(filename);
+    }
+
+    private void applyTextHeight(TextView textView, int height) {
+        textView.setHeight(height);
+    }
+
+    private void applyTextWidth(TextView textView, int width) {
+        textView.setWidth(width);
+    }
+
     protected void applyTextSize(TextView textView, float size) {
-        textView.setTextSize(size);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PT, size);
     }
 
     protected void applyTextColor(TextView textView, int color) {
@@ -185,8 +236,11 @@ public class TextStyleBuilder {
         COLOR("TextColor"),
         GRAVITY("Gravity"),
         FONT_FAMILY("FontFamily"),
+        FONT_FILE("FontFile"),
         BACKGROUND("Background"),
-        TEXT_APPEARANCE("TextAppearance");
+        TEXT_APPEARANCE("TextAppearance"),
+        TEXT_HEIGHT("TextHeight"),
+        TEXT_WIDTH("TextWidth") ;
 
         TextStyle(String property) {
             this.property = property;

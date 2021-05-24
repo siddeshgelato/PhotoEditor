@@ -71,6 +71,7 @@ public class PhotoEditorView extends RelativeLayout {
             Drawable imgSrcDrawable = a.getDrawable(R.styleable.PhotoEditorView_photo_src);
             if (imgSrcDrawable != null) {
                 mImgSource.setImageDrawable(imgSrcDrawable);
+                mImgSource.setScaleType(ImageView.ScaleType.FIT_XY);
             }
         }
 
