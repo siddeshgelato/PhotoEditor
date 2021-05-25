@@ -105,9 +105,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         final View imageRootView = getLayout(ViewType.IMAGE);
         imageRootView.setTag(uuid);
 
-        FrameLayout.LayoutParams parms = (FrameLayout.LayoutParams) imageRootView.getLayoutParams();
-        parms.height = (int)height;
-        parms.width = (int)width;
+        FrameLayout.LayoutParams parms = new FrameLayout.LayoutParams((int)height, (int)width);
         imageRootView.setLayoutParams(parms);
 
         final ImageView imageView = imageRootView.findViewById(R.id.imgPhotoEditorImage);
