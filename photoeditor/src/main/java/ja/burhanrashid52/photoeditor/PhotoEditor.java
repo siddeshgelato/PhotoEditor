@@ -99,11 +99,17 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param desiredImage bitmap image you want to add
      */
-    public void addImage(Bitmap desiredImage, float x, float y, String uuid) {
+    public void addImage(Bitmap desiredImage, float x, float y, String uuid, float height, float width) {
         posX = x;
         posY = y;
         final View imageRootView = getLayout(ViewType.IMAGE);
         imageRootView.setTag(uuid);
+
+        FrameLayout.LayoutParams parms = (FrameLayout.LayoutParams) imageRootView.getLayoutParams();
+        parms.height = (int)height;
+        parms.width = (int)width;
+        imageRootView.setLayoutParams(parms);
+
         final ImageView imageView = imageRootView.findViewById(R.id.imgPhotoEditorImage);
         final FrameLayout frmBorder = imageRootView.findViewById(R.id.frmBorder);
         final ImageView imgClose = imageRootView.findViewById(R.id.imgPhotoEditorClose);
@@ -134,7 +140,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     }
 
     public void addImage(Bitmap desiredImage) {
-        addImage(desiredImage, -1, -1, null);
+        addImage(desiredImage, -1, -1, null, 0.0f, 0.0f);
     }
 
 
