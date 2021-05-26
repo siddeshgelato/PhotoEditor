@@ -9,6 +9,7 @@
         android:layout_height="25dp"
         android:layout_gravity="top|start"
         android:elevation="1dp"
+        android:visibility="gone"
         android:src="@drawable/ic_remove" />
 
     <FrameLayout
@@ -23,8 +24,7 @@
             android:layout_gravity="center"
             android:adjustViewBounds="true"
             android:contentDescription="@string/app_name"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_remove" />
+            android:scaleType="fitXY" />
 
     </FrameLayout>
 
