@@ -193,7 +193,7 @@ public class TextStyleBuilder {
     }
 
     protected void applyTextSize(TextView textView, float size) {
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_PT, size);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
     }
 
     protected void applyTextColor(TextView textView, int color) {
