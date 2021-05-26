@@ -346,11 +346,8 @@ public class PhotoEditor implements BrushViewChangeListener {
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         if (posX != -1 && posY != -1) {
             //params.setMargins(posX, posY, posX + rootView.getMeasuredWidth(), posY + rootView.getMeasuredHeight());
-           /* rootView.setX(posX);
-            rootView.setY(posY);*/
-
-            rootView.setLeft((int)posX);
-            rootView.setTop((int)posY);
+            params.leftMargin = (int)posX;
+            params.topMargin = (int)posY;
 
             posX = -1;
             posY = -1;
