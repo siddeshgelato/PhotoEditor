@@ -9,8 +9,7 @@
         android:layout_height="25dp"
         android:layout_gravity="top|start"
         android:elevation="1dp"
-        android:visibility="gone"
-        android:src="@drawable/ic_remove" />
+        android:visibility="gone" />
 
     <FrameLayout
         android:id="@+id/frmBorder"
