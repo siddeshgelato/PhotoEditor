@@ -63,7 +63,7 @@ public class PhotoEditorView extends RelativeLayout {
         mImgSource = new FilterImageView(getContext());
         mImgSource.setId(imgSrcId);
         mImgSource.setAdjustViewBounds(true);
-        RelativeLayout.LayoutParams imgSrcParam = new RelativeLayout.LayoutParams(
+        LayoutParams imgSrcParam = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         imgSrcParam.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         if (attrs != null) {
@@ -80,7 +80,7 @@ public class PhotoEditorView extends RelativeLayout {
         mBrushDrawingView.setVisibility(GONE);
         mBrushDrawingView.setId(brushSrcId);
         //Align brush to the size of image view
-        RelativeLayout.LayoutParams brushParam = new RelativeLayout.LayoutParams(
+        LayoutParams brushParam = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         brushParam.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         brushParam.addRule(RelativeLayout.ALIGN_TOP, imgSrcId);
@@ -92,7 +92,7 @@ public class PhotoEditorView extends RelativeLayout {
         mImageFilterView.setVisibility(GONE);
 
         //Align brush to the size of image view
-        RelativeLayout.LayoutParams imgFilterParam = new RelativeLayout.LayoutParams(
+        LayoutParams imgFilterParam = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         imgFilterParam.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         imgFilterParam.addRule(RelativeLayout.ALIGN_TOP, imgSrcId);

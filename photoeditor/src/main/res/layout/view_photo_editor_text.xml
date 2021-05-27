@@ -6,6 +6,8 @@
 
     <FrameLayout
         android:id="@+id/frmBorder"
+        android:layout_margin="12dp"
+        android:background="@drawable/rounded_border_tv"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -24,8 +26,9 @@
         android:id="@+id/imgPhotoEditorClose"
         android:layout_width="15dp"
         android:layout_height="15dp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_gravity="top|start"
-        android:elevation="1dp" />
+        android:elevation="1dp"
+        android:src="@drawable/ic_remove"/>
 
 </FrameLayout>

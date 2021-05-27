@@ -33,7 +33,7 @@ import java.util.List;
 
 /**
  * <p>
- * This class in initialize by {@link PhotoEditor.Builder} using a builder pattern with multiple
+ * This class in initialize by {@link Builder} using a builder pattern with multiple
  * editing attributes
  * </p>
  *
@@ -95,7 +95,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
     /**
      * This will add image on {@link PhotoEditorView} which you drag,rotate and scale using pinch
-     * if {@link PhotoEditor.Builder#setPinchTextScalable(boolean)} enabled
+     * if {@link Builder#setPinchTextScalable(boolean)} enabled
      *
      * @param desiredImage bitmap image you want to add
      */
@@ -121,8 +121,8 @@ public class PhotoEditor implements BrushViewChangeListener {
             @Override
             public void onClick() {
                 clearHelperBox();
-                /*frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
-                imgClose.setVisibility(View.VISIBLE);*/
+                frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
+                imgClose.setVisibility(View.VISIBLE);
                 frmBorder.setTag(true);
                 viewState.setCurrentSelectedView(imageRootView);
             }
@@ -207,8 +207,8 @@ public class PhotoEditor implements BrushViewChangeListener {
             @Override
             public void onClick() {
                 clearHelperBox();
-                /*frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
-                imgClose.setVisibility(View.VISIBLE);*/
+                frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
+                imgClose.setVisibility(View.VISIBLE);
                 frmBorder.setTag(true);
                 viewState.setCurrentSelectedView(textRootView);
             }
@@ -281,7 +281,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
     /**
      * Adds emoji to the {@link PhotoEditorView} which you drag,rotate and scale using pinch
-     * if {@link PhotoEditor.Builder#setPinchTextScalable(boolean)} enabled
+     * if {@link Builder#setPinchTextScalable(boolean)} enabled
      *
      * @param emojiName unicode in form of string to display emoji
      */
@@ -291,7 +291,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
     /**
      * Adds emoji to the {@link PhotoEditorView} which you drag,rotate and scale using pinch
-     * if {@link PhotoEditor.Builder#setPinchTextScalable(boolean)} enabled
+     * if {@link Builder#setPinchTextScalable(boolean)} enabled
      *
      * @param emojiTypeface typeface for custom font to show emoji unicode in specific font
      * @param emojiName     unicode in form of string to display emoji
@@ -344,8 +344,14 @@ public class PhotoEditor implements BrushViewChangeListener {
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         if (posX != -1 && posY != -1) {
             //params.setMargins(posX, posY, posX + rootView.getMeasuredWidth(), posY + rootView.getMeasuredHeight());
-             rootView.setX(posX);
-             rootView.setY(posY);
+
+            FrameLayout frmBorder = rootView.findViewById(R.id.frmBorder);
+
+            int leftMargin = ((FrameLayout.LayoutParams)frmBorder.getLayoutParams()).leftMargin;
+            int topMargin = ((FrameLayout.LayoutParams)frmBorder.getLayoutParams()).topMargin;
+
+             rootView.setX(posX - leftMargin);
+             rootView.setY(posY - topMargin);
 
             posX = -1;
             posY = -1;
