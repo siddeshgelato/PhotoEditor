@@ -7,12 +7,14 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
 import androidx.annotation.UiThread;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -108,10 +110,13 @@ public class PhotoEditor implements BrushViewChangeListener {
         final ImageView imageView = imageRootView.findViewById(R.id.imgPhotoEditorImage);
         final FrameLayout frmBorder = imageRootView.findViewById(R.id.frmBorder);
         final ImageView imgClose = imageRootView.findViewById(R.id.imgPhotoEditorClose);
-
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) imageView.getLayoutParams();
-        params.height = (int)height;
-        params.width = (int)width;
+
+        if (height > 0.0 && width > 0.0) {
+            params.height = (int) height;
+            params.width = (int) width;
+        }
+
         imageRootView.setLayoutParams(params);
 
         imageView.setImageBitmap(desiredImage);
@@ -140,7 +145,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     }
 
     public void addImage(Bitmap desiredImage) {
-        addImage(desiredImage, -1, -1, null, 0.0f, 0.0f);
+        addImage(desiredImage, -1, -1, null, desiredImage.getHeight(), desiredImage.getWidth());
     }
 
 
@@ -347,11 +352,11 @@ public class PhotoEditor implements BrushViewChangeListener {
 
             FrameLayout frmBorder = rootView.findViewById(R.id.frmBorder);
 
-            int leftMargin = ((FrameLayout.LayoutParams)frmBorder.getLayoutParams()).leftMargin;
-            int topMargin = ((FrameLayout.LayoutParams)frmBorder.getLayoutParams()).topMargin;
+            int leftMargin = ((FrameLayout.LayoutParams) frmBorder.getLayoutParams()).leftMargin;
+            int topMargin = ((FrameLayout.LayoutParams) frmBorder.getLayoutParams()).topMargin;
 
-             rootView.setX(posX - leftMargin);
-             rootView.setY(posY - topMargin);
+            rootView.setX(posX - leftMargin);
+            rootView.setY(posY - topMargin);
 
             posX = -1;
             posY = -1;
