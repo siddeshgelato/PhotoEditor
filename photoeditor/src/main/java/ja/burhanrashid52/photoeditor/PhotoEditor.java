@@ -59,6 +59,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     private Typeface mDefaultEmojiTypeface;
     private float posX = -1;
     private float posY = -1;
+    private float rotation = 0.0f;
 
 
     protected PhotoEditor(Builder builder) {
@@ -104,6 +105,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     public void addImage(Bitmap desiredImage, float x, float y, String uuid, float height, float width, float rotation) {
         posX = x;
         posY = y;
+        this.rotation = rotation;
         final View imageRootView = getLayout(ViewType.IMAGE);
         imageRootView.setTag(uuid);
 
@@ -111,8 +113,6 @@ public class PhotoEditor implements BrushViewChangeListener {
         final FrameLayout frmBorder = imageRootView.findViewById(R.id.frmBorder);
         final ImageView imgClose = imageRootView.findViewById(R.id.imgPhotoEditorClose);
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) imageView.getLayoutParams();
-
-        imageRootView.setRotation(rotation);
 
         if (height > 0.0 && width > 0.0) {
             params.height = (int) height;
@@ -198,6 +198,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     public void addText(String text, TextStyleBuilder styleBuilder, float x, float y, String uuid, float rotation) {
         posX = x;
         posY = y;
+        this.rotation = rotation;
         brushDrawingView.setBrushDrawingMode(false);
         final View textRootView = getLayout(ViewType.TEXT);
         textRootView.setTag(uuid);
@@ -206,7 +207,6 @@ public class PhotoEditor implements BrushViewChangeListener {
         final FrameLayout frmBorder = textRootView.findViewById(R.id.frmBorder);
 
         textInputTv.setText(text);
-        textRootView.setRotation(rotation);
 
         if (styleBuilder != null)
             styleBuilder.applyStyle(textInputTv);
@@ -367,6 +367,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         } else {
             params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         }
+        rootView.setRotation(rotation);
         parentView.addView(rootView, params);
         viewState.addAddedView(rootView);
         if (mOnPhotoEditorListener != null)
