@@ -351,6 +351,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     private void addViewToParent(View rootView, ViewType viewType) {
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        rootView.setRotation(rotation);
         if (posX != -1 && posY != -1) {
             //params.setMargins(posX, posY, posX + rootView.getMeasuredWidth(), posY + rootView.getMeasuredHeight());
 
@@ -362,15 +363,13 @@ public class PhotoEditor implements BrushViewChangeListener {
             rootView.setX(posX - leftMargin);
             rootView.setY(posY - topMargin);
 
+            posX = -1;
+            posY = -1;
 
         } else {
             params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         }
-        rootView.setPivotX(posX);
-        rootView.setPivotY(posY);
-        posX = -1;
-        posY = -1;
-        rootView.setRotation(rotation);
+
         parentView.addView(rootView, params);
         viewState.addAddedView(rootView);
         if (mOnPhotoEditorListener != null)
