@@ -113,6 +113,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) imageView.getLayoutParams();
 
         imageView.setRotation(rotation);
+        imageRootView.setRotation(rotation);
 
         if (height > 0.0 && width > 0.0) {
             params.height = (int) height;
@@ -207,6 +208,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
         textInputTv.setText(text);
         textInputTv.setRotation(rotation);
+        textRootView.setRotation(rotation);
 
         if (styleBuilder != null)
             styleBuilder.applyStyle(textInputTv);
