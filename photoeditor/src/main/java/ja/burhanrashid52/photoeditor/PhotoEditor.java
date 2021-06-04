@@ -101,7 +101,7 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param desiredImage bitmap image you want to add
      */
-    public void addImage(Bitmap desiredImage, float x, float y, String uuid, float height, float width) {
+    public void addImage(Bitmap desiredImage, float x, float y, String uuid, float height, float width, float rotation) {
         posX = x;
         posY = y;
         final View imageRootView = getLayout(ViewType.IMAGE);
@@ -111,6 +111,8 @@ public class PhotoEditor implements BrushViewChangeListener {
         final FrameLayout frmBorder = imageRootView.findViewById(R.id.frmBorder);
         final ImageView imgClose = imageRootView.findViewById(R.id.imgPhotoEditorClose);
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) imageView.getLayoutParams();
+
+        imageView.setRotation(rotation);
 
         if (height > 0.0 && width > 0.0) {
             params.height = (int) height;
@@ -145,7 +147,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     }
 
     public void addImage(Bitmap desiredImage) {
-        addImage(desiredImage, -1, -1, null, desiredImage.getHeight(), desiredImage.getWidth());
+        addImage(desiredImage, -1, -1, null, desiredImage.getHeight(), desiredImage.getWidth(), 0);
     }
 
 
@@ -190,10 +192,10 @@ public class PhotoEditor implements BrushViewChangeListener {
      */
     @SuppressLint("ClickableViewAccessibility")
     public void addText(String text, @Nullable TextStyleBuilder styleBuilder) {
-        addText(text, styleBuilder, -1, -1, null);
+        addText(text, styleBuilder, -1, -1, null, 0);
     }
 
-    public void addText(String text, TextStyleBuilder styleBuilder, float x, float y, String uuid) {
+    public void addText(String text, TextStyleBuilder styleBuilder, float x, float y, String uuid, float rotation) {
         posX = x;
         posY = y;
         brushDrawingView.setBrushDrawingMode(false);
@@ -204,6 +206,8 @@ public class PhotoEditor implements BrushViewChangeListener {
         final FrameLayout frmBorder = textRootView.findViewById(R.id.frmBorder);
 
         textInputTv.setText(text);
+        textInputTv.setRotation(rotation);
+
         if (styleBuilder != null)
             styleBuilder.applyStyle(textInputTv);
 
