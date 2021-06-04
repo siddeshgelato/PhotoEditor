@@ -362,11 +362,14 @@ public class PhotoEditor implements BrushViewChangeListener {
             rootView.setX(posX - leftMargin);
             rootView.setY(posY - topMargin);
 
-            posX = -1;
-            posY = -1;
+
         } else {
             params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         }
+        rootView.setPivotX(posX);
+        rootView.setPivotY(posY);
+        posX = -1;
+        posY = -1;
         rootView.setRotation(rotation);
         parentView.addView(rootView, params);
         viewState.addAddedView(rootView);
