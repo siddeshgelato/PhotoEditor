@@ -60,6 +60,8 @@ public class PhotoEditor implements BrushViewChangeListener {
     private float posX = -1;
     private float posY = -1;
     private float rotation = 0.0f;
+    private float px = -1;
+    private float py = -1;
 
 
     protected PhotoEditor(Builder builder) {
@@ -102,16 +104,18 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param desiredImage bitmap image you want to add
      */
-    public void addImage(Bitmap desiredImage, float x, float y, String uuid, float height, float width, float rotation) {
+    public void addImage(Bitmap desiredImage, float x, float y, String uuid, float height, float width, float rotation, float px, float py) {
         posX = x;
         posY = y;
+        this.px = px;
+        this.py = py;
         this.rotation = rotation;
         final View imageRootView = getLayout(ViewType.IMAGE);
         imageRootView.setTag(uuid);
 
         final ImageView imageView = imageRootView.findViewById(R.id.imgPhotoEditorImage);
         final FrameLayout frmBorder = imageRootView.findViewById(R.id.frmBorder);
-       // final ImageView imgClose = imageRootView.findViewById(R.id.imgPhotoEditorClose);
+        // final ImageView imgClose = imageRootView.findViewById(R.id.imgPhotoEditorClose);
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) imageView.getLayoutParams();
 
         if (height > 0.0 && width > 0.0) {
@@ -129,7 +133,7 @@ public class PhotoEditor implements BrushViewChangeListener {
             public void onClick() {
                 clearHelperBox();
                 frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
-                //imgClose.setVisibility(View.VISIBLE);
+                //  imgClose.setVisibility(View.VISIBLE);
                 frmBorder.setTag(true);
                 viewState.setCurrentSelectedView(imageRootView);
             }
@@ -147,7 +151,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     }
 
     public void addImage(Bitmap desiredImage) {
-        addImage(desiredImage, -1, -1, null, desiredImage.getHeight(), desiredImage.getWidth(), 0);
+        addImage(desiredImage, -1, -1, null, desiredImage.getHeight(), desiredImage.getWidth(), 0, 0.0f, 0.0f);
     }
 
 
@@ -203,7 +207,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         final View textRootView = getLayout(ViewType.TEXT);
         textRootView.setTag(uuid);
         final TextView textInputTv = textRootView.findViewById(R.id.tvPhotoEditorText);
-       // final ImageView imgClose = textRootView.findViewById(R.id.imgPhotoEditorClose);
+        final ImageView imgClose = textRootView.findViewById(R.id.imgPhotoEditorClose);
         final FrameLayout frmBorder = textRootView.findViewById(R.id.frmBorder);
 
         textInputTv.setText(text);
@@ -217,7 +221,7 @@ public class PhotoEditor implements BrushViewChangeListener {
             public void onClick() {
                 clearHelperBox();
                 frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
-                //imgClose.setVisibility(View.VISIBLE);
+                imgClose.setVisibility(View.VISIBLE);
                 frmBorder.setTag(true);
                 viewState.setCurrentSelectedView(textRootView);
             }
@@ -351,9 +355,13 @@ public class PhotoEditor implements BrushViewChangeListener {
     private void addViewToParent(View rootView, ViewType viewType) {
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        rootView.setPivotX(0);
-        rootView.setPivotY(0);
+        rootView.setPivotX(px);
+        rootView.setPivotY(py);
         rootView.setRotation(rotation);
+        px = -1;
+        py = -1;
+        rotation = -1;
+
         if (posX != -1 && posY != -1) {
             //params.setMargins(posX, posY, posX + rootView.getMeasuredWidth(), posY + rootView.getMeasuredHeight());
 
