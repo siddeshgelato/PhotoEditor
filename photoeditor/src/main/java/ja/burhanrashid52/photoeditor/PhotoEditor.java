@@ -196,10 +196,10 @@ public class PhotoEditor implements BrushViewChangeListener {
      */
     @SuppressLint("ClickableViewAccessibility")
     public void addText(String text, @Nullable TextStyleBuilder styleBuilder) {
-        addText(text, styleBuilder, -1, -1, null, 0, 0.0f, 0.0f);
+        addText(text, styleBuilder, -1, -1, null, 0, 0.0f, 0.0f,ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
-    public void addText(String text, TextStyleBuilder styleBuilder, float x, float y, String uuid, float rotation, float px, float py) {
+    public void addText(String text, TextStyleBuilder styleBuilder, float x, float y, String uuid, float rotation, float px, float py, float height, float width) {
         posX = x;
         posY = y;
         this.rotation = rotation;
@@ -211,6 +211,17 @@ public class PhotoEditor implements BrushViewChangeListener {
         final TextView textInputTv = textRootView.findViewById(R.id.tvPhotoEditorText);
       //  final ImageView imgClose = textRootView.findViewById(R.id.imgPhotoEditorClose);
         final FrameLayout frmBorder = textRootView.findViewById(R.id.frmBorder);
+
+
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) imageView.getLayoutParams();
+
+        if (height > 0.0 && width > 0.0) {
+            params.height = (int) height;
+            params.width = (int) width;
+        }
+
+        textRootView.setLayoutParams(params);
+
 
         textInputTv.setText(text);
 
