@@ -196,13 +196,15 @@ public class PhotoEditor implements BrushViewChangeListener {
      */
     @SuppressLint("ClickableViewAccessibility")
     public void addText(String text, @Nullable TextStyleBuilder styleBuilder) {
-        addText(text, styleBuilder, -1, -1, null, 0);
+        addText(text, styleBuilder, -1, -1, null, 0, 0.0f, 0.0f);
     }
 
-    public void addText(String text, TextStyleBuilder styleBuilder, float x, float y, String uuid, float rotation) {
+    public void addText(String text, TextStyleBuilder styleBuilder, float x, float y, String uuid, float rotation, float px, float py) {
         posX = x;
         posY = y;
         this.rotation = rotation;
+        this.px = px;
+        this.py = py;
         brushDrawingView.setBrushDrawingMode(false);
         final View textRootView = getLayout(ViewType.TEXT);
         textRootView.setTag(uuid);
