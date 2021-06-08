@@ -213,7 +213,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         final FrameLayout frmBorder = textRootView.findViewById(R.id.frmBorder);
 
 
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) imageView.getLayoutParams();
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) textRootView.getLayoutParams();
 
         if (height > 0.0 && width > 0.0) {
             params.height = (int) height;
