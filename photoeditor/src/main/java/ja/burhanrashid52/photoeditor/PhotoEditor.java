@@ -90,9 +90,11 @@ public class PhotoEditor implements BrushViewChangeListener {
                 )
         );
 
+
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                clearHelperBox();
                 return mDetector.onTouchEvent(event);
             }
         });
@@ -209,7 +211,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         final View textRootView = getLayout(ViewType.TEXT);
         textRootView.setTag(uuid);
         final TextView textInputTv = textRootView.findViewById(R.id.tvPhotoEditorText);
-      //  final ImageView imgClose = textRootView.findViewById(R.id.imgPhotoEditorClose);
+        //  final ImageView imgClose = textRootView.findViewById(R.id.imgPhotoEditorClose);
         final FrameLayout frmBorder = textRootView.findViewById(R.id.frmBorder);
 
 
@@ -234,7 +236,7 @@ public class PhotoEditor implements BrushViewChangeListener {
             public void onClick() {
                 clearHelperBox();
                 frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
-               // imgClose.setVisibility(View.VISIBLE);
+                // imgClose.setVisibility(View.VISIBLE);
                 frmBorder.setTag(true);
                 viewState.setCurrentSelectedView(textRootView);
             }
