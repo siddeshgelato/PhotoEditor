@@ -617,6 +617,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
     public void deleteSelectedView(){
         viewUndo(viewState.getCurrentSelectedView(), null);
+        clearHelperBox();
     }
 
 
