@@ -54,6 +54,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     private View deleteView;
     private BrushDrawingView brushDrawingView;
     private OnPhotoEditorListener mOnPhotoEditorListener;
+    private OnElementSelectionListener elementSelectionListener;
     private boolean isTextPinchScalable;
     private Typeface mDefaultTextTypeface;
     private Typeface mDefaultEmojiTypeface;
@@ -138,6 +139,9 @@ public class PhotoEditor implements BrushViewChangeListener {
                 //  imgClose.setVisibility(View.VISIBLE);
                 frmBorder.setTag(true);
                 viewState.setCurrentSelectedView(imageRootView);
+                if(elementSelectionListener != null) {
+                    elementSelectionListener.onElementSelectedDeselected(imageRootView, true);
+                }
             }
 
             @Override
@@ -150,6 +154,9 @@ public class PhotoEditor implements BrushViewChangeListener {
         clearHelperBox();
         addViewToParent(imageRootView, ViewType.IMAGE);
         viewState.setCurrentSelectedView(imageRootView);
+        if(elementSelectionListener != null) {
+            elementSelectionListener.onElementSelectedDeselected(imageRootView, true);
+        }
     }
 
     public void addImage(Bitmap desiredImage) {
@@ -239,6 +246,9 @@ public class PhotoEditor implements BrushViewChangeListener {
                 // imgClose.setVisibility(View.VISIBLE);
                 frmBorder.setTag(true);
                 viewState.setCurrentSelectedView(textRootView);
+                if(elementSelectionListener != null) {
+                    elementSelectionListener.onElementSelectedDeselected(textRootView, true);
+                }
             }
 
             @Override
@@ -257,6 +267,9 @@ public class PhotoEditor implements BrushViewChangeListener {
 
         // Change the in-focus view
         viewState.setCurrentSelectedView(textRootView);
+        if(elementSelectionListener != null) {
+            elementSelectionListener.onElementSelectedDeselected(textRootView, true);
+        }
     }
 
     /**
@@ -347,6 +360,9 @@ public class PhotoEditor implements BrushViewChangeListener {
 
                 // Change the in-focus view
                 viewState.setCurrentSelectedView(emojiRootView);
+                if(elementSelectionListener != null) {
+                    elementSelectionListener.onElementSelectedDeselected(emojiRootView, true);
+                }
             }
 
             @Override
@@ -359,6 +375,9 @@ public class PhotoEditor implements BrushViewChangeListener {
 
         // Change the in-focus view
         viewState.setCurrentSelectedView(emojiRootView);
+        if(elementSelectionListener != null) {
+            elementSelectionListener.onElementSelectedDeselected(emojiRootView, true);
+        }
     }
 
 
@@ -691,7 +710,11 @@ public class PhotoEditor implements BrushViewChangeListener {
                 imgClose.setVisibility(View.GONE);
             }
         }
+        if(elementSelectionListener != null) {
+            elementSelectionListener.onElementSelectedDeselected(viewState.getCurrentSelectedView(), false);
+        }
         viewState.clearCurrentSelectedView();
+
     }
 
     /**
@@ -911,6 +934,10 @@ public class PhotoEditor implements BrushViewChangeListener {
         this.mOnPhotoEditorListener = onPhotoEditorListener;
     }
 
+
+    public void setOnElementSelectionListener(@NonNull OnElementSelectionListener onElementSelectionListener) {
+        this.elementSelectionListener = onElementSelectionListener;
+    }
     /**
      * Check if any changes made need to save
      *
