@@ -601,7 +601,7 @@ public class PhotoEditor implements BrushViewChangeListener {
             brushDrawingView.brushEraser();
     }
 
-    private void viewUndo(View removedView, ViewType viewType) {
+    public void viewUndo(View removedView, ViewType viewType) {
         if (viewState.containsAddedView(removedView)) {
             parentView.removeView(removedView);
             viewState.removeAddedView(removedView);
