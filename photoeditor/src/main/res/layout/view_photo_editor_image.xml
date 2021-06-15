@@ -9,6 +9,9 @@
         android:layout_height="15dp"
         android:layout_gravity="top|start"
         android:elevation="1dp"
+        android:padding="4dp"
+        android:adjustViewBounds="true"
+        android:cropToPadding="true"
         android:src="@drawable/ic_remove"
         android:visibility="gone" />
 
