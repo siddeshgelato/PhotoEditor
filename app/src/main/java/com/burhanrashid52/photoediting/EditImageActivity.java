@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,6 +38,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import java.io.File;
 import java.io.IOException;
 
+import ja.burhanrashid52.photoeditor.OnElementSelectionListener;
 import ja.burhanrashid52.photoeditor.OnPhotoEditorListener;
 import ja.burhanrashid52.photoeditor.PhotoEditor;
 import ja.burhanrashid52.photoeditor.PhotoEditorView;
@@ -121,6 +123,14 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                 .build(); // build photo editor sdk
 
         mPhotoEditor.setOnPhotoEditorListener(this);
+
+        mPhotoEditor.setOnElementSelectionListener(new OnElementSelectionListener() {
+            @Override
+            public void onElementSelectedDeselected(View view, boolean isSelected) {
+                Toast.makeText(EditImageActivity.this, "State" + isSelected, Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         //Set Image Dynamically
         // mPhotoEditorView.getSource().setImageResource(R.drawable.color_palette);
@@ -287,8 +297,8 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     private void saveImage() {
         final String fileName = System.currentTimeMillis() + ".png";
         final boolean hasStoragePermission =
-                ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED;
-        if(hasStoragePermission || isSdkHigherThan28()) {
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED;
+        if (hasStoragePermission || isSdkHigherThan28()) {
             showLoading("Saving...");
             mSaveFileHelper.createFile(fileName, (fileCreated, filePath, error, uri) -> {
                 if (fileCreated) {
@@ -319,7 +329,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                     showSnackbar(error);
                 }
             });
-        }else {
+        } else {
             requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
     }

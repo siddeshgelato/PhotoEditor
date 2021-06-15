@@ -355,7 +355,7 @@ public class PhotoEditor implements BrushViewChangeListener {
             public void onClick() {
                 clearHelperBox();
                 frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
-                imgClose.setVisibility(View.VISIBLE);
+                //imgClose.setVisibility(View.VISIBLE);
                 frmBorder.setTag(true);
 
                 // Change the in-focus view
@@ -480,7 +480,7 @@ public class PhotoEditor implements BrushViewChangeListener {
             //We are setting tag as ViewType to identify what type of the view it is
             //when we remove the view from stack i.e onRemoveViewListener(ViewType viewType, int numberOfAddedViews);
             rootView.setTag(viewType);
-            final ImageView imgClose = rootView.findViewById(R.id.imgPhotoEditorClose);
+            /*final ImageView imgClose = rootView.findViewById(R.id.imgPhotoEditorClose);
             final View finalRootView = rootView;
             if (imgClose != null) {
                 imgClose.setOnClickListener(new View.OnClickListener() {
@@ -489,7 +489,7 @@ public class PhotoEditor implements BrushViewChangeListener {
                         viewUndo(finalRootView, viewType);
                     }
                 });
-            }
+            }*/
         }
         return rootView;
     }
