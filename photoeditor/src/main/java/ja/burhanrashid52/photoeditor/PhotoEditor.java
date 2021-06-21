@@ -15,7 +15,9 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
 import androidx.annotation.UiThread;
 
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -23,6 +25,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -218,6 +222,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         final View textRootView = getLayout(ViewType.TEXT);
         textRootView.setTag(uuid);
         final TextView textInputTv = textRootView.findViewById(R.id.tvPhotoEditorText);
+        final EditText textInputEt = textRootView.findViewById(R.id.etPhotoEditorText);
         //  final ImageView imgClose = textRootView.findViewById(R.id.imgPhotoEditorClose);
         final FrameLayout frmBorder = textRootView.findViewById(R.id.frmBorder);
 
@@ -233,9 +238,12 @@ public class PhotoEditor implements BrushViewChangeListener {
 
 
         textInputTv.setText(text);
+        textInputEt.setText(text);
 
-        if (styleBuilder != null)
+        if (styleBuilder != null) {
             styleBuilder.applyStyle(textInputTv);
+            styleBuilder.applyStyle(textInputEt);
+        }
 
         MultiTouchListener multiTouchListener = getMultiTouchListener(isTextPinchScalable);
         multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
@@ -255,9 +263,62 @@ public class PhotoEditor implements BrushViewChangeListener {
             public void onLongClick() {
                 String textInput = textInputTv.getText().toString();
                 int currentTextColor = textInputTv.getCurrentTextColor();
-                if (mOnPhotoEditorListener != null) {
+                /*if (mOnPhotoEditorListener != null) {
                     mOnPhotoEditorListener.onEditTextChangeListener(textRootView, textInput, currentTextColor);
+                }*/
+               // textInputEt.setText(textInput);
+                textInputEt.setVisibility(View.VISIBLE);
+                textInputTv.setVisibility(View.GONE);
+                textInputEt.requestFocus();
+                InputMethodManager imm = (InputMethodManager) textInputEt.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(textInputEt, InputMethodManager.SHOW_IMPLICIT);
+
+            }
+        });
+
+
+        parentView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager) v.getContext()
+                        .getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                /*if(!textInputEt.getText().toString().isEmpty()) {
+                    textInputTv.setText(textInputEt.getText());
+                }*/
+                textInputEt.setVisibility(View.GONE);
+                textInputTv.setVisibility(View.VISIBLE);
+            }
+        });
+
+        /*textInputTv.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+
+                } else {
+                    textInputTv.setFocusable(false);
+                    parentView.setFocusable(false);
+                    parentView.setFocusableInTouchMode(false);
+                    parentView.setClickable(false);
                 }
+            }
+        });*/
+
+        textInputEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                textInputTv.setText(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 
@@ -273,7 +334,8 @@ public class PhotoEditor implements BrushViewChangeListener {
     }
 
     /**
-     * This will update text and color on provided view
+     * This will update text and color on provi
+     * ded view
      *
      * @param view      view on which you want update
      * @param inputText text to update {@link TextView}

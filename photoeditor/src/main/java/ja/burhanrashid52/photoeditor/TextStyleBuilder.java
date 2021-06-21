@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.HashMap;
