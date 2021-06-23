@@ -108,14 +108,16 @@ public class PhotoEditor implements BrushViewChangeListener {
 
     private void HideEditTextWhileBlur() {
         View view = viewState.getCurrentSelectedView();
-        final TextView textInputTv = view.findViewById(R.id.tvPhotoEditorText);
-        final EditText textInputEt = view.findViewById(R.id.etPhotoEditorText);
-        if (textInputTv != null && textInputEt != null) {
-            InputMethodManager imm = (InputMethodManager) view.getContext()
-                    .getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            textInputEt.setVisibility(View.GONE);
-            textInputTv.setVisibility(View.VISIBLE);
+        if (view != null) {
+            final TextView textInputTv = view.findViewById(R.id.tvPhotoEditorText);
+            final EditText textInputEt = view.findViewById(R.id.etPhotoEditorText);
+            if (textInputTv != null && textInputEt != null) {
+                InputMethodManager imm = (InputMethodManager) view.getContext()
+                        .getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                textInputEt.setVisibility(View.GONE);
+                textInputTv.setVisibility(View.VISIBLE);
+            }
         }
     }
 
