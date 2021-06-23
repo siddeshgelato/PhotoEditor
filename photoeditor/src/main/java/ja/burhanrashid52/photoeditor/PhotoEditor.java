@@ -99,10 +99,24 @@ public class PhotoEditor implements BrushViewChangeListener {
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                HideEditTextWhileBlur();
                 clearHelperBox();
                 return mDetector.onTouchEvent(event);
             }
         });
+    }
+
+    private void HideEditTextWhileBlur() {
+        View view = viewState.getCurrentSelectedView();
+        final TextView textInputTv = view.findViewById(R.id.tvPhotoEditorText);
+        final EditText textInputEt = view.findViewById(R.id.etPhotoEditorText);
+        if (textInputTv != null && textInputEt != null) {
+            InputMethodManager imm = (InputMethodManager) view.getContext()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            textInputEt.setVisibility(View.GONE);
+            textInputTv.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -143,7 +157,7 @@ public class PhotoEditor implements BrushViewChangeListener {
                 //  imgClose.setVisibility(View.VISIBLE);
                 frmBorder.setTag(true);
                 viewState.setCurrentSelectedView(imageRootView);
-                if(elementSelectionListener != null) {
+                if (elementSelectionListener != null) {
                     elementSelectionListener.onElementSelectedDeselected(imageRootView, true);
                 }
             }
@@ -158,7 +172,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         clearHelperBox();
         addViewToParent(imageRootView, ViewType.IMAGE);
         viewState.setCurrentSelectedView(imageRootView);
-        if(elementSelectionListener != null) {
+        if (elementSelectionListener != null) {
             elementSelectionListener.onElementSelectedDeselected(imageRootView, true);
         }
     }
@@ -209,7 +223,7 @@ public class PhotoEditor implements BrushViewChangeListener {
      */
     @SuppressLint("ClickableViewAccessibility")
     public void addText(String text, @Nullable TextStyleBuilder styleBuilder) {
-        addText(text, styleBuilder, -1, -1, null, 0, 0.0f, 0.0f,ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        addText(text, styleBuilder, -1, -1, null, 0, 0.0f, 0.0f, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     public void addText(String text, TextStyleBuilder styleBuilder, float x, float y, String uuid, float rotation, float px, float py, float height, float width) {
@@ -254,7 +268,7 @@ public class PhotoEditor implements BrushViewChangeListener {
                 // imgClose.setVisibility(View.VISIBLE);
                 frmBorder.setTag(true);
                 viewState.setCurrentSelectedView(textRootView);
-                if(elementSelectionListener != null) {
+                if (elementSelectionListener != null) {
                     elementSelectionListener.onElementSelectedDeselected(textRootView, true);
                 }
             }
@@ -262,11 +276,6 @@ public class PhotoEditor implements BrushViewChangeListener {
             @Override
             public void onLongClick() {
                 String textInput = textInputTv.getText().toString();
-                int currentTextColor = textInputTv.getCurrentTextColor();
-                /*if (mOnPhotoEditorListener != null) {
-                    mOnPhotoEditorListener.onEditTextChangeListener(textRootView, textInput, currentTextColor);
-                }*/
-               // textInputEt.setText(textInput);
                 textInputEt.setVisibility(View.VISIBLE);
                 textInputTv.setVisibility(View.GONE);
                 textInputEt.requestFocus();
@@ -276,34 +285,6 @@ public class PhotoEditor implements BrushViewChangeListener {
             }
         });
 
-
-       /* parentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InputMethodManager imm = (InputMethodManager) v.getContext()
-                        .getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                *//*if(!textInputEt.getText().toString().isEmpty()) {
-                    textInputTv.setText(textInputEt.getText());
-                }*//*
-                textInputEt.setVisibility(View.GONE);
-                textInputTv.setVisibility(View.VISIBLE);
-            }
-        });*/
-
-        /*textInputTv.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (hasFocus) {
-
-                } else {
-                    textInputTv.setFocusable(false);
-                    parentView.setFocusable(false);
-                    parentView.setFocusableInTouchMode(false);
-                    parentView.setClickable(false);
-                }
-            }
-        });*/
 
         textInputEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -328,7 +309,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
         // Change the in-focus view
         viewState.setCurrentSelectedView(textRootView);
-        if(elementSelectionListener != null) {
+        if (elementSelectionListener != null) {
             elementSelectionListener.onElementSelectedDeselected(textRootView, true);
         }
     }
@@ -422,7 +403,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
                 // Change the in-focus view
                 viewState.setCurrentSelectedView(emojiRootView);
-                if(elementSelectionListener != null) {
+                if (elementSelectionListener != null) {
                     elementSelectionListener.onElementSelectedDeselected(emojiRootView, true);
                 }
             }
@@ -437,7 +418,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
         // Change the in-focus view
         viewState.setCurrentSelectedView(emojiRootView);
-        if(elementSelectionListener != null) {
+        if (elementSelectionListener != null) {
             elementSelectionListener.onElementSelectedDeselected(emojiRootView, true);
         }
     }
@@ -677,7 +658,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         }
     }
 
-    public void deleteSelectedView(){
+    public void deleteSelectedView() {
         viewUndo(viewState.getCurrentSelectedView(), null);
         clearHelperBox();
     }
@@ -778,7 +759,7 @@ public class PhotoEditor implements BrushViewChangeListener {
                 imgClose.setVisibility(View.GONE);
             }
         }
-        if(elementSelectionListener != null) {
+        if (elementSelectionListener != null) {
             elementSelectionListener.onElementSelectedDeselected(viewState.getCurrentSelectedView(), false);
         }
         viewState.clearCurrentSelectedView();
@@ -1006,6 +987,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     public void setOnElementSelectionListener(@NonNull OnElementSelectionListener onElementSelectionListener) {
         this.elementSelectionListener = onElementSelectionListener;
     }
+
     /**
      * Check if any changes made need to save
      *
