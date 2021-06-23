@@ -277,19 +277,19 @@ public class PhotoEditor implements BrushViewChangeListener {
         });
 
 
-        parentView.setOnClickListener(new View.OnClickListener() {
+       /* parentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 InputMethodManager imm = (InputMethodManager) v.getContext()
                         .getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                /*if(!textInputEt.getText().toString().isEmpty()) {
+                *//*if(!textInputEt.getText().toString().isEmpty()) {
                     textInputTv.setText(textInputEt.getText());
-                }*/
+                }*//*
                 textInputEt.setVisibility(View.GONE);
                 textInputTv.setVisibility(View.VISIBLE);
             }
-        });
+        });*/
 
         /*textInputTv.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
