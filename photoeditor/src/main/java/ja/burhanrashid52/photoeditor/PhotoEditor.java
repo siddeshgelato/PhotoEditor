@@ -19,6 +19,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -277,10 +278,10 @@ public class PhotoEditor implements BrushViewChangeListener {
 
             @Override
             public void onLongClick() {
-              /*  textInputEt.setTypeface(textInputTv.getTypeface());
-                textInputEt.setTextSize(textInputTv.getTextSize());
+                textInputEt.setTypeface(textInputTv.getTypeface());
+                textInputEt.setTextSize(TypedValue.COMPLEX_UNIT_PX, textInputTv.getTextSize());
                 textInputEt.setTextColor(textInputTv.getTextColors());
-                textInputEt.setTextAlignment(textInputTv.getTextAlignment());*/
+                textInputEt.setTextAlignment(textInputTv.getTextAlignment());
                 textInputEt.setVisibility(View.VISIBLE);
                 textInputTv.setVisibility(View.GONE);
                 textInputEt.requestFocus();
