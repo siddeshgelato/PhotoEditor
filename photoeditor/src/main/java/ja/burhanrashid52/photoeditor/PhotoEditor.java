@@ -277,10 +277,10 @@ public class PhotoEditor implements BrushViewChangeListener {
 
             @Override
             public void onLongClick() {
-                textInputEt.setTypeface(textInputTv.getTypeface());
+              /*  textInputEt.setTypeface(textInputTv.getTypeface());
                 textInputEt.setTextSize(textInputTv.getTextSize());
                 textInputEt.setTextColor(textInputTv.getTextColors());
-                textInputEt.setTextAlignment(textInputTv.getTextAlignment());
+                textInputEt.setTextAlignment(textInputTv.getTextAlignment());*/
                 textInputEt.setVisibility(View.VISIBLE);
                 textInputTv.setVisibility(View.GONE);
                 textInputEt.requestFocus();
