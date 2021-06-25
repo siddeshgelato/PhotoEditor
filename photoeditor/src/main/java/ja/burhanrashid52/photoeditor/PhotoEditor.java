@@ -278,16 +278,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
             @Override
             public void onLongClick() {
-                textInputEt.setTypeface(textInputTv.getTypeface());
-                textInputEt.setTextSize(TypedValue.COMPLEX_UNIT_PX, textInputTv.getTextSize());
-                textInputEt.setTextColor(textInputTv.getTextColors());
-                textInputEt.setTextAlignment(textInputTv.getTextAlignment());
-                textInputEt.setVisibility(View.VISIBLE);
-                textInputTv.setVisibility(View.GONE);
-                textInputEt.requestFocus();
-                InputMethodManager imm = (InputMethodManager) textInputEt.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(textInputEt, InputMethodManager.SHOW_IMPLICIT);
-
+                editText(textRootView);
             }
         });
 
@@ -318,6 +309,20 @@ public class PhotoEditor implements BrushViewChangeListener {
         if (elementSelectionListener != null) {
             elementSelectionListener.onElementSelectedDeselected(textRootView, true);
         }
+    }
+
+    public void editText(View view){
+        final TextView textInputTv = view.findViewById(R.id.tvPhotoEditorText);
+        final EditText textInputEt = view.findViewById(R.id.etPhotoEditorText);
+        textInputEt.setTypeface(textInputTv.getTypeface());
+        textInputEt.setTextSize(TypedValue.COMPLEX_UNIT_PX, textInputTv.getTextSize());
+        textInputEt.setTextColor(textInputTv.getTextColors());
+        textInputEt.setTextAlignment(textInputTv.getTextAlignment());
+        textInputEt.setVisibility(View.VISIBLE);
+        textInputTv.setVisibility(View.GONE);
+        textInputEt.requestFocus();
+        InputMethodManager imm = (InputMethodManager) textInputEt.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(textInputEt, InputMethodManager.SHOW_IMPLICIT);
     }
 
     /**
