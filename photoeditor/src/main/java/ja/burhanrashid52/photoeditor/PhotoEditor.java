@@ -311,7 +311,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         }
     }
 
-    public void editText(View view){
+    public void editText(View view) {
         final TextView textInputTv = view.findViewById(R.id.tvPhotoEditorText);
         final EditText textInputEt = view.findViewById(R.id.etPhotoEditorText);
         textInputEt.setTypeface(textInputTv.getTypeface());
@@ -1146,5 +1146,9 @@ public class PhotoEditor implements BrushViewChangeListener {
             convertedEmojiList.add(convertEmoji(emojiUnicode));
         }
         return convertedEmojiList;
+    }
+
+    public View getSelectedView() {
+        return viewState.getCurrentSelectedView();
     }
 }
