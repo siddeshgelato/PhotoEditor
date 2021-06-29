@@ -127,7 +127,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         mPhotoEditor.setOnElementSelectionListener(new OnElementSelectionListener() {
             @Override
             public void onElementSelectedDeselected(View view, boolean isSelected) {
-                Toast.makeText(EditImageActivity.this, "State" + isSelected, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(EditImageActivity.this, "State" + isSelected, Toast.LENGTH_SHORT).show();
             }
         });
 

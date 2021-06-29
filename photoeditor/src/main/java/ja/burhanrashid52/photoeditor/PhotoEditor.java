@@ -1152,10 +1152,4 @@ public class PhotoEditor implements BrushViewChangeListener {
         return viewState.getCurrentSelectedView();
     }
 
-    public void selectedViewPositionLeft() {
-        View view = viewState.getCurrentSelectedView();
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
-        params.addRule(RelativeLayout.ALIGN_PARENT_START);
-        view.setLayoutParams(params);
-    }
 }
