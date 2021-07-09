@@ -33,6 +33,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.canhub.cropper.CropImageView;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -138,6 +140,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         imageRootView.setTag(uuid);
 
         final ImageView imageView = imageRootView.findViewById(R.id.imgPhotoEditorImage);
+        final CropImageView cropImageView = imageRootView.findViewById(R.id.imgCropImage);
         final FrameLayout frmBorder = imageRootView.findViewById(R.id.frmBorder);
         // final ImageView imgClose = imageRootView.findViewById(R.id.imgPhotoEditorClose);
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) imageView.getLayoutParams();
@@ -150,6 +153,8 @@ public class PhotoEditor implements BrushViewChangeListener {
         imageRootView.setLayoutParams(params);
 
         imageView.setImageBitmap(desiredImage);
+        cropImageView.setImageBitmap(desiredImage);
+
 
         MultiTouchListener multiTouchListener = getMultiTouchListener(true);
         multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
@@ -309,6 +314,34 @@ public class PhotoEditor implements BrushViewChangeListener {
         if (elementSelectionListener != null) {
             elementSelectionListener.onElementSelectedDeselected(textRootView, true);
         }
+    }
+
+    public void initCropping() {
+        View selectedView = viewState.getCurrentSelectedView();
+        final ImageView imageView = selectedView.findViewById(R.id.imgPhotoEditorImage);
+        final CropImageView cropImageView = selectedView.findViewById(R.id.imgCropImage);
+        cropImageView.setVisibility(View.VISIBLE);
+    }
+
+    public void crop() {
+        View selectedView = viewState.getCurrentSelectedView();
+        final ImageView imageView = selectedView.findViewById(R.id.imgPhotoEditorImage);
+        final CropImageView cropImageView = selectedView.findViewById(R.id.imgCropImage);
+        Bitmap cropped = cropImageView.getCroppedImage();
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) imageView.getLayoutParams();
+        params.height = FrameLayout.LayoutParams.WRAP_CONTENT;
+        params.width = FrameLayout.LayoutParams.WRAP_CONTENT;
+        imageView.setLayoutParams(params);
+        imageView.setImageBitmap(cropped);
+        cropImageView.setLayoutParams(params);
+        cropImageView.setImageBitmap(cropped);
+        cropImageView.setVisibility(View.GONE);
+    }
+
+    public void cancelCrop() {
+        View selectedView = viewState.getCurrentSelectedView();
+        final CropImageView cropImageView = selectedView.findViewById(R.id.imgCropImage);
+        cropImageView.setVisibility(View.GONE);
     }
 
     public void editText(View view) {

@@ -31,6 +31,15 @@
             android:contentDescription="@string/app_name"
             android:scaleType="fitXY" />
 
+        <com.canhub.cropper.CropImageView
+            android:id="@+id/imgCropImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitXY"/>
     </FrameLayout>
 
 </FrameLayout>
