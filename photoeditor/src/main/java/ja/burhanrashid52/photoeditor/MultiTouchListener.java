@@ -2,6 +2,8 @@ package ja.burhanrashid52.photoeditor;
 
 import android.graphics.Rect;
 import androidx.annotation.Nullable;
+
+import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,7 +34,7 @@ class MultiTouchListener implements OnTouchListener {
     private Rect outRect;
     private View deleteView;
     private ImageView photoEditImageView;
-    private RelativeLayout parentView;
+    private PhotoEditorView parentView;
 
     private OnMultiTouchListener onMultiTouchListener;
     private OnGestureControl mOnGestureControl;
@@ -42,7 +44,7 @@ class MultiTouchListener implements OnTouchListener {
     private PhotoEditorViewState viewState;
 
     MultiTouchListener(@Nullable View deleteView,
-                       RelativeLayout parentView,
+                       PhotoEditorView parentView,
                        ImageView photoEditImageView,
                        boolean isPinchScalable,
                        OnPhotoEditorListener onPhotoEditorListener,
@@ -141,6 +143,7 @@ class MultiTouchListener implements OnTouchListener {
                 }
                 view.bringToFront();
                 firePhotoEditorSDKListener(view, true);
+                parentView.setVisibilityOfGuideLines(true);
                 break;
             case MotionEvent.ACTION_MOVE:
                 // Only enable dragging on focused stickers.
@@ -170,6 +173,7 @@ class MultiTouchListener implements OnTouchListener {
                     deleteView.setVisibility(View.GONE);
                 }
                 firePhotoEditorSDKListener(view, false);
+                parentView.setVisibilityOfGuideLines(false);
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 int pointerIndexPointerUp = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;

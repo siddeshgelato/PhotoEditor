@@ -4,14 +4,17 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -35,6 +38,12 @@ public class PhotoEditorView extends RelativeLayout {
     private BrushDrawingView mBrushDrawingView;
     private ImageFilterView mImageFilterView;
     private static final int imgSrcId = 1, brushSrcId = 2, glFilterId = 3;
+    private View mHorizontalGuideLine = new View(getContext());
+    private View mVerticalGuideLine = new View(getContext());
+    private View mTopGuideLine = new View(getContext());
+    private View mBottomGuideLine = new View(getContext());
+    private View mLeftGuideLine = new View(getContext());
+    private View mRightGuideLine = new View(getContext());
 
     public PhotoEditorView(Context context) {
         super(context);
@@ -107,7 +116,6 @@ public class PhotoEditorView extends RelativeLayout {
             }
         });
 
-
         //Add image source
         addView(mImgSource, imgSrcParam);
 
@@ -117,6 +125,41 @@ public class PhotoEditorView extends RelativeLayout {
         //Add brush view
         addView(mBrushDrawingView, brushParam);
 
+        createGuideLine(mHorizontalGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 2, RelativeLayout.CENTER_IN_PARENT);
+        createGuideLine(mVerticalGuideLine, 2, ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.CENTER_IN_PARENT);
+        createGuideLine(mLeftGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 4, RelativeLayout.ALIGN_PARENT_START);
+        createGuideLine(mRightGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 4, RelativeLayout.ALIGN_PARENT_END);
+        createGuideLine(mTopGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.ALIGN_PARENT_TOP);
+        createGuideLine(mBottomGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.ALIGN_PARENT_BOTTOM);
+
+    }
+
+    private void createGuideLine(View view, int height, int width, int constraint) {
+        LayoutParams params = new LayoutParams(
+                width, height);
+        params.addRule(constraint, RelativeLayout.TRUE);
+        view.setBackgroundColor(Color.MAGENTA);
+        view.setLayoutParams(params);
+        addView(view, params);
+        view.setVisibility(View.GONE);
+    }
+
+    void setVisibilityOfGuideLines(boolean isVisible) {
+        if (isVisible) {
+            mHorizontalGuideLine.setVisibility(VISIBLE);
+            mVerticalGuideLine.setVisibility(VISIBLE);
+            mTopGuideLine.setVisibility(VISIBLE);
+            mBottomGuideLine.setVisibility(VISIBLE);
+            mLeftGuideLine.setVisibility(VISIBLE);
+            mRightGuideLine.setVisibility(VISIBLE);
+        } else {
+            mHorizontalGuideLine.setVisibility(GONE);
+            mVerticalGuideLine.setVisibility(GONE);
+            mTopGuideLine.setVisibility(GONE);
+            mBottomGuideLine.setVisibility(GONE);
+            mLeftGuideLine.setVisibility(GONE);
+            mRightGuideLine.setVisibility(GONE);
+        }
     }
 
 
