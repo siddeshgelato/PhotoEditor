@@ -3,7 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <ImageView
+    <!--<ImageView
         android:id="@+id/imgPhotoEditorClose"
         android:layout_width="15dp"
         android:layout_height="15dp"
@@ -13,7 +13,7 @@
         android:adjustViewBounds="true"
         android:cropToPadding="true"
         android:src="@drawable/ic_remove"
-        android:visibility="gone" />
+        android:visibility="gone" />-->
 
     <FrameLayout
         android:id="@+id/frmBorder"
@@ -27,7 +27,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
-            android:src="@drawable/ic_remove"
             android:contentDescription="@string/app_name"
             android:scaleType="fitXY" />
 

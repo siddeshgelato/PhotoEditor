@@ -171,7 +171,7 @@ public class EditImageActivityTest {
         assertNotEquals(emojiScaleYBeforePinching, emojiFrameParentView.getScaleY());
 
         // Remove the emoji from the screen.
-        onView(withId(R.id.imgPhotoEditorClose)).perform(click());
+       // onView(withId(R.id.imgPhotoEditorClose)).perform(click());
 
         // Add a text to the image.
         onView(withText(R.string.label_text)).perform(click());

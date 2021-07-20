@@ -1,15 +1,14 @@
 package ja.burhanrashid52.photoeditor;
 
 import android.graphics.Rect;
+
 import androidx.annotation.Nullable;
 
-import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 /**
  * Created on 18/01/2017.
@@ -42,13 +41,16 @@ class MultiTouchListener implements OnTouchListener {
     private OnPhotoEditorListener mOnPhotoEditorListener;
 
     private PhotoEditorViewState viewState;
+    private UndoRedoController undoRedoController;
+    float prevX = -1, prevY = -1;
 
     MultiTouchListener(@Nullable View deleteView,
                        PhotoEditorView parentView,
                        ImageView photoEditImageView,
                        boolean isPinchScalable,
                        OnPhotoEditorListener onPhotoEditorListener,
-                       PhotoEditorViewState viewState
+                       PhotoEditorViewState viewState,
+                       UndoRedoController undoRedoController
     ) {
         mIsPinchScalable = isPinchScalable;
         mScaleGestureDetector = new ScaleGestureDetector(new ScaleGestureListener());
@@ -57,6 +59,7 @@ class MultiTouchListener implements OnTouchListener {
         this.parentView = parentView;
         this.photoEditImageView = photoEditImageView;
         this.mOnPhotoEditorListener = onPhotoEditorListener;
+        this.undoRedoController = undoRedoController;
         if (deleteView != null) {
             outRect = new Rect(deleteView.getLeft(), deleteView.getTop(),
                     deleteView.getRight(), deleteView.getBottom());
@@ -143,7 +146,6 @@ class MultiTouchListener implements OnTouchListener {
                 }
                 view.bringToFront();
                 firePhotoEditorSDKListener(view, true);
-                parentView.setVisibilityOfGuideLines(true);
                 break;
             case MotionEvent.ACTION_MOVE:
                 // Only enable dragging on focused stickers.
@@ -156,6 +158,7 @@ class MultiTouchListener implements OnTouchListener {
                             adjustTranslation(view, currX - mPrevX, currY - mPrevY);
                         }
                     }
+                    handleGuidelines(view);
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:
@@ -173,7 +176,19 @@ class MultiTouchListener implements OnTouchListener {
                     deleteView.setVisibility(View.GONE);
                 }
                 firePhotoEditorSDKListener(view, false);
-                parentView.setVisibilityOfGuideLines(false);
+                parentView.setVisibilityOfGuideLines(GuidelineVisibility.NONE);
+                VirtualView virtualView = null;
+                if(undoRedoController.getFreqOfItemInAddedViews(view.getTag().toString()) == 1) {
+                     virtualView = undoRedoController.getVirtualViewFromAddedViews(view.getTag().toString());
+                }
+                if(prevX != -1 && prevY != -1 && (prevX == view.getX() && prevY == view.getY()) ||
+                        (virtualView != null && virtualView.x == view.getX() && virtualView.y == view.getY())) {
+                   //Dont add
+                } else {
+                    undoRedoController.addAddedView(view);
+                }
+                prevX = view.getX();
+                prevY = view.getY();
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 int pointerIndexPointerUp = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
@@ -188,6 +203,120 @@ class MultiTouchListener implements OnTouchListener {
         }
         return true;
     }
+
+    private void handleGuidelines(View view) {
+        int yAxisCenter = Math.round(parentView.getHeight() / 2.0f);
+        if (((Math.round(view.getY())) >= (yAxisCenter - 20) && (Math.round(view.getY())) <= (yAxisCenter + 20))) {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.HORIZONTAL);
+            view.setY(yAxisCenter);
+        } else if (((Math.round(view.getY() + (view.getHeight() / 2.0))) >= (yAxisCenter - 20) && (Math.round((view.getY() + (view.getHeight() / 2.0)))) <= (yAxisCenter + 20))) {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.HORIZONTAL);
+            view.setY(Math.round(yAxisCenter - (view.getHeight() / 2.0)));
+        } else if (((Math.round(view.getY() + (view.getHeight())) >= (yAxisCenter - 20)) && (Math.round((view.getY() + (view.getHeight()))) <= (yAxisCenter + 20)))) {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.HORIZONTAL);
+            view.setY(Math.round(yAxisCenter - view.getHeight()));
+        } else {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.HORIZONTAL_GONE);
+        }
+
+
+        int xAxisCenter = Math.round(parentView.getWidth() / 2.0f);
+        if (((Math.round(view.getX())) >= (xAxisCenter - 20) && (Math.round(view.getX())) <= (xAxisCenter + 20))) {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.VERTICAL);
+            view.setX(xAxisCenter);
+        } else if (((Math.round(view.getX() + (view.getWidth() / 2.0))) >= (xAxisCenter - 20) && (Math.round((view.getX() + (view.getWidth() / 2.0)))) <= (xAxisCenter + 20))) {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.VERTICAL);
+            view.setX(Math.round(xAxisCenter - (view.getWidth() / 2.0)));
+        } else if (((Math.round(view.getX() + (view.getWidth())) >= (xAxisCenter - 20)) && (Math.round((view.getX() + (view.getWidth()))) <= (xAxisCenter + 20)))) {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.VERTICAL);
+            view.setX(Math.round(xAxisCenter - view.getWidth()));
+        } else {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.VERTICAL_GONE);
+        }
+
+
+        int yAxisTop = 0;
+        if (Math.round(view.getY()) <= yAxisTop + 20 && Math.round(view.getY()) >= yAxisTop - 20) {
+            view.setY(yAxisTop);
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.TOP);
+        } else {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.TOP_GONE);
+        }
+
+        int yAxisBottom = Math.round(parentView.getHeight());
+        if (Math.round(view.getY() + view.getHeight()) >= yAxisBottom - 20 && Math.round(view.getY()) + view.getHeight() <= yAxisBottom + 20) {
+            view.setY(yAxisBottom - view.getHeight());
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.BOTTOM);
+        } else {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.BOTTOM_GONE);
+        }
+
+        int xAxisLeft = 0;
+        if (Math.round(view.getX()) <= xAxisLeft + 20 && Math.round(view.getX()) >= xAxisLeft - 20) {
+            view.setX(xAxisLeft);
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.LEFT);
+        } else {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.LEFT_GONE);
+        }
+
+
+        int xAxisRight = Math.round(parentView.getWidth());
+        if (Math.round(view.getX() + view.getWidth()) >= xAxisRight - 20 && Math.round(view.getX()) + view.getWidth() <= xAxisRight + 20) {
+            view.setX(xAxisRight - view.getWidth());
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.RIGHT);
+        } else {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.RIGHT_GONE);
+        }
+    }
+
+    /*private void handleGuidelines(View view) {
+        int yAxisCenter = Math.round(parentView.getHeight() / 2.0f);
+        if (((Math.round(view.getY())) >= (yAxisCenter - 10) && (Math.round(view.getY())) <= (yAxisCenter + 10)) ||
+                ((Math.round(view.getY() + (view.getHeight() / 2.0))) >= (yAxisCenter - 10) && (Math.round((view.getY() + (view.getHeight() / 2.0)))) <= (yAxisCenter + 10)) ||
+                ((Math.round(view.getY() + (view.getHeight())) >= (yAxisCenter - 10)) && (Math.round((view.getY() + (view.getHeight()))) <= (yAxisCenter + 10)))) {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.HORIZONTAL);
+        } else {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.HORIZONTAL_GONE);
+        }
+        int xAxisCenter = Math.round(parentView.getWidth() / 2.0f);
+        if (((Math.round(view.getX())) >= (xAxisCenter - 10) && (Math.round(view.getX())) <= (xAxisCenter + 10)) ||
+                ((Math.round(view.getX() + (view.getWidth() / 2.0))) >= (xAxisCenter - 10) && (Math.round((view.getX() + (view.getWidth() / 2.0)))) <= (xAxisCenter + 10)) ||
+                ((Math.round(view.getX() + (view.getWidth())) >= (xAxisCenter - 10)) && (Math.round((view.getX() + (view.getWidth()))) <= (xAxisCenter + 10)))) {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.VERTICAL);
+            view.setX(xAxisCenter);
+        } else {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.VERTICAL_GONE);
+        }
+        int yAxisTop = 0;
+        if(Math.round(view.getY()) <= yAxisTop && Math.round(view.getY()) >= yAxisTop-10) {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.TOP);
+        } else {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.TOP_GONE);
+        }
+
+        int yAxisBottom = Math.round(parentView.getHeight());
+        if(Math.round(view.getY() + view.getHeight()) >= yAxisBottom && Math.round(view.getY()) + view.getHeight() <= yAxisBottom+10) {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.BOTTOM);
+        } else {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.BOTTOM_GONE);
+        }
+
+        int xAxisLeft = 0;
+        if(Math.round(view.getX()) <= xAxisLeft && Math.round(view.getX()) >= xAxisLeft-10) {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.LEFT);
+        } else {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.LEFT_GONE);
+        }
+
+
+        int xAxisRight = Math.round(parentView.getWidth());
+        if(Math.round(view.getX() + view.getWidth()) >= xAxisRight && Math.round(view.getX()) + view.getWidth() <= xAxisRight+10) {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.RIGHT);
+        } else {
+            parentView.setVisibilityOfGuideLines(GuidelineVisibility.RIGHT_GONE);
+        }
+
+    }*/
 
     private void firePhotoEditorSDKListener(View view, boolean isStart) {
         Object viewTag = view.getTag();
@@ -266,6 +395,11 @@ class MultiTouchListener implements OnTouchListener {
     void setOnGestureControl(OnGestureControl onGestureControl) {
         mOnGestureControl = onGestureControl;
     }
+
+    OnGestureControl getOnGestureControl(){
+        return mOnGestureControl;
+    }
+
 
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override

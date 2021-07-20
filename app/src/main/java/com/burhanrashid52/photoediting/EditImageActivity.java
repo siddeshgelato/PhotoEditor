@@ -379,8 +379,9 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
     @Override
     public void onEmojiClick(String emojiUnicode) {
-        mPhotoEditor.addEmoji(emojiUnicode);
-        mTxtCurrentTool.setText(R.string.label_emoji);
+       /* mPhotoEditor.addEmoji(emojiUnicode);
+        mTxtCurrentTool.setText(R.string.label_emoji);*/
+        mPhotoEditor.deleteSelectedView();
     }
 
     @Override

@@ -38,12 +38,12 @@ public class PhotoEditorView extends RelativeLayout {
     private BrushDrawingView mBrushDrawingView;
     private ImageFilterView mImageFilterView;
     private static final int imgSrcId = 1, brushSrcId = 2, glFilterId = 3;
-    private View mHorizontalGuideLine = new View(getContext());
-    private View mVerticalGuideLine = new View(getContext());
-    private View mTopGuideLine = new View(getContext());
-    private View mBottomGuideLine = new View(getContext());
-    private View mLeftGuideLine = new View(getContext());
-    private View mRightGuideLine = new View(getContext());
+    public View mHorizontalGuideLine = new View(getContext());
+    public View mVerticalGuideLine = new View(getContext());
+    public View mTopGuideLine = new View(getContext());
+    public View mBottomGuideLine = new View(getContext());
+    public View mLeftGuideLine = new View(getContext());
+    public View mRightGuideLine = new View(getContext());
 
     public PhotoEditorView(Context context) {
         super(context);
@@ -125,27 +125,105 @@ public class PhotoEditorView extends RelativeLayout {
         //Add brush view
         addView(mBrushDrawingView, brushParam);
 
-        createGuideLine(mHorizontalGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 2, RelativeLayout.CENTER_IN_PARENT);
-        createGuideLine(mVerticalGuideLine, 2, ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.CENTER_IN_PARENT);
-        createGuideLine(mLeftGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 4, RelativeLayout.ALIGN_PARENT_START);
-        createGuideLine(mRightGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 4, RelativeLayout.ALIGN_PARENT_END);
-        createGuideLine(mTopGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.ALIGN_PARENT_TOP);
-        createGuideLine(mBottomGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.ALIGN_PARENT_BOTTOM);
+        createGuideLine(mHorizontalGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.CENTER_IN_PARENT, "horizontal");
+        createGuideLine(mVerticalGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 4, RelativeLayout.CENTER_IN_PARENT, "vertical");
+        createGuideLine(mLeftGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 4, RelativeLayout.ALIGN_PARENT_START, "left");
+        createGuideLine(mRightGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 4, RelativeLayout.ALIGN_PARENT_END, "right");
+        createGuideLine(mTopGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.ALIGN_PARENT_TOP, "top");
+        createGuideLine(mBottomGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.ALIGN_PARENT_BOTTOM, "bottom");
 
     }
 
-    private void createGuideLine(View view, int height, int width, int constraint) {
+    private void createGuideLine(View view, int height, int width, int constraint, String tag) {
         LayoutParams params = new LayoutParams(
                 width, height);
         params.addRule(constraint, RelativeLayout.TRUE);
         view.setBackgroundColor(Color.MAGENTA);
         view.setLayoutParams(params);
         addView(view, params);
-        view.setVisibility(View.GONE);
+        view.setVisibility(View.INVISIBLE);
+        view.setTag(tag);
     }
 
-    void setVisibilityOfGuideLines(boolean isVisible) {
-        if (isVisible) {
+    void setVisibilityOfGuideLines(GuidelineVisibility guidelineVisibility) {
+
+        switch (guidelineVisibility) {
+            case ALL:
+                bringGuidelineToFront();
+                guidelineVisibilityForAll(VISIBLE);
+                break;
+            case NONE:
+                guidelineVisibilityForAll(INVISIBLE);
+                break;
+            case VERTICAL:
+                bringGuidelineToFront();
+                mVerticalGuideLine.setVisibility(VISIBLE);
+                break;
+            case VERTICAL_GONE:
+                mVerticalGuideLine.setVisibility(INVISIBLE);
+                break;
+            case HORIZONTAL:
+                bringGuidelineToFront();
+                mHorizontalGuideLine.setVisibility(VISIBLE);
+                break;
+            case HORIZONTAL_GONE:
+                mHorizontalGuideLine.setVisibility(INVISIBLE);
+                break;
+            case LEFT:
+                bringGuidelineToFront();
+                mLeftGuideLine.setVisibility(VISIBLE);
+                break;
+            case LEFT_GONE:
+                mLeftGuideLine.setVisibility(INVISIBLE);
+                break;
+            case RIGHT:
+                bringGuidelineToFront();
+                mRightGuideLine.setVisibility(VISIBLE);
+                break;
+            case RIGHT_GONE:
+                mRightGuideLine.setVisibility(INVISIBLE);
+                break;
+            case TOP:
+                bringGuidelineToFront();
+                mTopGuideLine.setVisibility(VISIBLE);
+                break;
+            case TOP_GONE:
+                mTopGuideLine.setVisibility(INVISIBLE);
+                break;
+            case BOTTOM:
+                bringGuidelineToFront();
+                mBottomGuideLine.setVisibility(VISIBLE);
+                break;
+            case BOTTOM_GONE:
+                mBottomGuideLine.setVisibility(INVISIBLE);
+                break;
+        }
+
+
+
+        /*for (int i = 0; i < getChildCount(); i++) {
+            View view = getChildAt(i);
+            if (view.getTag() != null) {
+                if (guidelineVisibility == GuidelineVisibility.ALL) {
+                    view.setVisibility(VISIBLE);
+                } else if (guidelineVisibility == GuidelineVisibility.NONE) {
+                    view.setVisibility(GONE);
+                } else if (view.getTag().equals(guidelineVisibility.value)) {
+                    if ((guidelineVisibility.value.equals(GuidelineVisibility.HORIZONTAL.value) && guidelineVisibility == GuidelineVisibility.GONE_HORIZONTAL )||
+                            (guidelineVisibility.value.equals(GuidelineVisibility.VERTICAL.value) &&  guidelineVisibility == GuidelineVisibility.GONE_VERTICAL)) {
+                        view.setVisibility(GONE);
+                    } else {
+                        view.setVisibility(VISIBLE);
+                    }
+                } else {
+                    view.setVisibility(GONE);
+                }
+            }
+        }*/
+
+
+        //todo set view front with proper logic
+        /*if (isVisible) {
             mHorizontalGuideLine.setVisibility(VISIBLE);
             mVerticalGuideLine.setVisibility(VISIBLE);
             mTopGuideLine.setVisibility(VISIBLE);
@@ -159,7 +237,26 @@ public class PhotoEditorView extends RelativeLayout {
             mBottomGuideLine.setVisibility(GONE);
             mLeftGuideLine.setVisibility(GONE);
             mRightGuideLine.setVisibility(GONE);
-        }
+        }*/
+
+    }
+
+    private void guidelineVisibilityForAll(int visibility) {
+        mHorizontalGuideLine.setVisibility(visibility);
+        mVerticalGuideLine.setVisibility(visibility);
+        mTopGuideLine.setVisibility(visibility);
+        mBottomGuideLine.setVisibility(visibility);
+        mLeftGuideLine.setVisibility(visibility);
+        mRightGuideLine.setVisibility(visibility);
+    }
+
+    private void bringGuidelineToFront() {
+        mHorizontalGuideLine.bringToFront();
+        mVerticalGuideLine.bringToFront();
+        mTopGuideLine.bringToFront();
+        mBottomGuideLine.bringToFront();
+        mLeftGuideLine.bringToFront();
+        mRightGuideLine.bringToFront();
     }
 
 
