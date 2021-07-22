@@ -138,10 +138,13 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         mSaveFileHelper = new FileSaveHelper(this);
 
         // ToDO code for testing
-        final TextStyleBuilder styleBuilder = new TextStyleBuilder();
+        TextStyleBuilder styleBuilder = new TextStyleBuilder();
         styleBuilder.withTextColor(ColorPickerAdapter.getDefaultColors(this).get(0));
         styleBuilder.withTextSize(100);
         mPhotoEditor.addText("Text1", styleBuilder);
+        styleBuilder = new TextStyleBuilder();
+        styleBuilder.withTextColor(ColorPickerAdapter.getDefaultColors(this).get(0));
+        styleBuilder.withTextSize(100);
         mPhotoEditor.addText("Text2", styleBuilder);
     }
 

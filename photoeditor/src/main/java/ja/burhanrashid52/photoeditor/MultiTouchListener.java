@@ -240,32 +240,32 @@ class MultiTouchListener implements OnTouchListener {
 
                 if (Math.round(view.getY()) >= Math.round((child.getY() - 10)) &&
                         (Math.round(view.getY()) <= Math.round(child.getY() + 10))) {
-                    drawLine(view, child, SnappingViewGuidelinePosition.TOP_TOP);
                     view.setY(child.getY());
+                    drawLine(view, child, SnappingViewGuidelinePosition.TOP_TOP);
                 } else {
                     removeLine(SnappingViewGuidelinePosition.TOP_TOP);
                 }
 
                 if (Math.round(view.getY()) >= Math.round((child.getY() + (child.getHeight()/2.0) - 10)) &&
                         (Math.round(view.getY()) <= Math.round(child.getY() + (child.getHeight()/2.0) + 10))) {
-                    drawLine(view, child, SnappingViewGuidelinePosition.TOP_MIDDLE);
                     view.setY(child.getY() + (child.getHeight()/2.0f));
+                    drawLine(view, child, SnappingViewGuidelinePosition.TOP_MIDDLE);
                 } else {
                     removeLine(SnappingViewGuidelinePosition.TOP_MIDDLE);
                 }
 
                 if (Math.round(view.getY()) >= Math.round((child.getY() + (child.getHeight()) - 10)) &&
                         (Math.round(view.getY()) <= Math.round(child.getY() + (child.getHeight()) + 10))) {
-                    drawLine(view, child, SnappingViewGuidelinePosition.TOP_BOTTOM);
                     view.setY(child.getY() + (child.getHeight()));
+                    drawLine(view, child, SnappingViewGuidelinePosition.TOP_BOTTOM);
                 } else {
                     removeLine(SnappingViewGuidelinePosition.TOP_BOTTOM);
                 }
 
                 if (Math.round(view.getY() + (view.getHeight() / 2.0)) >= Math.round((child.getY() - 10)) &&
                         (Math.round(view.getY() + (view.getHeight() / 2.0)) <= Math.round(child.getY() + 10))) {
+                    view.setY(child.getY() - (child.getHeight()/2.0f));
                     drawLine(view, child, SnappingViewGuidelinePosition.MIDDLE_TOP);
-                   // view.setY(child.getY() + (child.getHeight()/2.0f));
                 } else {
                     removeLine(SnappingViewGuidelinePosition.MIDDLE_TOP);
                 }
@@ -273,7 +273,6 @@ class MultiTouchListener implements OnTouchListener {
                 if (Math.round(view.getY() + (view.getHeight() / 2.0)) >= Math.round((child.getY() + (child.getHeight() / 2.0) - 10)) &&
                         (Math.round(view.getY() + (view.getHeight() / 2.0)) <= Math.round(child.getY() + (child.getHeight() / 2.0) + 10))) {
                     drawLine(view, child, SnappingViewGuidelinePosition.MIDDLE_MIDDLE);
-                    //view.setY(child.getY());
                 } else {
                     removeLine(SnappingViewGuidelinePosition.MIDDLE_MIDDLE);
                 }
@@ -281,23 +280,22 @@ class MultiTouchListener implements OnTouchListener {
                 if (Math.round(view.getY() + (view.getHeight() / 2.0)) >= Math.round((child.getY() + (child.getHeight()) - 10)) &&
                         (Math.round(view.getY() + (view.getHeight() / 2.0)) <= Math.round(child.getY() + (child.getHeight()) + 10))) {
                     drawLine(view, child, SnappingViewGuidelinePosition.MIDDLE_BOTTOM);
-                    //view.setY(child.getY() + (child.getHeight() / 2.0f));
                 } else {
                     removeLine(SnappingViewGuidelinePosition.MIDDLE_BOTTOM);
                 }
 
                 if (Math.round(view.getY() + (view.getHeight())) >= Math.round((child.getY()  - 10)) &&
                         (Math.round(view.getY() + (view.getHeight())) <= Math.round(child.getY()  + 10))) {
+                    view.setY(child.getY() - child.getHeight());
                     drawLine(view, child, SnappingViewGuidelinePosition.BOTTOM_TOP);
-                   // view.setY(child.getY() - view.getHeight());
                 } else {
                     removeLine(SnappingViewGuidelinePosition.BOTTOM_TOP);
                 }
 
                 if (Math.round(view.getY() + (view.getHeight())) >= Math.round((child.getY() + (child.getHeight()/2.0f)  - 10)) &&
                         (Math.round(view.getY() + (view.getHeight())) <= Math.round(child.getY() + (child.getHeight()/2.0f)  + 10))) {
+                    view.setY(child.getY() - (view.getHeight() / 2.0f));
                     drawLine(view, child, SnappingViewGuidelinePosition.BOTTOM_MIDDLE);
-                   // view.setY(child.getY() - (view.getHeight() / 2.0f));
                 } else {
                     removeLine(SnappingViewGuidelinePosition.BOTTOM_MIDDLE);
                 }
@@ -305,7 +303,6 @@ class MultiTouchListener implements OnTouchListener {
                 if (Math.round(view.getY() + (view.getHeight())) >= Math.round((child.getY() + (child.getHeight())  - 5)) &&
                         (Math.round(view.getY() + (view.getHeight())) <= Math.round(child.getY() + (child.getHeight())  + 5))) {
                     drawLine(view, child, SnappingViewGuidelinePosition.BOTTOM_BOTTOM);
-                    //view.setY(child.getY());
                 } else {
                     removeLine(SnappingViewGuidelinePosition.BOTTOM_BOTTOM);
                 }
