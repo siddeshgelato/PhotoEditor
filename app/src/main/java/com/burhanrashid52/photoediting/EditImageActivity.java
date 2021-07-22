@@ -136,6 +136,13 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         // mPhotoEditorView.getSource().setImageResource(R.drawable.color_palette);
 
         mSaveFileHelper = new FileSaveHelper(this);
+
+        // ToDO code for testing
+        final TextStyleBuilder styleBuilder = new TextStyleBuilder();
+        styleBuilder.withTextColor(ColorPickerAdapter.getDefaultColors(this).get(0));
+        styleBuilder.withTextSize(100);
+        mPhotoEditor.addText("Text1", styleBuilder);
+        mPhotoEditor.addText("Text2", styleBuilder);
     }
 
     private void handleIntentImage(ImageView source) {
@@ -443,7 +450,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                     public void onDone(String inputText, int colorCode) {
                         final TextStyleBuilder styleBuilder = new TextStyleBuilder();
                         styleBuilder.withTextColor(colorCode);
-
+                        styleBuilder.withTextSize(100);
                         mPhotoEditor.addText(inputText, styleBuilder);
                         mTxtCurrentTool.setText(R.string.label_text);
                     }
