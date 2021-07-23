@@ -1,5 +1,6 @@
 package ja.burhanrashid52.photoeditor;
 
+import android.graphics.Color;
 import android.graphics.Rect;
 
 import androidx.annotation.Nullable;
@@ -57,6 +58,16 @@ class MultiTouchListener implements OnTouchListener {
     private View horizontalBottomTopView;
     private View horizontalBottomMiddleView;
     private View horizontalBottomBottomView;
+
+    private View verticalTopView;
+    private View verticalMiddleView;
+    private View verticalBottomView;
+    private View verticalMiddleTopView;
+    private View verticalMiddleMiddleView;
+    private View verticalMiddleBottomView;
+    private View verticalBottomTopView;
+    private View verticalBottomMiddleView;
+    private View verticalBottomBottomView;
 
     float prevX = -1, prevY = -1;
 
@@ -176,7 +187,8 @@ class MultiTouchListener implements OnTouchListener {
                         }
                     }
                     handleGuidelines(view);
-                    snapViews(view);
+                    snapingHorizontalViews(view);
+                    snapingVerticalViews(view);
 
                 }
                 break;
@@ -209,15 +221,7 @@ class MultiTouchListener implements OnTouchListener {
                 }
                 prevX = view.getX();
                 prevY = view.getY();
-                removeLine(SnappingViewGuidelinePosition.TOP_TOP);
-                removeLine(SnappingViewGuidelinePosition.TOP_MIDDLE);
-                removeLine(SnappingViewGuidelinePosition.TOP_BOTTOM);
-                removeLine(SnappingViewGuidelinePosition.MIDDLE_TOP);
-                removeLine(SnappingViewGuidelinePosition.MIDDLE_MIDDLE);
-                removeLine(SnappingViewGuidelinePosition.MIDDLE_BOTTOM);
-                removeLine(SnappingViewGuidelinePosition.BOTTOM_TOP);
-                removeLine(SnappingViewGuidelinePosition.BOTTOM_MIDDLE);
-                removeLine(SnappingViewGuidelinePosition.BOTTOM_BOTTOM);
+                hideAllGuidelines();
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 int pointerIndexPointerUp = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
@@ -233,264 +237,500 @@ class MultiTouchListener implements OnTouchListener {
         return true;
     }
 
-    private void snapViews(View view) {
+    private void snapingVerticalViews(View view) {
         for (int i = 0; i < parentView.getChildCount(); i++) {
             View child = parentView.getChildAt(i);
             if (view.getTag() != null && view.getTag() != child.getTag() && child instanceof FrameLayout) {
-
-                if (Math.round(view.getY()) >= Math.round((child.getY() - 10)) &&
-                        (Math.round(view.getY()) <= Math.round(child.getY() + 10))) {
-                    view.setY(child.getY());
-                    drawLine(view, child, SnappingViewGuidelinePosition.TOP_TOP);
+                if (Math.round(view.getX()) >= Math.round((child.getX() - 10)) &&
+                        (Math.round(view.getX()) <= Math.round(child.getX() + 10))) {
+                    view.setX(child.getX());
+                    drawLine(view, child, SnappingViewGuidelinePosition.TOP_TOP, false);
                 } else {
-                    removeLine(SnappingViewGuidelinePosition.TOP_TOP);
+                    removeLine(SnappingViewGuidelinePosition.TOP_TOP, false);
                 }
 
-                if (Math.round(view.getY()) >= Math.round((child.getY() + (child.getHeight()/2.0) - 10)) &&
-                        (Math.round(view.getY()) <= Math.round(child.getY() + (child.getHeight()/2.0) + 10))) {
-                    view.setY(child.getY() + (child.getHeight()/2.0f));
-                    drawLine(view, child, SnappingViewGuidelinePosition.TOP_MIDDLE);
+              if (Math.round(view.getX()) >= Math.round((child.getX() + (child.getWidth() / 2.0) - 10)) &&
+                        (Math.round(view.getX()) <= Math.round(child.getX() + (child.getWidth() / 2.0) + 10))) {
+                    view.setX(child.getX() + (child.getWidth() / 2.0f));
+                    drawLine(view, child, SnappingViewGuidelinePosition.TOP_MIDDLE, false);
                 } else {
-                    removeLine(SnappingViewGuidelinePosition.TOP_MIDDLE);
+                    removeLine(SnappingViewGuidelinePosition.TOP_MIDDLE, false);
                 }
 
-                if (Math.round(view.getY()) >= Math.round((child.getY() + (child.getHeight()) - 10)) &&
-                        (Math.round(view.getY()) <= Math.round(child.getY() + (child.getHeight()) + 10))) {
-                    view.setY(child.getY() + (child.getHeight()));
-                    drawLine(view, child, SnappingViewGuidelinePosition.TOP_BOTTOM);
+                 if (Math.round(view.getX()) >= Math.round((child.getX() + (child.getWidth()) - 10)) &&
+                        (Math.round(view.getX()) <= Math.round(child.getX() + (child.getWidth()) + 10))) {
+                    view.setX(child.getX() + (child.getWidth()));
+                    drawLine(view, child, SnappingViewGuidelinePosition.TOP_BOTTOM, false);
                 } else {
-                    removeLine(SnappingViewGuidelinePosition.TOP_BOTTOM);
+                    removeLine(SnappingViewGuidelinePosition.TOP_BOTTOM, false);
                 }
 
-                if (Math.round(view.getY() + (view.getHeight() / 2.0)) >= Math.round((child.getY() - 10)) &&
-                        (Math.round(view.getY() + (view.getHeight() / 2.0)) <= Math.round(child.getY() + 10))) {
-                    view.setY(child.getY() - (child.getHeight()/2.0f));
-                    drawLine(view, child, SnappingViewGuidelinePosition.MIDDLE_TOP);
+                 if (Math.round(view.getX() + (view.getWidth() / 2.0)) >= Math.round((child.getX() - 10)) &&
+                        (Math.round(view.getX() + (view.getWidth() / 2.0)) <= Math.round(child.getX() + 10))) {
+                    view.setX(child.getX() - (child.getWidth() / 2.0f));
+                    drawLine(view, child, SnappingViewGuidelinePosition.MIDDLE_TOP, false);
                 } else {
-                    removeLine(SnappingViewGuidelinePosition.MIDDLE_TOP);
+                    removeLine(SnappingViewGuidelinePosition.MIDDLE_TOP, false);
                 }
 
-                if (Math.round(view.getY() + (view.getHeight() / 2.0)) >= Math.round((child.getY() + (child.getHeight() / 2.0) - 10)) &&
-                        (Math.round(view.getY() + (view.getHeight() / 2.0)) <= Math.round(child.getY() + (child.getHeight() / 2.0) + 10))) {
-                    drawLine(view, child, SnappingViewGuidelinePosition.MIDDLE_MIDDLE);
+               if (Math.round(view.getX() + (view.getWidth() / 2.0)) >= Math.round((child.getX() + (child.getWidth() / 2.0) - 10)) &&
+                        (Math.round(view.getX() + (view.getWidth() / 2.0)) <= Math.round(child.getX() + (child.getWidth() / 2.0) + 10))) {
+                    drawLine(view, child, SnappingViewGuidelinePosition.MIDDLE_MIDDLE, false);
                 } else {
-                    removeLine(SnappingViewGuidelinePosition.MIDDLE_MIDDLE);
+                    removeLine(SnappingViewGuidelinePosition.MIDDLE_MIDDLE, false);
                 }
 
-                if (Math.round(view.getY() + (view.getHeight() / 2.0)) >= Math.round((child.getY() + (child.getHeight()) - 10)) &&
-                        (Math.round(view.getY() + (view.getHeight() / 2.0)) <= Math.round(child.getY() + (child.getHeight()) + 10))) {
-                    drawLine(view, child, SnappingViewGuidelinePosition.MIDDLE_BOTTOM);
+                if (Math.round(view.getX() + (view.getWidth() / 2.0)) >= Math.round((child.getX() + (child.getWidth()) - 10)) &&
+                        (Math.round(view.getX() + (view.getWidth() / 2.0)) <= Math.round(child.getX() + (child.getWidth()) + 10))) {
+                    drawLine(view, child, SnappingViewGuidelinePosition.MIDDLE_BOTTOM, false);
                 } else {
-                    removeLine(SnappingViewGuidelinePosition.MIDDLE_BOTTOM);
+                    removeLine(SnappingViewGuidelinePosition.MIDDLE_BOTTOM, false);
                 }
 
-                if (Math.round(view.getY() + (view.getHeight())) >= Math.round((child.getY()  - 10)) &&
-                        (Math.round(view.getY() + (view.getHeight())) <= Math.round(child.getY()  + 10))) {
-                    view.setY(child.getY() - child.getHeight());
-                    drawLine(view, child, SnappingViewGuidelinePosition.BOTTOM_TOP);
+                 if (Math.round(view.getX() + (view.getWidth())) >= Math.round((child.getX() - 10)) &&
+                        (Math.round(view.getX() + (view.getWidth())) <= Math.round(child.getX() + 10))) {
+                    view.setX(child.getX() - child.getWidth());
+                    drawLine(view, child, SnappingViewGuidelinePosition.BOTTOM_TOP, false);
                 } else {
-                    removeLine(SnappingViewGuidelinePosition.BOTTOM_TOP);
+                    removeLine(SnappingViewGuidelinePosition.BOTTOM_TOP, false);
                 }
 
-                if (Math.round(view.getY() + (view.getHeight())) >= Math.round((child.getY() + (child.getHeight()/2.0f)  - 10)) &&
-                        (Math.round(view.getY() + (view.getHeight())) <= Math.round(child.getY() + (child.getHeight()/2.0f)  + 10))) {
-                    view.setY(child.getY() - (view.getHeight() / 2.0f));
-                    drawLine(view, child, SnappingViewGuidelinePosition.BOTTOM_MIDDLE);
+               if (Math.round(view.getX() + (view.getWidth())) >= Math.round((child.getX() + (child.getWidth() / 2.0f) - 10)) &&
+                        (Math.round(view.getX() + (view.getWidth())) <= Math.round(child.getX() + (child.getWidth() / 2.0f) + 10))) {
+                    view.setX(child.getX() - (view.getWidth() / 2.0f));
+                    drawLine(view, child, SnappingViewGuidelinePosition.BOTTOM_MIDDLE, false);
                 } else {
-                    removeLine(SnappingViewGuidelinePosition.BOTTOM_MIDDLE);
+                    removeLine(SnappingViewGuidelinePosition.BOTTOM_MIDDLE, false);
                 }
 
-                if (Math.round(view.getY() + (view.getHeight())) >= Math.round((child.getY() + (child.getHeight())  - 5)) &&
-                        (Math.round(view.getY() + (view.getHeight())) <= Math.round(child.getY() + (child.getHeight())  + 5))) {
-                    drawLine(view, child, SnappingViewGuidelinePosition.BOTTOM_BOTTOM);
+                 if (Math.round(view.getX() + (view.getWidth())) >= Math.round((child.getX() + (child.getWidth()) - 5)) &&
+                        (Math.round(view.getX() + (view.getWidth())) <= Math.round(child.getX() + (child.getWidth()) + 5))) {
+                    drawLine(view, child, SnappingViewGuidelinePosition.BOTTOM_BOTTOM, false);
                 } else {
-                    removeLine(SnappingViewGuidelinePosition.BOTTOM_BOTTOM);
+                    removeLine(SnappingViewGuidelinePosition.BOTTOM_BOTTOM, false);
                 }
             }
         }
     }
 
-    private void removeLine(SnappingViewGuidelinePosition position) {
+    private void hideAllGuidelines() {
+        removeLine(SnappingViewGuidelinePosition.TOP_TOP, true);
+        removeLine(SnappingViewGuidelinePosition.TOP_MIDDLE, true);
+        removeLine(SnappingViewGuidelinePosition.TOP_BOTTOM, true);
+        removeLine(SnappingViewGuidelinePosition.MIDDLE_TOP, true);
+        removeLine(SnappingViewGuidelinePosition.MIDDLE_MIDDLE, true);
+        removeLine(SnappingViewGuidelinePosition.MIDDLE_BOTTOM, true);
+        removeLine(SnappingViewGuidelinePosition.BOTTOM_TOP, true);
+        removeLine(SnappingViewGuidelinePosition.BOTTOM_MIDDLE, true);
+        removeLine(SnappingViewGuidelinePosition.BOTTOM_BOTTOM, true);
+        removeLine(SnappingViewGuidelinePosition.TOP_TOP, false);
+        removeLine(SnappingViewGuidelinePosition.TOP_MIDDLE, false);
+        removeLine(SnappingViewGuidelinePosition.TOP_BOTTOM, false);
+        removeLine(SnappingViewGuidelinePosition.MIDDLE_TOP, false);
+        removeLine(SnappingViewGuidelinePosition.MIDDLE_MIDDLE, false);
+        removeLine(SnappingViewGuidelinePosition.MIDDLE_BOTTOM, false);
+        removeLine(SnappingViewGuidelinePosition.BOTTOM_TOP, false);
+        removeLine(SnappingViewGuidelinePosition.BOTTOM_MIDDLE, false);
+        removeLine(SnappingViewGuidelinePosition.BOTTOM_BOTTOM, false);
+    }
+
+    private void snapingHorizontalViews(View view) {
+        for (int i = 0; i < parentView.getChildCount(); i++) {
+            View child = parentView.getChildAt(i);
+            if (view.getTag() != null && view.getTag() != child.getTag() && child instanceof FrameLayout) {
+                if (Math.round(view.getY()) >= Math.round((child.getY() - 10)) &&
+                        (Math.round(view.getY()) <= Math.round(child.getY() + 10))) {
+                    view.setY(child.getY());
+                    drawLine(view, child, SnappingViewGuidelinePosition.TOP_TOP, true);
+                } else {
+                    removeLine(SnappingViewGuidelinePosition.TOP_TOP, true);
+                }
+
+                if (Math.round(view.getY()) >= Math.round((child.getY() + (child.getHeight() / 2.0) - 10)) &&
+                        (Math.round(view.getY()) <= Math.round(child.getY() + (child.getHeight() / 2.0) + 10))) {
+                    view.setY(child.getY() + (child.getHeight() / 2.0f));
+                    drawLine(view, child, SnappingViewGuidelinePosition.TOP_MIDDLE, true);
+                } else {
+                    removeLine(SnappingViewGuidelinePosition.TOP_MIDDLE, true);
+                }
+
+                if (Math.round(view.getY()) >= Math.round((child.getY() + (child.getHeight()) - 10)) &&
+                        (Math.round(view.getY()) <= Math.round(child.getY() + (child.getHeight()) + 10))) {
+                    view.setY(child.getY() + (child.getHeight()));
+                    drawLine(view, child, SnappingViewGuidelinePosition.TOP_BOTTOM, true);
+                } else {
+                    removeLine(SnappingViewGuidelinePosition.TOP_BOTTOM, true);
+                }
+
+                if (Math.round(view.getY() + (view.getHeight() / 2.0)) >= Math.round((child.getY() - 10)) &&
+                        (Math.round(view.getY() + (view.getHeight() / 2.0)) <= Math.round(child.getY() + 10))) {
+                    view.setY(child.getY() - (child.getHeight() / 2.0f));
+                    drawLine(view, child, SnappingViewGuidelinePosition.MIDDLE_TOP, true);
+                } else {
+                    removeLine(SnappingViewGuidelinePosition.MIDDLE_TOP, true);
+                }
+
+                if (Math.round(view.getY() + (view.getHeight() / 2.0)) >= Math.round((child.getY() + (child.getHeight() / 2.0) - 10)) &&
+                        (Math.round(view.getY() + (view.getHeight() / 2.0)) <= Math.round(child.getY() + (child.getHeight() / 2.0) + 10))) {
+                    drawLine(view, child, SnappingViewGuidelinePosition.MIDDLE_MIDDLE, true);
+                } else {
+                    removeLine(SnappingViewGuidelinePosition.MIDDLE_MIDDLE, true);
+                }
+
+                if (Math.round(view.getY() + (view.getHeight() / 2.0)) >= Math.round((child.getY() + (child.getHeight()) - 10)) &&
+                        (Math.round(view.getY() + (view.getHeight() / 2.0)) <= Math.round(child.getY() + (child.getHeight()) + 10))) {
+                    drawLine(view, child, SnappingViewGuidelinePosition.MIDDLE_BOTTOM, true);
+                } else {
+                    removeLine(SnappingViewGuidelinePosition.MIDDLE_BOTTOM, true);
+                }
+
+                if (Math.round(view.getY() + (view.getHeight())) >= Math.round((child.getY() - 10)) &&
+                        (Math.round(view.getY() + (view.getHeight())) <= Math.round(child.getY() + 10))) {
+                    view.setY(child.getY() - child.getHeight());
+                    drawLine(view, child, SnappingViewGuidelinePosition.BOTTOM_TOP, true);
+                } else {
+                    removeLine(SnappingViewGuidelinePosition.BOTTOM_TOP, true);
+                }
+
+                if (Math.round(view.getY() + (view.getHeight())) >= Math.round((child.getY() + (child.getHeight() / 2.0f) - 10)) &&
+                        (Math.round(view.getY() + (view.getHeight())) <= Math.round(child.getY() + (child.getHeight() / 2.0f) + 10))) {
+                    view.setY(child.getY() - (view.getHeight() / 2.0f));
+                    drawLine(view, child, SnappingViewGuidelinePosition.BOTTOM_MIDDLE, true);
+                } else {
+                    removeLine(SnappingViewGuidelinePosition.BOTTOM_MIDDLE, true);
+                }
+
+                if (Math.round(view.getY() + (view.getHeight())) >= Math.round((child.getY() + (child.getHeight()) - 5)) &&
+                        (Math.round(view.getY() + (view.getHeight())) <= Math.round(child.getY() + (child.getHeight()) + 5))) {
+                    drawLine(view, child, SnappingViewGuidelinePosition.BOTTOM_BOTTOM, true);
+                } else {
+                    removeLine(SnappingViewGuidelinePosition.BOTTOM_BOTTOM, true);
+                }
+            }
+        }
+    }
+
+    private void removeLine(SnappingViewGuidelinePosition position, boolean isHorizontal) {
         switch (position) {
             case TOP_TOP:
-                if (horizontalTopView != null) {
-                    horizontalTopView.setVisibility(View.GONE);
-                }
+                if (isHorizontal)
+                    setVisibilityGone(horizontalTopView);
+                else setVisibilityGone(verticalTopView);
                 break;
             case TOP_MIDDLE:
-                if (horizontalMiddleView != null) {
-                    horizontalMiddleView.setVisibility(View.GONE);
-                }
+                if (isHorizontal)
+                    setVisibilityGone(horizontalMiddleView);
+                else setVisibilityGone(verticalMiddleView);
                 break;
             case TOP_BOTTOM:
-                if (horizontalBottomView != null) {
-                    horizontalBottomView.setVisibility(View.GONE);
-                }
+                if (isHorizontal)
+                    setVisibilityGone(horizontalBottomView);
+                else setVisibilityGone(verticalBottomView);
+
                 break;
             case MIDDLE_TOP:
-                if(horizontalMiddleTopView != null) {
-                    horizontalMiddleTopView.setVisibility(View.GONE);
-                }
+                if (isHorizontal)
+                    setVisibilityGone(horizontalMiddleTopView);
+                else setVisibilityGone(verticalMiddleTopView);
                 break;
-
             case MIDDLE_MIDDLE:
-                if(horizontalMiddleMiddleView != null) {
-                    horizontalMiddleMiddleView.setVisibility(View.GONE);
-                }
+                if (isHorizontal)
+                    setVisibilityGone(horizontalMiddleMiddleView);
+                else setVisibilityGone(verticalMiddleMiddleView);
                 break;
             case MIDDLE_BOTTOM:
-                if(horizontalMiddleBottomView != null) {
-                    horizontalMiddleBottomView.setVisibility(View.GONE);
-                }
+                if (isHorizontal)
+                    setVisibilityGone(horizontalMiddleBottomView);
+                else setVisibilityGone(verticalMiddleBottomView);
                 break;
-
             case BOTTOM_TOP:
-                if(horizontalBottomTopView != null) {
-                    horizontalBottomTopView.setVisibility(View.GONE);
-                }
+                if (isHorizontal)
+                    setVisibilityGone(horizontalBottomTopView);
+                else setVisibilityGone(verticalBottomTopView);
                 break;
             case BOTTOM_MIDDLE:
-                if(horizontalBottomMiddleView != null) {
-                    horizontalBottomMiddleView.setVisibility(View.GONE);
-                }
+                if (isHorizontal)
+                    setVisibilityGone(horizontalBottomMiddleView);
+                else setVisibilityGone(verticalBottomMiddleView);
                 break;
             case BOTTOM_BOTTOM:
-                if(horizontalBottomBottomView != null) {
-                    horizontalBottomBottomView.setVisibility(View.GONE);
-                }
+                if (isHorizontal)
+                    setVisibilityGone(horizontalBottomBottomView);
+                else setVisibilityGone(verticalBottomBottomView);
                 break;
         }
 
     }
 
-    private void drawLine(View view, View child, SnappingViewGuidelinePosition position) {
+    private void drawLine(View view, View child, SnappingViewGuidelinePosition position, boolean isHorizontal) {
+        int heightWidth = 0;
+        if (isHorizontal) {
+            if (view.getX() < child.getX()) {
+                heightWidth = (int) ((child.getX() + child.getWidth()) - view.getX());
+            } else {
+                heightWidth = (int) ((view.getX() + view.getWidth()) - child.getX());
+            }
+        } else {
+            if(view.getY() < child.getY()) {
+                heightWidth = (int) ((child.getY() + child.getHeight()) - view.getY());
+            } else {
+                heightWidth = (int) ((view.getY() + view.getHeight()) - child.getY());
+            }
+        }
+
         switch (position) {
             case TOP_TOP:
-                if (horizontalTopView == null) {
-                    horizontalTopView = createSnappingGuidelines();
-                }
-                setSnappingGuidelineUIProperties(horizontalTopView);
-                if (view.getX() < child.getX()) {
-                    setCalculatedValuesForGuideView(horizontalTopView, (int) ((child.getX() + child.getWidth()) - view.getX()), view.getX(), child.getY());
+                if (isHorizontal) {
+                    if (horizontalTopView == null) {
+                        horizontalTopView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(horizontalTopView, isHorizontal);
+                    if (view.getX() < child.getX()) {
+                        setCalculatedValuesForGuideView(horizontalTopView, heightWidth, view.getX(), child.getY(), isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(horizontalTopView, heightWidth, child.getX(), child.getY(), isHorizontal);
+                    }
                 } else {
-                    setCalculatedValuesForGuideView(horizontalTopView, (int) ((view.getX() + view.getWidth()) - child.getX()), child.getX(), child.getY());
+                    if (verticalTopView == null) {
+                        verticalTopView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(verticalTopView, isHorizontal);
+                    if (view.getY() < child.getY()) {
+                        setCalculatedValuesForGuideView(verticalTopView, heightWidth, child.getX(), view.getY(), isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(verticalTopView, heightWidth, child.getX(), child.getY(), isHorizontal);
+                    }
                 }
                 break;
             case TOP_MIDDLE:
-                if (horizontalMiddleView == null) {
-                    horizontalMiddleView =  createSnappingGuidelines();
-                }
-                setSnappingGuidelineUIProperties(horizontalMiddleView);
-                if (view.getX() < child.getX()) {
-                    setCalculatedValuesForGuideView(horizontalMiddleView, (int) ((child.getX() + child.getWidth()) - view.getX()), view.getX(), child.getY() + (child.getHeight() / 2.0f));
+                if(isHorizontal) {
+                    if (horizontalMiddleView == null) {
+                        horizontalMiddleView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(horizontalMiddleView, isHorizontal);
+                    if (view.getX() < child.getX()) {
+                        setCalculatedValuesForGuideView(horizontalMiddleView, heightWidth, view.getX(), child.getY() + (child.getHeight() / 2.0f), isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(horizontalMiddleView, heightWidth, child.getX(), child.getY() + (child.getHeight() / 2.0f), isHorizontal);
+                    }
                 } else {
-                    setCalculatedValuesForGuideView(horizontalMiddleView, (int) ((view.getX() + view.getWidth()) - child.getX()), child.getX(), child.getY() + (child.getHeight() / 2.0f));
+                    if (verticalMiddleView == null) {
+                        verticalMiddleView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(verticalMiddleView, isHorizontal);
+                    if (view.getY() < child.getY()) {
+                        setCalculatedValuesForGuideView(verticalMiddleView, heightWidth, child.getX() + child.getWidth()/2.0f, view.getY(), isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(verticalMiddleView, heightWidth, child.getX() + child.getWidth()/2.0f, child.getY(), isHorizontal);
+                    }
                 }
                 break;
             case TOP_BOTTOM:
-                if (horizontalBottomView == null) {
-                    horizontalBottomView =  createSnappingGuidelines();
-                }
-                setSnappingGuidelineUIProperties(horizontalBottomView);
-                if (view.getX() < child.getX()) {
-                    setCalculatedValuesForGuideView(horizontalBottomView, (int) ((child.getX() + child.getWidth()) - view.getX()), view.getX(), child.getY() + child.getHeight());
+                if(isHorizontal) {
+                    if (horizontalBottomView == null) {
+                        horizontalBottomView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(horizontalBottomView, isHorizontal);
+                    if (view.getX() < child.getX()) {
+                        setCalculatedValuesForGuideView(horizontalBottomView, (int) heightWidth, view.getX(), child.getY() + child.getHeight(), isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(horizontalBottomView, (int) heightWidth, child.getX(), child.getY() + child.getHeight(), isHorizontal);
+                    }
                 } else {
-                    setCalculatedValuesForGuideView(horizontalBottomView, (int) ((view.getX() + view.getWidth()) - child.getX()), child.getX(), child.getY() + child.getHeight());
+                    if (verticalBottomView == null) {
+                        verticalBottomView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(verticalBottomView, isHorizontal);
+                    if (view.getY() < child.getY()) {
+                        setCalculatedValuesForGuideView(verticalBottomView, (int) heightWidth, child.getX() + child.getWidth(), view.getY(), isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(verticalBottomView, (int) heightWidth, child.getX() + child.getWidth(), child.getY(), isHorizontal);
+                    }
                 }
                 break;
             case MIDDLE_TOP:
-                if (horizontalMiddleTopView == null) {
-                    horizontalMiddleTopView =  createSnappingGuidelines();
-                }
-                setSnappingGuidelineUIProperties(horizontalMiddleTopView);
-                if (view.getX() < child.getX()) {
-                    setCalculatedValuesForGuideView(horizontalMiddleTopView, (int) ((child.getX() + child.getWidth()) - view.getX()), view.getX() , view.getY() + (view.getHeight()/2.0f));
+                if(isHorizontal) {
+                    if (horizontalMiddleTopView == null) {
+                        horizontalMiddleTopView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(horizontalMiddleTopView, isHorizontal);
+                    if (view.getX() < child.getX()) {
+                        setCalculatedValuesForGuideView(horizontalMiddleTopView, heightWidth, view.getX(), view.getY() + (view.getHeight() / 2.0f), isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(horizontalMiddleTopView, heightWidth, child.getX(), child.getY(), isHorizontal);
+                    }
                 } else {
-                    setCalculatedValuesForGuideView(horizontalMiddleTopView, (int) ((view.getX() + view.getWidth()) - child.getX()), child.getX(),  child.getY());
+                    if (verticalMiddleTopView == null) {
+                        verticalMiddleTopView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(verticalMiddleTopView, isHorizontal);
+                    if (view.getY() < child.getY()) {
+                        setCalculatedValuesForGuideView(verticalMiddleTopView, heightWidth, view.getX() + (view.getWidth() / 2.0f), view.getY(), isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(verticalMiddleTopView, heightWidth, child.getX(), child.getY(), isHorizontal);
+                    }
                 }
                 break;
 
             case MIDDLE_MIDDLE:
-                if (horizontalMiddleMiddleView == null) {
-                    horizontalMiddleMiddleView =  createSnappingGuidelines();
-                }
-                setSnappingGuidelineUIProperties(horizontalMiddleMiddleView);
-                if (view.getX() < child.getX()) {
-                    setCalculatedValuesForGuideView(horizontalMiddleMiddleView, (int) ((child.getX() + child.getWidth()) - view.getX()), view.getX() , view.getY() + (view.getHeight()/2.0f));
+                if(isHorizontal) {
+                    if (horizontalMiddleMiddleView == null) {
+                        horizontalMiddleMiddleView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(horizontalMiddleMiddleView, isHorizontal);
+                    if (view.getX() < child.getX()) {
+                        setCalculatedValuesForGuideView(horizontalMiddleMiddleView, heightWidth, view.getX(), view.getY() + (view.getHeight() / 2.0f), isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(horizontalMiddleMiddleView, heightWidth, child.getX(), child.getY() + (child.getHeight() / 2.0f), isHorizontal);
+                    }
                 } else {
-                    setCalculatedValuesForGuideView(horizontalMiddleMiddleView, (int) ((view.getX() + view.getWidth()) - child.getX()), child.getX(),  child.getY() + (child.getHeight()/2.0f));
+                    if (verticalMiddleMiddleView == null) {
+                        verticalMiddleMiddleView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(verticalMiddleMiddleView, isHorizontal);
+                    if (view.getY() < child.getY()) {
+                        setCalculatedValuesForGuideView(verticalMiddleMiddleView, heightWidth, view.getX() + (view.getWidth() / 2.0f),view.getY() , isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(verticalMiddleMiddleView, heightWidth, child.getX() + (child.getWidth() / 2.0f),child.getY() , isHorizontal);
+                    }
                 }
                 break;
             case MIDDLE_BOTTOM:
-                if (horizontalMiddleBottomView == null) {
-                    horizontalMiddleBottomView =  createSnappingGuidelines();
-                }
-                setSnappingGuidelineUIProperties(horizontalMiddleBottomView);
-                if (view.getX() < child.getX()) {
-                    setCalculatedValuesForGuideView(horizontalMiddleBottomView, (int) ((child.getX() + child.getWidth()) - view.getX()), view.getX() , view.getY() + (view.getHeight()/2.0f));
+                if(isHorizontal) {
+                    if (horizontalMiddleBottomView == null) {
+                        horizontalMiddleBottomView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(horizontalMiddleBottomView, isHorizontal);
+                    if (view.getX() < child.getX()) {
+                        setCalculatedValuesForGuideView(horizontalMiddleBottomView, heightWidth, view.getX(), view.getY() + (view.getHeight() / 2.0f), isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(horizontalMiddleBottomView, heightWidth, child.getX(), child.getY() + (child.getHeight()), isHorizontal);
+                    }
                 } else {
-                    setCalculatedValuesForGuideView(horizontalMiddleBottomView, (int) ((view.getX() + view.getWidth()) - child.getX()), child.getX(),  child.getY() + (child.getHeight()));
+                    if (verticalMiddleBottomView == null) {
+                        verticalMiddleBottomView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(verticalMiddleBottomView, isHorizontal);
+                    if (view.getY() < child.getY()) {
+                        setCalculatedValuesForGuideView(verticalMiddleBottomView, heightWidth, view.getX() + (view.getWidth() / 2.0f), view.getY(), isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(verticalMiddleBottomView, heightWidth, child.getX() + (child.getWidth()), child.getY(), isHorizontal);
+                    }
                 }
                 break;
 
             case BOTTOM_TOP:
-                if (horizontalBottomTopView == null) {
-                    horizontalBottomTopView =  createSnappingGuidelines();
-                }
-                setSnappingGuidelineUIProperties(horizontalBottomTopView);
-                if (view.getX() < child.getX()) {
-                    setCalculatedValuesForGuideView(horizontalBottomTopView, (int) ((child.getX() + child.getWidth()) - view.getX()), view.getX() , view.getY() + (view.getHeight()));
+                if(isHorizontal) {
+                    if (horizontalBottomTopView == null) {
+                        horizontalBottomTopView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(horizontalBottomTopView, isHorizontal);
+                    if (view.getX() < child.getX()) {
+                        setCalculatedValuesForGuideView(horizontalBottomTopView, heightWidth, view.getX(), view.getY() + (view.getHeight()), isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(horizontalBottomTopView, heightWidth, child.getX(), child.getY(), isHorizontal);
+                    }
                 } else {
-                    setCalculatedValuesForGuideView(horizontalBottomTopView, (int) ((view.getX() + view.getWidth()) - child.getX()), child.getX(),  child.getY());
+                    if (verticalBottomTopView == null) {
+                        verticalBottomTopView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(verticalBottomTopView, isHorizontal);
+                    if (view.getY() < child.getY()) {
+                        setCalculatedValuesForGuideView(verticalBottomTopView, heightWidth, view.getX() + (view.getWidth()), view.getY(), isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(verticalBottomTopView, heightWidth, child.getX(), child.getY(), isHorizontal);
+                    }
                 }
                 break;
 
             case BOTTOM_MIDDLE:
-                if (horizontalBottomMiddleView == null) {
-                    horizontalBottomMiddleView =  createSnappingGuidelines();
-                }
-                setSnappingGuidelineUIProperties(horizontalBottomMiddleView);
-                if (view.getX() < child.getX()) {
-                    setCalculatedValuesForGuideView(horizontalBottomMiddleView, (int) ((child.getX() + child.getWidth()) - view.getX()), view.getX() , view.getY() + (view.getHeight()));
+                if(isHorizontal) {
+                    if (horizontalBottomMiddleView == null) {
+                        horizontalBottomMiddleView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(horizontalBottomMiddleView, isHorizontal);
+                    if (view.getX() < child.getX()) {
+                        setCalculatedValuesForGuideView(horizontalBottomMiddleView, heightWidth, view.getX(), view.getY() + (view.getHeight()), isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(horizontalBottomMiddleView, heightWidth, child.getX(), child.getY() + (child.getHeight() / 2.0f), isHorizontal);
+                    }
                 } else {
-                    setCalculatedValuesForGuideView(horizontalBottomMiddleView, (int) ((view.getX() + view.getWidth()) - child.getX()), child.getX(),  child.getY() + (child.getHeight() / 2.0f));
+                    if (verticalBottomMiddleView == null) {
+                        verticalBottomMiddleView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(verticalBottomMiddleView, isHorizontal);
+                    if (view.getY() < child.getY()) {
+                        setCalculatedValuesForGuideView(verticalBottomMiddleView, heightWidth,view.getX() + (view.getWidth()),view.getY() , isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(verticalBottomMiddleView, heightWidth,child.getX() + (child.getWidth() / 2.0f), child.getY(), isHorizontal);
+                    }
                 }
                 break;
 
             case BOTTOM_BOTTOM:
-                if (horizontalBottomBottomView == null) {
-                    horizontalBottomBottomView =  createSnappingGuidelines();
-                }
-                setSnappingGuidelineUIProperties(horizontalBottomBottomView);
-                if (view.getX() < child.getX()) {
-                    setCalculatedValuesForGuideView(horizontalBottomBottomView, (int) ((child.getX() + child.getWidth()) - view.getX()), view.getX() , view.getY() + (view.getHeight()));
+                if(isHorizontal) {
+                    if (horizontalBottomBottomView == null) {
+                        horizontalBottomBottomView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(horizontalBottomBottomView, isHorizontal);
+                    if (view.getX() < child.getX()) {
+                        setCalculatedValuesForGuideView(horizontalBottomBottomView, heightWidth, view.getX(), view.getY() + (view.getHeight()), isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(horizontalBottomBottomView, heightWidth, child.getX(), child.getY() + (child.getHeight()), isHorizontal);
+                    }
                 } else {
-                    setCalculatedValuesForGuideView(horizontalBottomBottomView, (int) ((view.getX() + view.getWidth()) - child.getX()), child.getX(),  child.getY() + (child.getHeight()));
+                    if (verticalBottomBottomView == null) {
+                        verticalBottomBottomView = createSnappingGuidelines(isHorizontal);
+                    }
+                    setSnappingGuidelineUIProperties(verticalBottomBottomView, isHorizontal);
+                    if (view.getY() < child.getY()) {
+                        setCalculatedValuesForGuideView(verticalBottomBottomView, heightWidth, view.getX() + (view.getWidth()), view.getY(), isHorizontal);
+                    } else {
+                        setCalculatedValuesForGuideView(verticalBottomBottomView, heightWidth, child.getX() + (child.getWidth()), child.getY(), isHorizontal);
+                    }
                 }
                 break;
-
         }
-
     }
 
-    private void setSnappingGuidelineUIProperties(View view) {
-        view.setBackground(ContextCompat.getDrawable(parentView.getContext(), R.drawable.doted));
+    private void setVisibilityGone(View view) {
+        if (view != null) {
+            view.setVisibility(View.GONE);
+        }
+    }
+
+    private void setSnappingGuidelineUIProperties(View view, boolean isHorizontal) {
+        if(isHorizontal) {
+            view.setBackground(ContextCompat.getDrawable(parentView.getContext(), R.drawable.doted));
+        } else {
+            //view.setBackgroundColor(Color.MAGENTA);
+            view.setBackground(ContextCompat.getDrawable(parentView.getContext(), R.drawable.doted_vertical));
+        }
+        ///view.setBackgroundColor(Color.MAGENTA);
         view.setVisibility(View.VISIBLE);
     }
 
-    private View createSnappingGuidelines() {
+    private View createSnappingGuidelines(boolean isHorizontal) {
         View view = new View(parentView.getContext());
         parentView.addView(view);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.height = 4;
+        if (isHorizontal) {
+            params.height = 4;
+        } else {
+            params.width = 4;
+        }
         view.setLayoutParams(params);
         return view;
     }
 
-    void setCalculatedValuesForGuideView(View view, int width, float x, float y) {
+    void setCalculatedValuesForGuideView(View view, int width, float x, float y, boolean isHorizontal) {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
-        params.width = width;
+        if (isHorizontal) {
+            params.width = width;
+        } else {
+            params.height = width;
+        }
         view.setLayoutParams(params);
         view.setX(x);
         view.setY(y);
