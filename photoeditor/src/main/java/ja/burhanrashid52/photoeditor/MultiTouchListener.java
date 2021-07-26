@@ -1,19 +1,14 @@
 package ja.burhanrashid52.photoeditor;
 
-import android.graphics.Color;
 import android.graphics.Rect;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 /**
  * Created on 18/01/2017.
@@ -169,8 +164,8 @@ class MultiTouchListener implements OnTouchListener {
                         }
                     }
                     guideLineController.handleGuidelines(view);
-                    guideLineController.snapingHorizontalViews(view);
-                    guideLineController.snapingVerticalViews(view);
+                    guideLineController.snappingHorizontalViews(view);
+                    guideLineController.snappingVerticalViews(view);
 
                 }
                 break;
