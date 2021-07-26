@@ -21,7 +21,6 @@ import java.util.Stack;
 
 public class UndoRedoController {
 
-    private View currentSelectedView;
     private List<VirtualView> addedViews;
     private Stack<VirtualView> redoViews;
     private LayoutInflater mLayoutInflater;
@@ -240,9 +239,7 @@ public class UndoRedoController {
     public TextWatcher getTextWatcher(final TextView textView) {
         return new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -250,9 +247,7 @@ public class UndoRedoController {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) { }
         };
     }
 
