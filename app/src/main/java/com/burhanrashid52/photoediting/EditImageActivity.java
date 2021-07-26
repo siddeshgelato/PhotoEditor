@@ -124,28 +124,10 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
         mPhotoEditor.setOnPhotoEditorListener(this);
 
-        mPhotoEditor.setOnElementSelectionListener(new OnElementSelectionListener() {
-            @Override
-            public void onElementSelectedDeselected(View view, boolean isSelected) {
-               // Toast.makeText(EditImageActivity.this, "State" + isSelected, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
         //Set Image Dynamically
         // mPhotoEditorView.getSource().setImageResource(R.drawable.color_palette);
 
         mSaveFileHelper = new FileSaveHelper(this);
-
-        // ToDO code for testing
-        TextStyleBuilder styleBuilder = new TextStyleBuilder();
-        styleBuilder.withTextColor(ColorPickerAdapter.getDefaultColors(this).get(0));
-        styleBuilder.withTextSize(100);
-        mPhotoEditor.addText("Text1", styleBuilder);
-        styleBuilder = new TextStyleBuilder();
-        styleBuilder.withTextColor(ColorPickerAdapter.getDefaultColors(this).get(0));
-        styleBuilder.withTextSize(100);
-        mPhotoEditor.addText("Text2", styleBuilder);
     }
 
     private void handleIntentImage(ImageView source) {
@@ -307,8 +289,8 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     private void saveImage() {
         final String fileName = System.currentTimeMillis() + ".png";
         final boolean hasStoragePermission =
-                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED;
-        if (hasStoragePermission || isSdkHigherThan28()) {
+                ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED;
+        if(hasStoragePermission || isSdkHigherThan28()) {
             showLoading("Saving...");
             mSaveFileHelper.createFile(fileName, (fileCreated, filePath, error, uri) -> {
                 if (fileCreated) {
@@ -339,7 +321,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                     showSnackbar(error);
                 }
             });
-        } else {
+        }else {
             requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
     }
@@ -389,9 +371,8 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
     @Override
     public void onEmojiClick(String emojiUnicode) {
-       /* mPhotoEditor.addEmoji(emojiUnicode);
-        mTxtCurrentTool.setText(R.string.label_emoji);*/
-        mPhotoEditor.deleteSelectedView();
+        mPhotoEditor.addEmoji(emojiUnicode);
+        mTxtCurrentTool.setText(R.string.label_emoji);
     }
 
     @Override

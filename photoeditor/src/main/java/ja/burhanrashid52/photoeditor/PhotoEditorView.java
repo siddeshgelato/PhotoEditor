@@ -198,47 +198,6 @@ public class PhotoEditorView extends RelativeLayout {
                 mBottomGuideLine.setVisibility(INVISIBLE);
                 break;
         }
-
-
-
-        /*for (int i = 0; i < getChildCount(); i++) {
-            View view = getChildAt(i);
-            if (view.getTag() != null) {
-                if (guidelineVisibility == GuidelineVisibility.ALL) {
-                    view.setVisibility(VISIBLE);
-                } else if (guidelineVisibility == GuidelineVisibility.NONE) {
-                    view.setVisibility(GONE);
-                } else if (view.getTag().equals(guidelineVisibility.value)) {
-                    if ((guidelineVisibility.value.equals(GuidelineVisibility.HORIZONTAL.value) && guidelineVisibility == GuidelineVisibility.GONE_HORIZONTAL )||
-                            (guidelineVisibility.value.equals(GuidelineVisibility.VERTICAL.value) &&  guidelineVisibility == GuidelineVisibility.GONE_VERTICAL)) {
-                        view.setVisibility(GONE);
-                    } else {
-                        view.setVisibility(VISIBLE);
-                    }
-                } else {
-                    view.setVisibility(GONE);
-                }
-            }
-        }*/
-
-
-        //todo set view front with proper logic
-        /*if (isVisible) {
-            mHorizontalGuideLine.setVisibility(VISIBLE);
-            mVerticalGuideLine.setVisibility(VISIBLE);
-            mTopGuideLine.setVisibility(VISIBLE);
-            mBottomGuideLine.setVisibility(VISIBLE);
-            mLeftGuideLine.setVisibility(VISIBLE);
-            mRightGuideLine.setVisibility(VISIBLE);
-        } else {
-            mHorizontalGuideLine.setVisibility(GONE);
-            mVerticalGuideLine.setVisibility(GONE);
-            mTopGuideLine.setVisibility(GONE);
-            mBottomGuideLine.setVisibility(GONE);
-            mLeftGuideLine.setVisibility(GONE);
-            mRightGuideLine.setVisibility(GONE);
-        }*/
-
     }
 
     private void guidelineVisibilityForAll(int visibility) {

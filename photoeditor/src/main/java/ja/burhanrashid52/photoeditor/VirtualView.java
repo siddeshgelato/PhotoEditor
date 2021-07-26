@@ -1,7 +1,6 @@
 package ja.burhanrashid52.photoeditor;
 
 import android.graphics.Bitmap;
-import android.view.View;
 
 public class VirtualView {
     public boolean isText;

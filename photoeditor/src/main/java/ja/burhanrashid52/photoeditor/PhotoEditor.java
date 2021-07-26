@@ -163,7 +163,6 @@ public class PhotoEditor implements BrushViewChangeListener {
             public void onClick() {
                 clearHelperBox();
                 frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
-                //  imgClose.setVisibility(View.VISIBLE);
                 frmBorder.setTag(true);
                 viewState.setCurrentSelectedView(imageRootView);
                 if (elementSelectionListener != null) {
