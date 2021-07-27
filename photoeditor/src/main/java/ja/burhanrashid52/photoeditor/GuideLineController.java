@@ -131,7 +131,7 @@ public class GuideLineController {
 
                 if (Math.round(view.getY()) >= Math.round((child.getY() + (child.getHeight() / 2.0) - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getY()) <= Math.round(child.getY() + (child.getHeight() / 2.0) + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
-                    view.setY(child.getY() + (child.getHeight() / 2.0f));
+                    view.setY(child.getY() + (view.getHeight() / 2.0f));
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.TOP_MIDDLE, true);
                 } else {
                     removeLine(SnappingViewGuidelinePosition.TOP_MIDDLE, true);
@@ -147,7 +147,7 @@ public class GuideLineController {
 
                 if (Math.round(view.getY() + (view.getHeight() / 2.0)) >= Math.round((child.getY() - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getY() + (view.getHeight() / 2.0)) <= Math.round(child.getY() + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
-                    view.setY(child.getY() - (child.getHeight() / 2.0f));
+                    view.setY(child.getY() - (view.getHeight() / 2.0f));
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.MIDDLE_TOP, true);
                 } else {
                     removeLine(SnappingViewGuidelinePosition.MIDDLE_TOP, true);
@@ -169,7 +169,7 @@ public class GuideLineController {
 
                 if (Math.round(view.getY() + (view.getHeight())) >= Math.round((child.getY() - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getY() + (view.getHeight())) <= Math.round(child.getY() + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
-                    view.setY(child.getY() - child.getHeight());
+                    view.setY(child.getY() - view.getHeight());
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.BOTTOM_TOP, true);
                 } else {
                     removeLine(SnappingViewGuidelinePosition.BOTTOM_TOP, true);
