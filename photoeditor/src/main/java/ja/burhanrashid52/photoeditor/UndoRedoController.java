@@ -124,7 +124,7 @@ public class UndoRedoController {
     private View getViewFromVirtualView(VirtualView virtualView, PhotoEditorView parentView, boolean isFromUndo) {
         View view = null;
 
-        if (virtualView.isDeleted) {
+        if (virtualView.isDeleted || (virtualView.isRemoved && isFromUndo)) {
             if (mLayoutInflater == null) {
                 mLayoutInflater = (LayoutInflater) parentView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             }

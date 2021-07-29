@@ -30,6 +30,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -38,6 +39,8 @@ import com.canhub.cropper.CropImageView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * <p>
@@ -52,6 +55,7 @@ import java.util.ArrayList;
 public class PhotoEditor implements BrushViewChangeListener {
 
     private static final String TAG = "PhotoEditor";
+    private static final int ZINDEX_MEDIA = 1000;
     private final LayoutInflater mLayoutInflater;
     private Context context;
     private PhotoEditorView parentView;
@@ -70,6 +74,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     private float rotation = 0.0f;
     private float px = -1;
     private float py = -1;
+    private float zIndexCount = ZINDEX_MEDIA;
 
 
     protected PhotoEditor(Builder builder) {
@@ -163,6 +168,7 @@ public class PhotoEditor implements BrushViewChangeListener {
             public void onClick() {
                 clearHelperBox();
                 frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
+                //  imgClose.setVisibility(View.VISIBLE);
                 frmBorder.setTag(true);
                 viewState.setCurrentSelectedView(imageRootView);
                 if (elementSelectionListener != null) {
@@ -231,7 +237,7 @@ public class PhotoEditor implements BrushViewChangeListener {
      */
     @SuppressLint("ClickableViewAccessibility")
     public void addText(String text, @Nullable TextStyleBuilder styleBuilder) {
-        addText(text, styleBuilder, 50, 50, "" + System.currentTimeMillis(), 0, 0.0f, 0.0f, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        addText(text, styleBuilder, -1, -1, "" + System.currentTimeMillis(), 0, 0.0f, 0.0f, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     public void addText(String text, TextStyleBuilder styleBuilder, float x, float y, String uuid, float rotation, float px, float py, float height, float width) {
@@ -434,7 +440,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         final View emojiRootView = getLayout(ViewType.EMOJI);
         final TextView emojiTextView = emojiRootView.findViewById(R.id.tvPhotoEditorText);
         final FrameLayout frmBorder = emojiRootView.findViewById(R.id.frmBorder);
-      //  final ImageView imgClose = emojiRootView.findViewById(R.id.imgPhotoEditorClose);
+        //  final ImageView imgClose = emojiRootView.findViewById(R.id.imgPhotoEditorClose);
 
         if (emojiTypeface != null) {
             emojiTextView.setTypeface(emojiTypeface);
@@ -505,18 +511,123 @@ public class PhotoEditor implements BrushViewChangeListener {
         } else {
 
             rootView.measure(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            rootView.setX((float)((parentView.getWidth() / 2.0) - (rootView.getMeasuredWidth()/2.0)));
-            rootView.setY((float)((parentView.getHeight() / 2.0) - (rootView.getMeasuredHeight()/2.0)));
+            rootView.setX((float) ((parentView.getWidth() / 2.0) - (rootView.getMeasuredWidth() / 2.0)));
+            rootView.setY((float) ((parentView.getHeight() / 2.0) - (rootView.getMeasuredHeight() / 2.0)));
             //params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
 
         }
 
         parentView.addView(rootView, params);
+        rootView.setZ(zIndexCount);
+        zIndexCount++;
         viewState.addAddedView(rootView);
         undoRedoController.addAddedView(rootView);
         if (mOnPhotoEditorListener != null)
             mOnPhotoEditorListener.onAddViewListener(viewType, viewState.getAddedViewsCount());
     }
+
+    public ArrayList<View> getMediaElements() {
+        ArrayList<View> mediaList = new ArrayList<>();
+        for (int i = 0; i < parentView.getChildCount(); i++) {
+            View view = parentView.getChildAt(i);
+            if (view.getTag() != null && view instanceof FrameLayout) {
+                mediaList.add(view);
+            }
+        }
+
+        return mediaList;
+    }
+
+    private void sortMedia(ArrayList<View> mediaList) {
+        Collections.sort(mediaList, (s1, s2) -> Float.compare(s1.getZ(), s2.getZ()));
+    }
+
+    private void setZIndexToViews(ArrayList<View> mediaList) {
+        for (int i = 0; i < mediaList.size(); i++) {
+            mediaList.get(i).setZ(ZINDEX_MEDIA + i);
+        }
+    }
+
+    public void toFront() {
+        ArrayList<View> mediaList = getMediaElements();
+        View currentSelectedView = viewState.getCurrentSelectedView();
+        if (currentSelectedView != null) {
+            currentSelectedView.setZ(currentSelectedView.getZ() + 1.5f);
+            sortMedia(mediaList);
+            setZIndexToViews(mediaList);
+        }
+    }
+
+    public void toBack() {
+        ArrayList<View> mediaList = getMediaElements();
+        View currentSelectedView = viewState.getCurrentSelectedView();
+        if (currentSelectedView != null) {
+            currentSelectedView.setZ(currentSelectedView.getZ() - 1.5f);
+            sortMedia(mediaList);
+            setZIndexToViews(mediaList);
+        }
+    }
+
+    public void toForward() {
+        ArrayList<View> mediaList = getMediaElements();
+        View currentSelectedView = viewState.getCurrentSelectedView();
+        if (currentSelectedView != null) {
+            currentSelectedView.setZ(Integer.MAX_VALUE);
+            sortMedia(mediaList);
+            setZIndexToViews(mediaList);
+        }
+    }
+
+    public void toBackward() {
+        ArrayList<View> mediaList = getMediaElements();
+        View currentSelectedView = viewState.getCurrentSelectedView();
+        if (currentSelectedView != null) {
+            currentSelectedView.setZ(ZINDEX_MEDIA - 1);
+            sortMedia(mediaList);
+            setZIndexToViews(mediaList);
+        }
+    }
+
+    /* public void toFront() {
+        ArrayList<View> mediaList = getMediaElements();
+        View currentSelectedView = viewState.getCurrentSelectedView();
+        if (currentSelectedView != null) {
+            for (int i = 0; i < mediaList.size(); i++) {
+                View view = mediaList.get(i);
+                if (view.getZ() == currentSelectedView.getZ()) {
+                    float curIndex = currentSelectedView.getZ();
+                    if ((i + 1) < mediaList.size()) {
+                        View nextElement = mediaList.get(i + 1);
+                        float nextIndex = nextElement.getZ();
+                        currentSelectedView.setZ(nextIndex);
+                        nextElement.setZ(curIndex);
+                        break;
+                    }
+                }
+            }
+        }
+
+    }
+
+    public void toBack() {
+        ArrayList<View> mediaList = getMediaElements();
+        View currentSelectedView = viewState.getCurrentSelectedView();
+        if (currentSelectedView != null) {
+            for (int i = 0; i < mediaList.size(); i++) {
+                View view = mediaList.get(i);
+                if (view instanceof FrameLayout && view.getZ() == currentSelectedView.getZ()) {
+                    float curIndex = currentSelectedView.getZ();
+                    if ((i - 1) >= 0) {
+                        View prevElement = mediaList.get(i - 1);
+                        float prevIndex = prevElement.getZ();
+                        currentSelectedView.setZ(prevIndex);
+                        prevElement.setZ(curIndex);
+                        break;
+                    }
+                }
+            }
+        }
+    }*/
 
     /**
      * Create a new instance and scalable touchview
@@ -732,7 +843,7 @@ public class PhotoEditor implements BrushViewChangeListener {
                 parentView.removeView(removeView);
                 undoRedoController.pushRedoView(removeView, true, false);
             } else {
-               VirtualView virtualView = undoRedoController.removeAddedView(undoRedoController.getAddedViewsCount() - 1);
+                VirtualView virtualView = undoRedoController.removeAddedView(undoRedoController.getAddedViewsCount() - 1);
                 undoRedoController.pushRedoView(removeView, virtualView.isDeleted, virtualView.isRemoved);
                 View latestView = undoRedoController.getLatestAddedViewWithUuid(
                         removeView.getTag().toString(), parentView);
