@@ -13,6 +13,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.canhub.cropper.CropImageView;
+
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -174,6 +176,9 @@ public class UndoRedoController {
             } else {
                 ImageView imageView = view.findViewById(R.id.imgPhotoEditorImage);
                 imageView.setImageBitmap(virtualView.bitmap);
+                final CropImageView cropImageView = view.findViewById(R.id.imgCropImage);
+                cropImageView.setImageBitmap(virtualView.bitmap);
+
             }
         }
         return view;
