@@ -8,6 +8,7 @@ import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -23,6 +24,7 @@ import java.util.Stack;
 
 public class UndoRedoController {
 
+    private View currentSelectedView;
     private List<VirtualView> addedViews;
     private Stack<VirtualView> redoViews;
     private LayoutInflater mLayoutInflater;
@@ -47,7 +49,7 @@ public class UndoRedoController {
     }
 
     void addAddedView(final View view, boolean isRemoved, boolean isFromRedo) {
-        if(!isFromRedo) {
+        if (!isFromRedo) {
             redoViews.clear();
         }
         addedViews.add(getVirtualViewFromView(view, false, isRemoved));
@@ -99,9 +101,13 @@ public class UndoRedoController {
         VirtualView virtualView = new VirtualView();
         virtualView.x = view.getX();
         virtualView.y = view.getY();
+        virtualView.z = view.getZ();
         virtualView.rotation = view.getRotation();
         virtualView.uuid = view.getTag().
                 toString();
+        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        virtualView.height = view.getMeasuredHeight();
+        virtualView.width = view.getMeasuredWidth();
         virtualView.isDeleted = isDeleted;
         virtualView.isRemoved = isRemoved;
         if (imageView != null) {
@@ -116,7 +122,7 @@ public class UndoRedoController {
             if (textView.getTag() != null) {
                 virtualView.fontFamily = textView.getTag().toString();
             }
-            virtualView.textAlign = textView.getTextAlignment();
+            virtualView.textAlign = textView.getGravity();
             virtualView.color = textView.getCurrentTextColor();
         }
         return virtualView;
@@ -157,12 +163,28 @@ public class UndoRedoController {
             view.setTag(virtualView.uuid);
             view.setX(virtualView.x);
             view.setY(virtualView.y);
+            ViewGroup.LayoutParams params;
+            if (virtualView.isText) {
+                TextView textView = view.findViewById(R.id.tvPhotoEditorText);
+                params = (ViewGroup.LayoutParams) textView.getLayoutParams();
+                params.height = (int) virtualView.height;
+                params.width = (int) virtualView.width;
+                textView.setLayoutParams(params);
+            } else {
+                ImageView imageView = view.findViewById(R.id.imgPhotoEditorImage);
+                params = (ViewGroup.LayoutParams) imageView.getLayoutParams();
+                params.height = (int) virtualView.height;
+                params.width = (int) virtualView.width;
+                imageView.setLayoutParams(params);
+            }
+
+            setZ(virtualView, view, parentView);
             view.setRotation(virtualView.rotation);
             if (virtualView.isText) {
                 TextView textView = view.findViewById(R.id.tvPhotoEditorText);
                 textView.setText(virtualView.text);
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, ((int) virtualView.fontSize));
-                textView.setTextAlignment(virtualView.textAlign);
+                textView.setGravity(virtualView.textAlign);
                 textView.setTextColor(virtualView.color);
                 if (virtualView.fontFamily != null) {
                     textView.setTypeface(
@@ -182,6 +204,19 @@ public class UndoRedoController {
             }
         }
         return view;
+    }
+
+    private void setZ(VirtualView virtualView, View view, PhotoEditorView parentView) {
+        float prevZ = virtualView.z;
+        float curZ = view.getZ();
+        ArrayList<View> mediaList = getMediaElements(parentView);
+        for (View v : mediaList) {
+            if (v.getZ() == prevZ) {
+                v.setZ(curZ);
+                view.setZ(prevZ);
+                break;
+            }
+        }
     }
 
     private MultiTouchListener getMultiTouchListener(final View finalView) {
@@ -244,7 +279,9 @@ public class UndoRedoController {
     public TextWatcher getTextWatcher(final TextView textView) {
         return new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -252,8 +289,22 @@ public class UndoRedoController {
             }
 
             @Override
-            public void afterTextChanged(Editable s) { }
+            public void afterTextChanged(Editable s) {
+
+            }
         };
+    }
+
+    public ArrayList<View> getMediaElements(PhotoEditorView parentView) {
+        ArrayList<View> mediaList = new ArrayList<>();
+        for (int i = 0; i < parentView.getChildCount(); i++) {
+            View view = parentView.getChildAt(i);
+            if (view.getTag() != null && view instanceof FrameLayout) {
+                mediaList.add(view);
+            }
+        }
+
+        return mediaList;
     }
 
 }

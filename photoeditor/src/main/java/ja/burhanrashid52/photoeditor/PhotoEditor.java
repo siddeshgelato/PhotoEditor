@@ -317,6 +317,15 @@ public class PhotoEditor implements BrushViewChangeListener {
         View selectedView = viewState.getCurrentSelectedView();
         final ImageView imageView = selectedView.findViewById(R.id.imgPhotoEditorImage);
         final CropImageView cropImageView = selectedView.findViewById(R.id.imgCropImage);
+        BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
+        Bitmap resized = Bitmap.createScaledBitmap(
+                drawable.getBitmap(),
+                imageView.getWidth(),
+                imageView.getHeight(),
+                true
+        );
+        imageView.setImageBitmap(resized);
+        cropImageView.setImageBitmap(resized);
         cropImageView.setVisibility(View.VISIBLE);
     }
 

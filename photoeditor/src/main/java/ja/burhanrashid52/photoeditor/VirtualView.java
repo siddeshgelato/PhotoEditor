@@ -9,8 +9,9 @@ public class VirtualView {
     public String uuid;
     public float x;
     public float y;
-    public double height;
-    public double width;
+    public float z;
+    public double height = -99;
+    public double width = -99;
     public float rotation;
     public int color;
 

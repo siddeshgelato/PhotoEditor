@@ -45,7 +45,7 @@ class MultiTouchListener implements OnTouchListener {
     private final UndoRedoController undoRedoController;
     private GuideLineController guideLineController;
 
-    float prevX = -1, prevY = -1;
+    private float prevX = -1, prevY = -1;
 
     MultiTouchListener(@Nullable View deleteView,
                        PhotoEditorView parentView,
@@ -148,7 +148,7 @@ class MultiTouchListener implements OnTouchListener {
                 if (deleteView != null) {
                     deleteView.setVisibility(View.VISIBLE);
                 }
-                view.bringToFront();
+                //view.bringToFront();
                 firePhotoEditorSDKListener(view, true);
                 break;
             case MotionEvent.ACTION_MOVE:
