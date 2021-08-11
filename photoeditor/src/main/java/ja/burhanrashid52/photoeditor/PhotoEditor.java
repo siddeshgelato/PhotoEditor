@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 
 import androidx.annotation.ColorInt;
@@ -31,6 +32,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -152,6 +154,10 @@ public class PhotoEditor implements BrushViewChangeListener {
         if (height > 0.0 && width > 0.0) {
             params.height = (int) height;
             params.width = (int) width;
+        } else {
+            imageRootView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            params.height = imageView.getHeight();
+            params.width = imageView.getWidth();
         }
 
         imageRootView.setLayoutParams(params);
@@ -481,8 +487,8 @@ public class PhotoEditor implements BrushViewChangeListener {
      * @param rootView rootview of image,text and emoji
      */
     private void addViewToParent(View rootView, ViewType viewType) {
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+      /*  LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);*/
         rootView.setPivotX(px);
         rootView.setPivotY(py);
         rootView.setRotation(rotation);
@@ -506,20 +512,38 @@ public class PhotoEditor implements BrushViewChangeListener {
 
         } else {
 
-            rootView.measure(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            rootView.setX((float) ((parentView.getWidth() / 2.0) - (rootView.getMeasuredWidth() / 2.0)));
-            rootView.setY((float) ((parentView.getHeight() / 2.0) - (rootView.getMeasuredHeight() / 2.0)));
-            //params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+            //  rootView.measure(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            rootView.post(new Runnable() {
+                @Override
+                public void run() {
+                    rootView.setX((float) ((parentView.getWidth() / 2.0) - (rootView.getWidth() / 2.0)));
+                    rootView.setY((float) ((parentView.getHeight() / 2.0) - (rootView.getHeight() / 2.0)));
+                }
+            });
+
+            // params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+
+           /* int childWidth = rootView.getMeasuredWidth();
+            int left = (parentView.getWidth() - childWidth) / 2;
+            rootView.setLeft(left);
+            rootView.setRight(left + childWidth);
+            int childHeight = rootView.getMeasuredHeight();
+            int top = (parentView.getHeight() - childHeight) / 2;
+            rootView.setTop(top);
+            rootView.setBottom(top + childHeight);*/
+
 
         }
 
-        parentView.addView(rootView, params);
+        parentView.addView(rootView);
         rootView.setZ(zIndexCount);
         zIndexCount++;
         viewState.addAddedView(rootView);
         undoRedoController.addAddedView(rootView);
         if (mOnPhotoEditorListener != null)
             mOnPhotoEditorListener.onAddViewListener(viewType, viewState.getAddedViewsCount());
+
     }
 
     public ArrayList<View> getMediaElements() {
@@ -583,47 +607,6 @@ public class PhotoEditor implements BrushViewChangeListener {
             setZIndexToViews(mediaList);
         }
     }
-
-    /* public void toFront() {
-        ArrayList<View> mediaList = getMediaElements();
-        View currentSelectedView = viewState.getCurrentSelectedView();
-        if (currentSelectedView != null) {
-            for (int i = 0; i < mediaList.size(); i++) {
-                View view = mediaList.get(i);
-                if (view.getZ() == currentSelectedView.getZ()) {
-                    float curIndex = currentSelectedView.getZ();
-                    if ((i + 1) < mediaList.size()) {
-                        View nextElement = mediaList.get(i + 1);
-                        float nextIndex = nextElement.getZ();
-                        currentSelectedView.setZ(nextIndex);
-                        nextElement.setZ(curIndex);
-                        break;
-                    }
-                }
-            }
-        }
-
-    }
-
-    public void toBack() {
-        ArrayList<View> mediaList = getMediaElements();
-        View currentSelectedView = viewState.getCurrentSelectedView();
-        if (currentSelectedView != null) {
-            for (int i = 0; i < mediaList.size(); i++) {
-                View view = mediaList.get(i);
-                if (view instanceof FrameLayout && view.getZ() == currentSelectedView.getZ()) {
-                    float curIndex = currentSelectedView.getZ();
-                    if ((i - 1) >= 0) {
-                        View prevElement = mediaList.get(i - 1);
-                        float prevIndex = prevElement.getZ();
-                        currentSelectedView.setZ(prevIndex);
-                        prevElement.setZ(curIndex);
-                        break;
-                    }
-                }
-            }
-        }
-    }*/
 
     /**
      * Create a new instance and scalable touchview
@@ -1371,6 +1354,8 @@ public class PhotoEditor implements BrushViewChangeListener {
             copyImageProperties(imageView, duplicateMedia);
         }
 
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) selectedView.getLayoutParams();
+        duplicateMedia.setLayoutParams(params);
         duplicateMedia.setOnTouchListener(getMultiTouchListener(duplicateMedia));
         clearHelperBox();
         viewState.setCurrentSelectedView(duplicateMedia);
@@ -1417,6 +1402,12 @@ public class PhotoEditor implements BrushViewChangeListener {
         duplicateTextView.setTextColor(textView.getCurrentTextColor());
         EditText duplicateEditText = duplicateMedia.findViewById(R.id.etPhotoEditorText);
         duplicateEditText.addTextChangedListener(getTextWatcher(duplicateTextView));
+    }
+
+    public void centerSelectedView() {
+        View selectedView = viewState.getCurrentSelectedView();
+        selectedView.setX((float) ((parentView.getWidth() / 2.0) - (selectedView.getWidth() / 2.0)));
+        selectedView.setY((float) ((parentView.getHeight() / 2.0) - (selectedView.getHeight() / 2.0)));
     }
 
 }

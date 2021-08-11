@@ -16,8 +16,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 
 /**
  * <p>
@@ -30,7 +31,7 @@ import android.widget.RelativeLayout;
  * @since 1/18/2018
  */
 
-public class PhotoEditorView extends RelativeLayout {
+public class PhotoEditorView extends FrameLayout {
 
     private static final String TAG = "PhotoEditorView";
 
@@ -74,7 +75,7 @@ public class PhotoEditorView extends RelativeLayout {
         mImgSource.setAdjustViewBounds(true);
         LayoutParams imgSrcParam = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        imgSrcParam.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        //  imgSrcParam.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         if (attrs != null) {
             TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.PhotoEditorView);
             Drawable imgSrcDrawable = a.getDrawable(R.styleable.PhotoEditorView_photo_src);
@@ -91,9 +92,9 @@ public class PhotoEditorView extends RelativeLayout {
         //Align brush to the size of image view
         LayoutParams brushParam = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        brushParam.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-        brushParam.addRule(RelativeLayout.ALIGN_TOP, imgSrcId);
-        brushParam.addRule(RelativeLayout.ALIGN_BOTTOM, imgSrcId);
+        //  brushParam.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        //  brushParam.addRule(RelativeLayout.ALIGN_TOP, imgSrcId);
+        //   brushParam.addRule(RelativeLayout.ALIGN_BOTTOM, imgSrcId);
 
         //Setup GLSurface attributes
         mImageFilterView = new ImageFilterView(getContext());
@@ -103,9 +104,9 @@ public class PhotoEditorView extends RelativeLayout {
         //Align brush to the size of image view
         LayoutParams imgFilterParam = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        imgFilterParam.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-        imgFilterParam.addRule(RelativeLayout.ALIGN_TOP, imgSrcId);
-        imgFilterParam.addRule(RelativeLayout.ALIGN_BOTTOM, imgSrcId);
+        //  imgFilterParam.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        //  imgFilterParam.addRule(RelativeLayout.ALIGN_TOP, imgSrcId);
+        //  imgFilterParam.addRule(RelativeLayout.ALIGN_BOTTOM, imgSrcId);
 
         mImgSource.setOnImageChangedListener(new FilterImageView.OnImageChangedListener() {
             @Override
@@ -125,19 +126,19 @@ public class PhotoEditorView extends RelativeLayout {
         //Add brush view
         addView(mBrushDrawingView, brushParam);
 
-        createGuideLine(mHorizontalGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.CENTER_IN_PARENT, "horizontal");
+       /* createGuideLine(mHorizontalGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.CENTER_IN_PARENT, "horizontal");
         createGuideLine(mVerticalGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 4, RelativeLayout.CENTER_IN_PARENT, "vertical");
         createGuideLine(mLeftGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 4, RelativeLayout.ALIGN_PARENT_START, "left");
         createGuideLine(mRightGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 4, RelativeLayout.ALIGN_PARENT_END, "right");
         createGuideLine(mTopGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.ALIGN_PARENT_TOP, "top");
-        createGuideLine(mBottomGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.ALIGN_PARENT_BOTTOM, "bottom");
+        createGuideLine(mBottomGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.ALIGN_PARENT_BOTTOM, "bottom");*/
 
     }
 
     private void createGuideLine(View view, int height, int width, int constraint, String tag) {
         LayoutParams params = new LayoutParams(
                 width, height);
-        params.addRule(constraint, RelativeLayout.TRUE);
+        // params.addRule(constraint, RelativeLayout.TRUE);
         view.setBackgroundColor(Color.MAGENTA);
         view.setLayoutParams(params);
         addView(view, params);
