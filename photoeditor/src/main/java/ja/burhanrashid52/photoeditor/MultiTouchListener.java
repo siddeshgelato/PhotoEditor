@@ -163,7 +163,7 @@ class MultiTouchListener implements OnTouchListener {
                             adjustTranslation(view, currX - mPrevX, currY - mPrevY);
                         }
                     }
-                    //  guideLineController.handleGuidelines(view);
+                    guideLineController.handleGuidelines(view);
                     guideLineController.snappingHorizontalViews(view);
                     guideLineController.snappingVerticalViews(view);
 

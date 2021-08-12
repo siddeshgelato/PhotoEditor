@@ -20,8 +20,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:scaleType="fitXY"
-            android:contentDescription="@string/app_name"
-            />
+            android:padding="1dp"
+            android:background="@drawable/rounded_border_tv"
+            android:contentDescription="@string/app_name" />
 
         <com.canhub.cropper.CropImageView
             android:id="@+id/imgCropImage"

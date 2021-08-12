@@ -41,11 +41,13 @@ public class GuideLineController {
     }
 
     void snappingVerticalViews(View view) {
+        boolean isMatched = false;
         for (int i = 0; i < parentView.getChildCount(); i++) {
             View child = parentView.getChildAt(i);
             if (view.getTag() != null && view.getTag() != child.getTag() && child instanceof FrameLayout) {
                 if (Math.round(view.getX()) >= Math.round((child.getX() - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getX()) <= Math.round(child.getX() + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
+                    isMatched = true;
                     view.setX(child.getX());
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.TOP_TOP, false);
                 } else {
@@ -54,6 +56,7 @@ public class GuideLineController {
 
                 if (Math.round(view.getX()) >= Math.round((child.getX() + (child.getWidth() / 2.0) - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getX()) <= Math.round(child.getX() + (child.getWidth() / 2.0) + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
+                    isMatched = true;
                     view.setX(child.getX() + (child.getWidth() / 2.0f));
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.TOP_MIDDLE, false);
                 } else {
@@ -62,6 +65,7 @@ public class GuideLineController {
 
                 if (Math.round(view.getX()) >= Math.round((child.getX() + (child.getWidth()) - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getX()) <= Math.round(child.getX() + (child.getWidth()) + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
+                    isMatched = true;
                     view.setX(child.getX() + (child.getWidth()));
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.TOP_BOTTOM, false);
                 } else {
@@ -70,6 +74,7 @@ public class GuideLineController {
 
                 if (Math.round(view.getX() + (view.getWidth() / 2.0)) >= Math.round((child.getX() - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getX() + (view.getWidth() / 2.0)) <= Math.round(child.getX() + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
+                    isMatched = true;
                     view.setX(child.getX() - (view.getWidth() / 2.0f));
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.MIDDLE_TOP, false);
                 } else {
@@ -78,6 +83,7 @@ public class GuideLineController {
 
                 if (Math.round(view.getX() + (view.getWidth() / 2.0)) >= Math.round((child.getX() + (child.getWidth() / 2.0) - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getX() + (view.getWidth() / 2.0)) <= Math.round(child.getX() + (child.getWidth() / 2.0) + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
+                    isMatched = true;
                     view.setX((child.getX() - view.getWidth()) + (child.getWidth() / 2.0f) + (view.getWidth() / 2.0f));
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.MIDDLE_MIDDLE, false);
                 } else {
@@ -86,6 +92,7 @@ public class GuideLineController {
 
                 if (Math.round(view.getX() + (view.getWidth() / 2.0)) >= Math.round((child.getX() + (child.getWidth()) - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getX() + (view.getWidth() / 2.0)) <= Math.round(child.getX() + (child.getWidth()) + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
+                    isMatched = true;
                     view.setX(((child.getX() + child.getWidth()) - view.getWidth()) + (view.getWidth()/2.0f));
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.MIDDLE_BOTTOM, false);
                 } else {
@@ -94,6 +101,7 @@ public class GuideLineController {
 
                 if (Math.round(view.getX() + (view.getWidth())) >= Math.round((child.getX() - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getX() + (view.getWidth())) <= Math.round(child.getX() + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
+                    isMatched = true;
                     view.setX(child.getX() - view.getWidth());
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.BOTTOM_TOP, false);
                 } else {
@@ -102,6 +110,7 @@ public class GuideLineController {
 
                 if (Math.round(view.getX() + (view.getWidth())) >= Math.round((child.getX() + (child.getWidth() / 2.0f) - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getX() + (view.getWidth())) <= Math.round(child.getX() + (child.getWidth() / 2.0f) + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
+                    isMatched = true;
                     view.setX((child.getX() - view.getWidth()) + (child.getWidth() / 2.0f));
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.BOTTOM_MIDDLE, false);
                 } else {
@@ -110,21 +119,27 @@ public class GuideLineController {
 
                 if (Math.round(view.getX() + (view.getWidth())) >= Math.round((child.getX() + (child.getWidth()) - 5)) &&
                         (Math.round(view.getX() + (view.getWidth())) <= Math.round(child.getX() + (child.getWidth()) + 5))) {
+                    isMatched = true;
                     view.setX((child.getX() + child.getWidth()) - view.getWidth());
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.BOTTOM_BOTTOM, false);
                 } else {
                     removeLine(SnappingViewGuidelinePosition.BOTTOM_BOTTOM, false);
+                }
+                if(isMatched) {
+                    break;
                 }
             }
         }
     }
 
     void snappingHorizontalViews(View view) {
+        boolean isMatched = false;
         for (int i = 0; i < parentView.getChildCount(); i++) {
             View child = parentView.getChildAt(i);
             if (view.getTag() != null && view.getTag() != child.getTag() && child instanceof FrameLayout) {
                 if (Math.round(view.getY()) >= Math.round((child.getY() - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getY()) <= Math.round(child.getY() + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
+                    isMatched = true;
                     view.setY(child.getY());
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.TOP_TOP, true);
                 } else {
@@ -133,6 +148,7 @@ public class GuideLineController {
 
                 if (Math.round(view.getY()) >= Math.round((child.getY() + (child.getHeight() / 2.0) - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getY()) <= Math.round(child.getY() + (child.getHeight() / 2.0) + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
+                    isMatched = true;
                     view.setY(child.getY() + (child.getHeight() / 2.0f));
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.TOP_MIDDLE, true);
                 } else {
@@ -141,6 +157,7 @@ public class GuideLineController {
 
                 if (Math.round(view.getY()) >= Math.round((child.getY() + (child.getHeight()) - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getY()) <= Math.round(child.getY() + (child.getHeight()) + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
+                    isMatched = true;
                     view.setY(child.getY() + (child.getHeight()));
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.TOP_BOTTOM, true);
                 } else {
@@ -149,6 +166,7 @@ public class GuideLineController {
 
                 if (Math.round(view.getY() + (view.getHeight() / 2.0)) >= Math.round((child.getY() - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getY() + (view.getHeight() / 2.0)) <= Math.round(child.getY() + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
+                    isMatched = true;
                     view.setY(child.getY() - (view.getHeight() / 2.0f));
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.MIDDLE_TOP, true);
                 } else {
@@ -157,6 +175,7 @@ public class GuideLineController {
 
                 if (Math.round(view.getY() + (view.getHeight() / 2.0)) >= Math.round((child.getY() + (child.getHeight() / 2.0) - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getY() + (view.getHeight() / 2.0)) <= Math.round(child.getY() + (child.getHeight() / 2.0) + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
+                    isMatched = true;
                     view.setY((child.getY() - view.getHeight()) + (child.getHeight() / 2.0f) + (view.getHeight() / 2.0f));
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.MIDDLE_MIDDLE, true);
                 } else {
@@ -165,6 +184,7 @@ public class GuideLineController {
 
                 if (Math.round(view.getY() + (view.getHeight() / 2.0)) >= Math.round((child.getY() + (child.getHeight()) - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getY() + (view.getHeight() / 2.0)) <= Math.round(child.getY() + (child.getHeight()) + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
+                    isMatched = true;
                     view.setY(((child.getY() + child.getHeight()) - view.getHeight()) + (view.getHeight()/2.0f));
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.MIDDLE_BOTTOM, true);
                 } else {
@@ -173,6 +193,7 @@ public class GuideLineController {
 
                 if (Math.round(view.getY() + (view.getHeight())) >= Math.round((child.getY() - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getY() + (view.getHeight())) <= Math.round(child.getY() + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
+                    isMatched = true;
                     view.setY(child.getY() - view.getHeight());
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.BOTTOM_TOP, true);
                 } else {
@@ -181,6 +202,7 @@ public class GuideLineController {
 
                 if (Math.round(view.getY() + (view.getHeight())) >= Math.round((child.getY() + (child.getHeight() / 2.0f) - MARGIN_MAGNET_SNAPPING_GUIDELINES)) &&
                         (Math.round(view.getY() + (view.getHeight())) <= Math.round(child.getY() + (child.getHeight() / 2.0f) + MARGIN_MAGNET_SNAPPING_GUIDELINES))) {
+                    isMatched = true;
                     view.setY((child.getY() - view.getHeight()) + (child.getHeight() / 2.0f));
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.BOTTOM_MIDDLE, true);
                 } else {
@@ -189,10 +211,15 @@ public class GuideLineController {
 
                 if (Math.round(view.getY() + (view.getHeight())) >= Math.round((child.getY() + (child.getHeight()) - 5)) &&
                         (Math.round(view.getY() + (view.getHeight())) <= Math.round(child.getY() + (child.getHeight()) + 5))) {
+                    isMatched = true;
                     view.setY((child.getY() + child.getHeight()) - view.getHeight());
                     generatePerticularLine(view, child, SnappingViewGuidelinePosition.BOTTOM_BOTTOM, true);
                 } else {
                     removeLine(SnappingViewGuidelinePosition.BOTTOM_BOTTOM, true);
+                }
+
+                if(isMatched) {
+                    break;
                 }
             }
         }
@@ -483,6 +510,7 @@ public class GuideLineController {
         } else {
             view.setOrientation(DividerView.ORIENTATION_VERTICAL);
         }
+        view.bringToFront();
         view.setVisibility(View.VISIBLE);
     }
 

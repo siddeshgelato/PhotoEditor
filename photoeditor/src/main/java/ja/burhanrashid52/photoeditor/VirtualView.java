@@ -1,6 +1,8 @@
 package ja.burhanrashid52.photoeditor;
 
 import android.graphics.Bitmap;
+import android.view.View;
+import android.widget.FrameLayout;
 
 public class VirtualView {
     public boolean isText;
@@ -21,4 +23,5 @@ public class VirtualView {
     public int textAlign;
 
     public Bitmap bitmap;
+    public FrameLayout.LayoutParams params;
 }

@@ -14,6 +14,7 @@ import androidx.annotation.RequiresApi;
 
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -126,12 +127,12 @@ public class PhotoEditorView extends FrameLayout {
         //Add brush view
         addView(mBrushDrawingView, brushParam);
 
-       /* createGuideLine(mHorizontalGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.CENTER_IN_PARENT, "horizontal");
-        createGuideLine(mVerticalGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 4, RelativeLayout.CENTER_IN_PARENT, "vertical");
-        createGuideLine(mLeftGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 4, RelativeLayout.ALIGN_PARENT_START, "left");
-        createGuideLine(mRightGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 4, RelativeLayout.ALIGN_PARENT_END, "right");
-        createGuideLine(mTopGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.ALIGN_PARENT_TOP, "top");
-        createGuideLine(mBottomGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.ALIGN_PARENT_BOTTOM, "bottom");*/
+        createGuideLine(mHorizontalGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER, "horizontal");
+        createGuideLine(mVerticalGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 4, Gravity.CENTER, "vertical");
+        createGuideLine(mLeftGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 4, Gravity.START, "left");
+        createGuideLine(mRightGuideLine, ViewGroup.LayoutParams.MATCH_PARENT, 4, Gravity.END, "right");
+        createGuideLine(mTopGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.TOP, "top");
+        createGuideLine(mBottomGuideLine, 4, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.BOTTOM, "bottom");
 
     }
 
@@ -139,6 +140,7 @@ public class PhotoEditorView extends FrameLayout {
         LayoutParams params = new LayoutParams(
                 width, height);
         // params.addRule(constraint, RelativeLayout.TRUE);
+        params.gravity = constraint;
         view.setBackgroundColor(Color.MAGENTA);
         view.setLayoutParams(params);
         addView(view, params);
@@ -211,12 +213,12 @@ public class PhotoEditorView extends FrameLayout {
     }
 
     private void bringGuidelineToFront() {
-        mHorizontalGuideLine.bringToFront();
-        mVerticalGuideLine.bringToFront();
-        mTopGuideLine.bringToFront();
-        mBottomGuideLine.bringToFront();
-        mLeftGuideLine.bringToFront();
-        mRightGuideLine.bringToFront();
+        mHorizontalGuideLine.setZ(Integer.MAX_VALUE);
+        mVerticalGuideLine.setZ(Integer.MAX_VALUE);
+        mTopGuideLine.setZ(Integer.MAX_VALUE);
+        mBottomGuideLine.setZ(Integer.MAX_VALUE);
+        mLeftGuideLine.setZ(Integer.MAX_VALUE);
+        mRightGuideLine.setZ(Integer.MAX_VALUE);
     }
 
 

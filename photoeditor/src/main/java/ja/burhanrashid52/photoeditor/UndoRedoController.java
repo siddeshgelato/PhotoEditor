@@ -105,6 +105,7 @@ public class UndoRedoController {
         virtualView.rotation = view.getRotation();
         virtualView.uuid = view.getTag().
                 toString();
+        virtualView.params = (FrameLayout.LayoutParams) view.getLayoutParams();
         view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         virtualView.height = view.getMeasuredHeight();
         virtualView.width = view.getMeasuredWidth();
@@ -163,6 +164,7 @@ public class UndoRedoController {
             view.setTag(virtualView.uuid);
             view.setX(virtualView.x);
             view.setY(virtualView.y);
+            //view.setLayoutParams(virtualView.params);
             ViewGroup.LayoutParams params;
             if (virtualView.isText) {
                 TextView textView = view.findViewById(R.id.tvPhotoEditorText);
@@ -177,6 +179,7 @@ public class UndoRedoController {
                 params.width = (int) virtualView.width;
                 imageView.setLayoutParams(params);
             }
+            view.setLayoutParams(params);
 
             setZ(virtualView, view, parentView);
             view.setRotation(virtualView.rotation);

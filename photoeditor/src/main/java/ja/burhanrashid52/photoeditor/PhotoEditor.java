@@ -1360,6 +1360,14 @@ public class PhotoEditor implements BrushViewChangeListener {
         clearHelperBox();
         viewState.setCurrentSelectedView(duplicateMedia);
         parentView.addView(duplicateMedia);
+        duplicateMedia.post(new Runnable() {
+            @Override
+            public void run() {
+                duplicateMedia.setX(selectedView.getX() + MARGIN);
+                duplicateMedia.setY(selectedView.getY() + MARGIN);
+            }
+        });
+
         viewState.addAddedView(duplicateMedia);
         undoRedoController.addAddedView(duplicateMedia);
         if (elementSelectionListener != null) {
