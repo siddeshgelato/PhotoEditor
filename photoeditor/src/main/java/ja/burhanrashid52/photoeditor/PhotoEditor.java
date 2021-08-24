@@ -182,8 +182,10 @@ public class PhotoEditor implements BrushViewChangeListener {
             @Override
             public void onClick() {
                 clearHelperBox();
-                frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
-                frmBorder.setTag(true);
+                if(frmBorder != null) {
+                    frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
+                    frmBorder.setTag(true);
+                }
                 viewState.setCurrentSelectedView(rootView);
                 if (elementSelectionListener != null) {
                     elementSelectionListener.onElementSelectedDeselected(rootView, true);
@@ -1416,6 +1418,10 @@ public class PhotoEditor implements BrushViewChangeListener {
         View selectedView = viewState.getCurrentSelectedView();
         selectedView.setX((float) ((parentView.getWidth() / 2.0) - (selectedView.getWidth() / 2.0)));
         selectedView.setY((float) ((parentView.getHeight() / 2.0) - (selectedView.getHeight() / 2.0)));
+    }
+
+    public ViewGroup getParent(){
+        return parentView;
     }
 
 }
