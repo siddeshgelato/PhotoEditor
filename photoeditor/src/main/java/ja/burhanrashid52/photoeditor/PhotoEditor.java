@@ -151,14 +151,17 @@ public class PhotoEditor implements BrushViewChangeListener {
         final CropImageView cropImageView = imageRootView.findViewById(R.id.imgCropImage);
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) imageView.getLayoutParams();
 
-        if (height > 0.0 && width > 0.0) {
+       /* if (height > 0.0 && width > 0.0) {
             params.height = (int) height;
             params.width = (int) width;
         } else {
             imageRootView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             params.height = imageView.getHeight();
             params.width = imageView.getWidth();
-        }
+        }*/
+
+        params.height = FrameLayout.LayoutParams.WRAP_CONTENT;
+        params.width = FrameLayout.LayoutParams.WRAP_CONTENT;
 
         imageRootView.setLayoutParams(params);
 
@@ -1383,7 +1386,10 @@ public class PhotoEditor implements BrushViewChangeListener {
         duplicateMedia.setY(selectedView.getY() + MARGIN);
         duplicateMedia.setZ(zIndexCount++);
         duplicateMedia.setTag("" + uuid);
+        duplicateMedia.setScaleX(selectedView.getScaleX());
+        duplicateMedia.setScaleY(selectedView.getScaleY());
         duplicateMedia.setRotation(selectedView.getRotation());
+
     }
 
     private void copyImageProperties(ImageView imageView, FrameLayout duplicateMedia) {
@@ -1416,8 +1422,8 @@ public class PhotoEditor implements BrushViewChangeListener {
 
     public void centerSelectedView() {
         View selectedView = viewState.getCurrentSelectedView();
-        selectedView.setX((float) ((parentView.getWidth() / 2.0) - (selectedView.getWidth() / 2.0)));
-        selectedView.setY((float) ((parentView.getHeight() / 2.0) - (selectedView.getHeight() / 2.0)));
+        ViewUtil.setTransformedX(selectedView, (float) ((parentView.getWidth() / 2.0) - (ViewUtil.getTransformedWidth(selectedView) / 2.0)));
+        ViewUtil.setTransformedY(selectedView, (float) ((parentView.getHeight() / 2.0) - (ViewUtil.getTransformedHeight(selectedView) / 2.0)));
     }
 
     public ViewGroup getParent(){
