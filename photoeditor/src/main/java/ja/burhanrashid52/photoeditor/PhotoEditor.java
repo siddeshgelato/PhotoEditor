@@ -494,8 +494,10 @@ public class PhotoEditor implements BrushViewChangeListener {
     private void addViewToParent(View rootView, ViewType viewType) {
       /*  LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);*/
-        rootView.setPivotX(px);
-        rootView.setPivotY(py);
+        if(px != -1 || py != -1) {
+            rootView.setPivotX(px);
+            rootView.setPivotY(py);
+        }
         rootView.setRotation(rotation);
         px = -1;
         py = -1;
