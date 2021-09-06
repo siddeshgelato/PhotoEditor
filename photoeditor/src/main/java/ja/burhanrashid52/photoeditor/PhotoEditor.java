@@ -58,6 +58,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     private static final String TAG = "PhotoEditor";
     private static final int ZINDEX_MEDIA = 1000;
     private static final int MARGIN = 50;
+    private static final int DEFAULT_EXTRA_WIDTH = 6;
     private final LayoutInflater mLayoutInflater;
     private Context context;
     private PhotoEditorView parentView;
@@ -185,7 +186,7 @@ public class PhotoEditor implements BrushViewChangeListener {
             @Override
             public void onClick() {
                 clearHelperBox();
-                if(frmBorder != null) {
+                if (frmBorder != null) {
                     frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
                     frmBorder.setTag(true);
                 }
@@ -293,6 +294,15 @@ public class PhotoEditor implements BrushViewChangeListener {
         textRootView.setOnTouchListener(multiTouchListener);
         clearHelperBox();
         addViewToParent(textRootView, ViewType.TEXT);
+
+        textRootView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        if (height == ViewGroup.LayoutParams.WRAP_CONTENT) {
+            params.height = textRootView.getMeasuredHeight() + DEFAULT_EXTRA_WIDTH;
+        }
+        if (width == ViewGroup.LayoutParams.WRAP_CONTENT) {
+            params.width = textRootView.getMeasuredWidth() + DEFAULT_EXTRA_WIDTH;
+        }
+        textRootView.setLayoutParams(params);
 
         // Change the in-focus view
         viewState.setCurrentSelectedView(textRootView);
@@ -494,7 +504,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     private void addViewToParent(View rootView, ViewType viewType) {
       /*  LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);*/
-        if(px != -1 || py != -1) {
+        if (px != -1 || py != -1) {
             rootView.setPivotX(px);
             rootView.setPivotY(py);
         }
@@ -1428,7 +1438,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         ViewUtil.setTransformedY(selectedView, (float) ((parentView.getHeight() / 2.0) - (ViewUtil.getTransformedHeight(selectedView) / 2.0)));
     }
 
-    public ViewGroup getParent(){
+    public ViewGroup getParent() {
         return parentView;
     }
 
