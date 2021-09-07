@@ -58,7 +58,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     private static final String TAG = "PhotoEditor";
     private static final int ZINDEX_MEDIA = 1000;
     private static final int MARGIN = 50;
-    private static final int DEFAULT_EXTRA_WIDTH = 6;
+    private static final int DEFAULT_EXTRA_WIDTH = 8;
     private final LayoutInflater mLayoutInflater;
     private Context context;
     private PhotoEditorView parentView;
@@ -279,7 +279,9 @@ public class PhotoEditor implements BrushViewChangeListener {
 
 
         textInputTv.setText(text);
+        textInputTv.setGravity(Gravity.CENTER);
         textInputEt.setText(text);
+        textInputEt.setGravity(Gravity.CENTER);
 
         if (styleBuilder != null) {
             styleBuilder.applyStyle(textInputTv);
@@ -378,7 +380,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         textInputEt.setTypeface(textInputTv.getTypeface());
         textInputEt.setTextSize(TypedValue.COMPLEX_UNIT_PX, textInputTv.getTextSize());
         textInputEt.setTextColor(textInputTv.getTextColors());
-        textInputEt.setTextAlignment(textInputTv.getTextAlignment());
+        textInputEt.setGravity(textInputTv.getGravity());
         textInputEt.setVisibility(View.VISIBLE);
         textInputTv.setVisibility(View.GONE);
         textInputEt.requestFocus();
@@ -1401,7 +1403,6 @@ public class PhotoEditor implements BrushViewChangeListener {
         duplicateMedia.setScaleX(selectedView.getScaleX());
         duplicateMedia.setScaleY(selectedView.getScaleY());
         duplicateMedia.setRotation(selectedView.getRotation());
-
     }
 
     private void copyImageProperties(ImageView imageView, FrameLayout duplicateMedia) {
@@ -1426,9 +1427,12 @@ public class PhotoEditor implements BrushViewChangeListener {
             );
             duplicateTextView.setTag(textView.getTag());
         }
-        duplicateTextView.setTextAlignment(textView.getTextAlignment());
+        duplicateTextView.setGravity(textView.getGravity());
         duplicateTextView.setTextColor(textView.getCurrentTextColor());
+        duplicateTextView.setWidth(textView.getWidth());
         EditText duplicateEditText = duplicateMedia.findViewById(R.id.etPhotoEditorText);
+        duplicateEditText.setGravity(textView.getGravity());
+        duplicateEditText.setTextColor(textView.getCurrentTextColor());
         duplicateEditText.addTextChangedListener(getTextWatcher(duplicateTextView));
     }
 
