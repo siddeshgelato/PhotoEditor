@@ -438,7 +438,7 @@ class ScaleGestureDetector {
      *
      * @return Distance between pointers in pixels.
      */
-    private float getCurrentSpan() {
+    public float getCurrentSpan() {
         if (mCurrLen == -1) {
             final float cvx = mCurrFingerDiffX;
             final float cvy = mCurrFingerDiffY;
@@ -477,7 +477,7 @@ class ScaleGestureDetector {
      *
      * @return Previous distance between pointers in pixels.
      */
-    private float getPreviousSpan() {
+    public float getPreviousSpan() {
         if (mPrevLen == -1) {
             final float pvx = mPrevFingerDiffX;
             final float pvy = mPrevFingerDiffY;

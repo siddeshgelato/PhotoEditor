@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 
 import androidx.annotation.ColorInt;
@@ -21,6 +20,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Pair;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -32,8 +32,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.canhub.cropper.CropImageView;
@@ -58,7 +56,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     private static final String TAG = "PhotoEditor";
     private static final int ZINDEX_MEDIA = 1000;
     private static final int MARGIN = 50;
-    private static final int DEFAULT_EXTRA_WIDTH = 8;
+    private static final int DEFAULT_EXTRA_WIDTH_HEIGHT = 8;
     private final LayoutInflater mLayoutInflater;
     private Context context;
     private PhotoEditorView parentView;
@@ -271,7 +269,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) textInputTv.getLayoutParams();
 
         if (height > 0.0 && width > 0.0) {
-            params.height = (int) height;
+            params.height = (int) height + DEFAULT_EXTRA_WIDTH_HEIGHT;;
             params.width = (int) width;
         }
 
@@ -299,10 +297,10 @@ public class PhotoEditor implements BrushViewChangeListener {
 
         textRootView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         if (height == ViewGroup.LayoutParams.WRAP_CONTENT) {
-            params.height = textRootView.getMeasuredHeight() + DEFAULT_EXTRA_WIDTH;
+            params.height = textRootView.getMeasuredHeight() + DEFAULT_EXTRA_WIDTH_HEIGHT;
         }
         if (width == ViewGroup.LayoutParams.WRAP_CONTENT) {
-            params.width = textRootView.getMeasuredWidth() + DEFAULT_EXTRA_WIDTH;
+            params.width = textRootView.getMeasuredWidth() + DEFAULT_EXTRA_WIDTH_HEIGHT;
         }
         textRootView.setLayoutParams(params);
 
@@ -515,6 +513,53 @@ public class PhotoEditor implements BrushViewChangeListener {
         py = -1;
         rotation = -1;
 
+        /*if (posX != -1 && posY != -1) {
+            //params.setMargins(posX, posY, posX + rootView.getMeasuredWidth(), posY + rootView.getMeasuredHeight());
+
+            FrameLayout frmBorder = rootView.findViewById(R.id.frmBorder);
+            rootView.post(new Runnable() {
+                @Override
+                public void run() {
+                    int leftMargin = ((FrameLayout.LayoutParams) frmBorder.getLayoutParams()).leftMargin;
+                    int topMargin = ((FrameLayout.LayoutParams) frmBorder.getLayoutParams()).topMargin;
+
+                    rootView.setX(posX - leftMargin);
+                    rootView.setY(posY - topMargin);
+
+                    posX = -1;
+                    posY = -1;
+                }
+            });
+
+        } else {
+
+            //  rootView.measure(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            rootView.post(new Runnable() {
+                @Override
+                public void run() {
+                    rootView.setX((float) ((parentView.getWidth() / 2.0) - (rootView.getWidth() / 2.0)));
+                    rootView.setY((float) ((parentView.getHeight() / 2.0) - (rootView.getHeight() / 2.0)));
+                }
+            });
+
+            // params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+
+           *//* int childWidth = rootView.getMeasuredWidth();
+            int left = (parentView.getWidth() - childWidth) / 2;
+            rootView.setLeft(left);
+            rootView.setRight(left + childWidth);
+            int childHeight = rootView.getMeasuredHeight();
+            int top = (parentView.getHeight() - childHeight) / 2;
+            rootView.setTop(top);
+            rootView.setBottom(top + childHeight);*//*
+
+
+        }*/
+
+        parentView.addView(rootView);
+        rootView.setZ(zIndexCount);
+        zIndexCount++;
         if (posX != -1 && posY != -1) {
             //params.setMargins(posX, posY, posX + rootView.getMeasuredWidth(), posY + rootView.getMeasuredHeight());
 
@@ -522,12 +567,23 @@ public class PhotoEditor implements BrushViewChangeListener {
 
             int leftMargin = ((FrameLayout.LayoutParams) frmBorder.getLayoutParams()).leftMargin;
             int topMargin = ((FrameLayout.LayoutParams) frmBorder.getLayoutParams()).topMargin;
+            Pair<Float, Float> coordinates = new Pair<>(posX - leftMargin, posY - topMargin);
+            frmBorder.setTag(coordinates);
 
-            rootView.setX(posX - leftMargin);
-            rootView.setY(posY - topMargin);
+            rootView.post(new Runnable() {
+                @Override
+                public void run() {
+                    FrameLayout frmBorder = rootView.findViewById(R.id.frmBorder);
+                    Pair<Float, Float> coordinates = (Pair<Float, Float>) frmBorder.getTag();
+                    rootView.setX(coordinates.first - leftMargin);
+                    rootView.setY(coordinates.second - topMargin);
+                }
+            });
+
 
             posX = -1;
             posY = -1;
+
 
         } else {
 
@@ -554,10 +610,6 @@ public class PhotoEditor implements BrushViewChangeListener {
 
 
         }
-
-        parentView.addView(rootView);
-        rootView.setZ(zIndexCount);
-        zIndexCount++;
         viewState.addAddedView(rootView);
         undoRedoController.addAddedView(rootView);
         if (mOnPhotoEditorListener != null)
@@ -1327,6 +1379,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         public PhotoEditor build() {
             return new PhotoEditor(this);
         }
+
     }
 
     /**

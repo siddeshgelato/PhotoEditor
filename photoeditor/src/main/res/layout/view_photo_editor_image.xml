@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:clipChildren="false"
-    android:clipToPadding="false"
     android:layout_height="wrap_content">
-
 
     <FrameLayout
         android:id="@+id/frmBorder"
         android:background="@drawable/rounded_border_tv"
         android:layout_width="match_parent"
-        android:clipChildren="false"
-        android:clipToPadding="false"
         android:layout_height="match_parent">
 
         <ImageView
@@ -21,7 +16,6 @@
             android:layout_gravity="center"
             android:scaleType="fitXY"
             android:padding="1dp"
-            android:background="@drawable/rounded_border_tv"
             android:contentDescription="@string/app_name" />
 
         <com.canhub.cropper.CropImageView

@@ -2,13 +2,18 @@ package ja.burhanrashid52.photoeditor;
 
 import android.graphics.Rect;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 /**
  * Created on 18/01/2017.
@@ -26,6 +31,10 @@ class MultiTouchListener implements OnTouchListener {
     private boolean isScaleEnabled = true;
     private float minimumScale = 0.5f;
     private float maximumScale = 10.0f;
+
+    private float minimumSize = 50f;
+    private float maximumSize = 206f;
+
     private int mActivePointerId = INVALID_POINTER_ID;
     private float mPrevX, mPrevY, mPrevRawX, mPrevRawY;
     private ScaleGestureDetector mScaleGestureDetector;
@@ -84,13 +93,27 @@ class MultiTouchListener implements OnTouchListener {
     }
 
     private static void move(View view, TransformInfo info) {
+
+
         computeRenderOffset(view, info.pivotX, info.pivotY);
         adjustTranslation(view, info.deltaX, info.deltaY);
 
-        float scale = view.getScaleX() * info.deltaScale;
-        scale = Math.max(info.minimumScale, Math.min(info.maximumScale, scale));
-        view.setScaleX(scale);
-        view.setScaleY(scale);
+        TextView textView = view.findViewById(R.id.tvPhotoEditorText);
+        if (textView == null) {
+            float scale = view.getScaleX() * info.deltaScale;
+            scale = Math.max(info.minimumScale, Math.min(info.maximumScale, scale));
+            view.setScaleX(scale);
+            view.setScaleY(scale);
+        } else {
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
+            if(params.width != ViewGroup.LayoutParams.WRAP_CONTENT) {
+                params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            }
+            float scale = textView.getTextSize() * info.deltaScale;
+            scale = Math.max(info.minimumSize, Math.min(info.maximumSize, scale));
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, scale);
+        }
 
         float rotation = adjustAngle(view.getRotation() + info.deltaAngle);
         view.setRotation(rotation);
@@ -240,6 +263,7 @@ class MultiTouchListener implements OnTouchListener {
         private float mPivotX;
         private float mPivotY;
         private Vector2D mPrevSpanVector = new Vector2D();
+        private static final int SPAN_SLOP = 7;
 
         @Override
         public boolean onScaleBegin(View view, ScaleGestureDetector detector) {
@@ -249,18 +273,27 @@ class MultiTouchListener implements OnTouchListener {
             return mIsPinchScalable;
         }
 
+        private boolean gestureTolerance(@NonNull ScaleGestureDetector detector) {
+            final float spanDelta = Math.abs(detector.getCurrentSpan() - detector.getPreviousSpan());
+            return spanDelta > SPAN_SLOP;
+        }
+
         @Override
         public boolean onScale(View view, ScaleGestureDetector detector) {
-            TransformInfo info = new TransformInfo();
-            info.deltaScale = isScaleEnabled ? detector.getScaleFactor() : 1.0f;
-            info.deltaAngle = isRotateEnabled ? Vector2D.getAngle(mPrevSpanVector, detector.getCurrentSpanVector()) : 0.0f;
-            info.deltaX = isTranslateEnabled ? detector.getFocusX() - mPivotX : 0.0f;
-            info.deltaY = isTranslateEnabled ? detector.getFocusY() - mPivotY : 0.0f;
-            info.pivotX = mPivotX;
-            info.pivotY = mPivotY;
-            info.minimumScale = minimumScale;
-            info.maximumScale = maximumScale;
-            move(view, info);
+            if(gestureTolerance(detector)) {
+                TransformInfo info = new TransformInfo();
+                info.deltaScale = isScaleEnabled ? detector.getScaleFactor() : 1.0f;
+                info.deltaAngle = isRotateEnabled ? Vector2D.getAngle(mPrevSpanVector, detector.getCurrentSpanVector()) : 0.0f;
+                info.deltaX = isTranslateEnabled ? detector.getFocusX() - mPivotX : 0.0f;
+                info.deltaY = isTranslateEnabled ? detector.getFocusY() - mPivotY : 0.0f;
+                info.pivotX = mPivotX;
+                info.pivotY = mPivotY;
+                info.minimumScale = minimumScale;
+                info.maximumScale = maximumScale;
+                info.minimumSize = minimumSize;
+                info.maximumSize = maximumSize;
+                move(view, info);
+            }
             return !mIsPinchScalable;
         }
     }
@@ -274,6 +307,8 @@ class MultiTouchListener implements OnTouchListener {
         float pivotY;
         float minimumScale;
         float maximumScale;
+        float minimumSize;
+        float maximumSize;
     }
 
     interface OnMultiTouchListener {
