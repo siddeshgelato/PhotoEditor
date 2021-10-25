@@ -21,7 +21,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 /**
- * Detects transformation gestures involving more than one pointer ("multitouch")
+ * Detect transformation gestures involving more than one pointer ("multitouch")
  * using the supplied {@link MotionEvent}s. The {@link OnScaleGestureListener}
  * callback will notify users when a particular gesture event has occurred.
  * This class should only be used with {@link MotionEvent}s reported via touch.
