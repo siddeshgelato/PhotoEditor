@@ -5,17 +5,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
-
-import androidx.annotation.ColorInt;
-import androidx.annotation.IntRange;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresPermission;
-import androidx.annotation.UiThread;
-
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -34,7 +29,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.canhub.cropper.CropImageView;
+import androidx.annotation.ColorInt;
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresPermission;
+import androidx.annotation.UiThread;
+
+import com.oginotihiro.cropview.CropView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -137,7 +139,7 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param desiredImage bitmap image you want to add
      */
-    public void addImage(Bitmap desiredImage, float x, float y, String uuid, float height, float width, float rotation, float px, float py) {
+    public void addImage(Bitmap desiredImage, float x, float y, String uuid, float height, float width, float rotation, float px, float py, final RectF cropRect) {
         posX = x;
         posY = y;
         this.px = px;
@@ -147,25 +149,46 @@ public class PhotoEditor implements BrushViewChangeListener {
         imageRootView.setTag(uuid);
 
         final ImageView imageView = imageRootView.findViewById(R.id.imgPhotoEditorImage);
-        final CropImageView cropImageView = imageRootView.findViewById(R.id.imgCropImage);
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) imageView.getLayoutParams();
 
-       /* if (height > 0.0 && width > 0.0) {
+        if (height > 0.0 && width > 0.0) {
             params.height = (int) height;
             params.width = (int) width;
         } else {
             imageRootView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             params.height = imageView.getHeight();
             params.width = imageView.getWidth();
-        }*/
+        }
 
-        params.height = FrameLayout.LayoutParams.WRAP_CONTENT;
-        params.width = FrameLayout.LayoutParams.WRAP_CONTENT;
+      /*  params.height = FrameLayout.LayoutParams.WRAP_CONTENT;
+        params.width = FrameLayout.LayoutParams.WRAP_CONTENT;*/
+
 
         imageRootView.setLayoutParams(params);
 
+        final CropView cropZoomView = imageRootView.findViewById(R.id.cropZoomView);
+        cropZoomView.setVisibility(View.VISIBLE);
+        imageView.setVisibility(View.INVISIBLE);
+        cropZoomView.of(desiredImage).asSquare().initialize(context);
+        ViewGroup.LayoutParams cropParams = cropZoomView.getLayoutParams();
+        params.height = desiredImage.getHeight();
+        params.width = desiredImage.getWidth();
+        cropZoomView.setLayoutParams(cropParams);
         imageView.setImageBitmap(desiredImage);
-        cropImageView.setImageBitmap(desiredImage);
+
+        new Handler(Looper.myLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (cropRect != null) {
+                    cropZoomView.setImageRect(cropRect);
+                    Bitmap croppedBitmap = cropZoomView.getOutput();
+                    imageView.setImageBitmap(croppedBitmap);
+                }
+                cropZoomView.setVisibility(View.INVISIBLE);
+                imageView.setVisibility(View.VISIBLE);
+
+            }
+        }, 25);
 
         imageRootView.setOnTouchListener(getMultiTouchListener(imageRootView));
 
@@ -177,7 +200,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         }
     }
 
-    private MultiTouchListener getMultiTouchListener(View rootView) {
+    private MultiTouchListener getMultiTouchListener(final View rootView) {
         final FrameLayout frmBorder = rootView.findViewById(R.id.frmBorder);
         MultiTouchListener multiTouchListener = getMultiTouchListener(true);
         multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
@@ -203,7 +226,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     }
 
     public void addImage(Bitmap desiredImage) {
-        addImage(desiredImage, -1, -1, "" + System.currentTimeMillis(), desiredImage.getHeight(), desiredImage.getWidth(), 0, 0.0f, 0.0f);
+        addImage(desiredImage, -1, -1, "" + System.currentTimeMillis(), desiredImage.getHeight(), desiredImage.getWidth(), 0, 0.0f, 0.0f, null);
     }
 
 
@@ -269,7 +292,8 @@ public class PhotoEditor implements BrushViewChangeListener {
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) textInputTv.getLayoutParams();
 
         if (height > 0.0 && width > 0.0) {
-            params.height = (int) height + DEFAULT_EXTRA_WIDTH_HEIGHT;;
+            params.height = (int) height + DEFAULT_EXTRA_WIDTH_HEIGHT;
+            ;
             params.width = (int) width;
         }
 
@@ -311,7 +335,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         }
     }
 
-    private TextWatcher getTextWatcher(TextView textInputTv) {
+    private TextWatcher getTextWatcher(final TextView textInputTv) {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -337,38 +361,41 @@ public class PhotoEditor implements BrushViewChangeListener {
     public void initCropping() {
         View selectedView = viewState.getCurrentSelectedView();
         final ImageView imageView = selectedView.findViewById(R.id.imgPhotoEditorImage);
-        final CropImageView cropImageView = selectedView.findViewById(R.id.imgCropImage);
-        BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
-        Bitmap resized = Bitmap.createScaledBitmap(
-                drawable.getBitmap(),
-                imageView.getWidth(),
-                imageView.getHeight(),
-                true
-        );
-        imageView.setImageBitmap(resized);
-        cropImageView.setImageBitmap(resized);
-        cropImageView.setVisibility(View.VISIBLE);
+        CropView cropZoomView = selectedView.findViewById(R.id.cropZoomView);
+        cropZoomView.setVisibility(View.VISIBLE);
+        imageView.setVisibility(View.INVISIBLE);
+        BitmapDrawable oldDrawable = (BitmapDrawable) cropZoomView.getDrawable();
+        if (oldDrawable == null) {
+            BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
+            cropZoomView.of(drawable.getBitmap()).asSquare().initialize(selectedView.getContext());
+            ViewGroup.LayoutParams params = cropZoomView.getLayoutParams();
+            params.height = imageView.getHeight();
+            params.width = imageView.getWidth();
+            cropZoomView.setLayoutParams(params);
+        }
     }
 
     public void crop() {
         View selectedView = viewState.getCurrentSelectedView();
         final ImageView imageView = selectedView.findViewById(R.id.imgPhotoEditorImage);
-        final CropImageView cropImageView = selectedView.findViewById(R.id.imgCropImage);
-        Bitmap cropped = cropImageView.getCroppedImage();
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) imageView.getLayoutParams();
-        params.height = FrameLayout.LayoutParams.WRAP_CONTENT;
-        params.width = FrameLayout.LayoutParams.WRAP_CONTENT;
+        final CropView cropView = selectedView.findViewById(R.id.cropZoomView);
+        Bitmap croppedBitmap = cropView.getOutput();
+        imageView.setImageBitmap(croppedBitmap);
+        ViewGroup.LayoutParams params = imageView.getLayoutParams();
+        params.height = cropView.getHeight();
+        params.width = cropView.getWidth();
         imageView.setLayoutParams(params);
-        imageView.setImageBitmap(cropped);
-        cropImageView.setLayoutParams(params);
-        cropImageView.setImageBitmap(cropped);
-        cropImageView.setVisibility(View.GONE);
+        cropView.setVisibility(View.GONE);
+        imageView.setVisibility(View.VISIBLE);
     }
 
     public void cancelCrop() {
         View selectedView = viewState.getCurrentSelectedView();
-        final CropImageView cropImageView = selectedView.findViewById(R.id.imgCropImage);
-        cropImageView.setVisibility(View.GONE);
+        CropView cropZoomView = selectedView.findViewById(R.id.cropZoomView);
+        final ImageView imageView = selectedView.findViewById(R.id.imgPhotoEditorImage);
+        cropZoomView.setVisibility(View.INVISIBLE);
+        imageView.setVisibility(View.VISIBLE);
+
     }
 
     public void editText(View view) {
@@ -501,7 +528,7 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param rootView rootview of image,text and emoji
      */
-    private void addViewToParent(View rootView, ViewType viewType) {
+    private void addViewToParent(final View rootView, ViewType viewType) {
       /*  LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);*/
         if (px != -1 || py != -1) {
@@ -565,8 +592,8 @@ public class PhotoEditor implements BrushViewChangeListener {
 
             FrameLayout frmBorder = rootView.findViewById(R.id.frmBorder);
 
-            int leftMargin = ((FrameLayout.LayoutParams) frmBorder.getLayoutParams()).leftMargin;
-            int topMargin = ((FrameLayout.LayoutParams) frmBorder.getLayoutParams()).topMargin;
+            final int leftMargin = ((FrameLayout.LayoutParams) frmBorder.getLayoutParams()).leftMargin;
+            final int topMargin = ((FrameLayout.LayoutParams) frmBorder.getLayoutParams()).topMargin;
             Pair<Float, Float> coordinates = new Pair<>(posX - leftMargin, posY - topMargin);
             frmBorder.setTag(coordinates);
 
@@ -1459,11 +1486,11 @@ public class PhotoEditor implements BrushViewChangeListener {
     }
 
     private void copyImageProperties(ImageView imageView, FrameLayout duplicateMedia) {
+        //TODO need to rewrite the logic here for new crop
         ImageView duplicateImageView = duplicateMedia.findViewById(R.id.imgPhotoEditorImage);
         BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
         duplicateImageView.setImageBitmap(drawable.getBitmap());
-        final CropImageView cropImageView = duplicateMedia.findViewById(R.id.imgCropImage);
-        cropImageView.setImageBitmap(drawable.getBitmap());
+
     }
 
     private void copyTextProperties(FrameLayout selectedView, FrameLayout duplicateMedia) {

@@ -48,11 +48,14 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    api 'com.github.CanHub:Android-Image-Cropper:3.2.0'
-
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.23.0'
     testImplementation 'org.robolectric:robolectric:4.5.1'
+
+
+    implementation 'androidx.core:core-ktx:1.6.0'
+    api project(path: ':cropview')
+
 }
 
 
@@ -60,5 +63,8 @@ ext {
     PUBLISH_GROUP_ID = 'com.burhanrashid52'
     PUBLISH_VERSION = '1.1.2'
     PUBLISH_ARTIFACT_ID = 'photoeditor'
+}
+repositories {
+    mavenCentral()
 }
 
