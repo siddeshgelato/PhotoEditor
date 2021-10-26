@@ -139,7 +139,7 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param desiredImage bitmap image you want to add
      */
-    public void addImage(Bitmap desiredImage, float x, float y, String uuid, float height, float width, float rotation, float px, float py, final RectF cropRect) {
+    public void addImage(Bitmap desiredImage, float x, float y, String uuid, float height, float width, float rotation, float px, float py, RectF cropRect) {
         posX = x;
         posY = y;
         this.px = px;
@@ -166,7 +166,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
         imageRootView.setLayoutParams(params);
 
-        final CropView cropZoomView = imageRootView.findViewById(R.id.cropZoomView);
+        CropView cropZoomView = imageRootView.findViewById(R.id.cropZoomView);
         cropZoomView.setVisibility(View.VISIBLE);
         imageView.setVisibility(View.INVISIBLE);
         cropZoomView.of(desiredImage).asSquare().initialize(context);
@@ -200,7 +200,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         }
     }
 
-    private MultiTouchListener getMultiTouchListener(final View rootView) {
+    private MultiTouchListener getMultiTouchListener(View rootView) {
         final FrameLayout frmBorder = rootView.findViewById(R.id.frmBorder);
         MultiTouchListener multiTouchListener = getMultiTouchListener(true);
         multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
@@ -335,7 +335,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         }
     }
 
-    private TextWatcher getTextWatcher(final TextView textInputTv) {
+    private TextWatcher getTextWatcher(TextView textInputTv) {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -528,7 +528,7 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param rootView rootview of image,text and emoji
      */
-    private void addViewToParent(final View rootView, ViewType viewType) {
+    private void addViewToParent(View rootView, ViewType viewType) {
       /*  LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);*/
         if (px != -1 || py != -1) {
@@ -592,8 +592,8 @@ public class PhotoEditor implements BrushViewChangeListener {
 
             FrameLayout frmBorder = rootView.findViewById(R.id.frmBorder);
 
-            final int leftMargin = ((FrameLayout.LayoutParams) frmBorder.getLayoutParams()).leftMargin;
-            final int topMargin = ((FrameLayout.LayoutParams) frmBorder.getLayoutParams()).topMargin;
+            int leftMargin = ((FrameLayout.LayoutParams) frmBorder.getLayoutParams()).leftMargin;
+            int topMargin = ((FrameLayout.LayoutParams) frmBorder.getLayoutParams()).topMargin;
             Pair<Float, Float> coordinates = new Pair<>(posX - leftMargin, posY - topMargin);
             frmBorder.setTag(coordinates);
 
