@@ -168,7 +168,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
         CropView cropZoomView = imageRootView.findViewById(R.id.cropZoomView);
         cropZoomView.setVisibility(View.VISIBLE);
-        imageView.setVisibility(View.INVISIBLE);
+        imageView.setVisibility(View.GONE);
         cropZoomView.of(desiredImage).asSquare().initialize(context);
         ViewGroup.LayoutParams cropParams = cropZoomView.getLayoutParams();
         params.height = desiredImage.getHeight();
@@ -184,7 +184,7 @@ public class PhotoEditor implements BrushViewChangeListener {
                     Bitmap croppedBitmap = cropZoomView.getOutput();
                     imageView.setImageBitmap(croppedBitmap);
                 }
-                cropZoomView.setVisibility(View.INVISIBLE);
+                cropZoomView.setVisibility(View.GONE);
                 imageView.setVisibility(View.VISIBLE);
 
             }
@@ -363,7 +363,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         final ImageView imageView = selectedView.findViewById(R.id.imgPhotoEditorImage);
         CropView cropZoomView = selectedView.findViewById(R.id.cropZoomView);
         cropZoomView.setVisibility(View.VISIBLE);
-        imageView.setVisibility(View.INVISIBLE);
+        imageView.setVisibility(View.GONE);
         BitmapDrawable oldDrawable = (BitmapDrawable) cropZoomView.getDrawable();
         if (oldDrawable == null) {
             BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
@@ -373,7 +373,7 @@ public class PhotoEditor implements BrushViewChangeListener {
             params.width = imageView.getWidth();
             cropZoomView.setLayoutParams(params);
         } else {
-            cropZoomView.setImageRect(null);
+            cropZoomView.post(() -> cropZoomView.setImageRect(null));
         }
     }
 
@@ -396,7 +396,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         View selectedView = viewState.getCurrentSelectedView();
         CropView cropZoomView = selectedView.findViewById(R.id.cropZoomView);
         final ImageView imageView = selectedView.findViewById(R.id.imgPhotoEditorImage);
-        cropZoomView.setVisibility(View.INVISIBLE);
+        cropZoomView.setVisibility(View.GONE);
         imageView.setVisibility(View.VISIBLE);
 
     }
