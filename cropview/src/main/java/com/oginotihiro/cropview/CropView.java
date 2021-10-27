@@ -70,6 +70,7 @@ public class CropView extends ImageView implements ViewTreeObserver.OnGlobalLayo
     private final Matrix mDrawMatrix = new Matrix();
     private RectF mDisplayRect = new RectF();
     private final RectF mDrawRect = new RectF();
+    private RectF mExternalSuppliedRect = null;
 
     private final float[] mMatrixValues = new float[9];
 
@@ -219,13 +220,21 @@ public class CropView extends ImageView implements ViewTreeObserver.OnGlobalLayo
     }
 
     public void setImageRect(RectF cropRect) {
-        float scaleX = cropRect.width() / mBitmapDisplayed.getWidth();
-        float scaleY = cropRect.height() / mBitmapDisplayed.getHeight();
+        if(cropRect != null) {
+            mExternalSuppliedRect = new RectF(cropRect);
+            createSuppMatrix();
+        } else {
+            if(mExternalSuppliedRect != null) {
+                createSuppMatrix();
+            }
+        }
+    }
+
+    private void createSuppMatrix(){
+        float scaleX = mExternalSuppliedRect.width() / mBitmapDisplayed.getWidth();
+        float scaleY = mExternalSuppliedRect.height() / mBitmapDisplayed.getHeight();
         mSuppMatrix.setScale(scaleX, scaleY);
-        mSuppMatrix.postTranslate(cropRect.left, cropRect.top);
-      /*  mSuppMatrix.setScale(3, 3);
-        mSuppMatrix.postTranslate(-250,-250);*/
-        // updateBaseMatrix();
+        mSuppMatrix.postTranslate(mExternalSuppliedRect.left, mExternalSuppliedRect.top);
         checkAndDisplayMatrix();
     }
 

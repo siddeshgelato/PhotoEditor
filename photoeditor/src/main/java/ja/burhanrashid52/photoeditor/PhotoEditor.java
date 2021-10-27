@@ -372,6 +372,8 @@ public class PhotoEditor implements BrushViewChangeListener {
             params.height = imageView.getHeight();
             params.width = imageView.getWidth();
             cropZoomView.setLayoutParams(params);
+        } else {
+            cropZoomView.setImageRect(null);
         }
     }
 
@@ -385,6 +387,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         params.height = cropView.getHeight();
         params.width = cropView.getWidth();
         imageView.setLayoutParams(params);
+        cropView.setImageRect(cropView.getImageRect());
         cropView.setVisibility(View.GONE);
         imageView.setVisibility(View.VISIBLE);
     }
