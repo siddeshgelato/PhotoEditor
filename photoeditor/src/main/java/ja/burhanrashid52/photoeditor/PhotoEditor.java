@@ -1449,7 +1449,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         if (isText) {
             copyTextProperties(selectedView, duplicateMedia);
         } else {
-            copyImageProperties(imageView, duplicateMedia);
+            copyImageProperties(selectedView, duplicateMedia);
         }
 
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) selectedView.getLayoutParams();
@@ -1484,11 +1484,19 @@ public class PhotoEditor implements BrushViewChangeListener {
         duplicateMedia.setRotation(selectedView.getRotation());
     }
 
-    private void copyImageProperties(ImageView imageView, FrameLayout duplicateMedia) {
-        //TODO need to rewrite the logic here for new crop
+    private void copyImageProperties(FrameLayout selectedView, FrameLayout duplicateMedia) {
+        ImageView selectedImageView = selectedView.findViewById(R.id.imgPhotoEditorImage);
         ImageView duplicateImageView = duplicateMedia.findViewById(R.id.imgPhotoEditorImage);
-        BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
+        BitmapDrawable drawable = (BitmapDrawable) selectedImageView.getDrawable();
         duplicateImageView.setImageBitmap(drawable.getBitmap());
+
+        CropView selectedCropView = selectedView.findViewById(R.id.cropZoomView);
+        CropView duplicateCropView = duplicateMedia.findViewById(R.id.cropZoomView);
+        BitmapDrawable drawableCrop = (BitmapDrawable) selectedCropView.getDrawable();
+        duplicateCropView.of(drawableCrop.getBitmap()).asSquare().initialize(context);
+        duplicateCropView.post(() -> {
+            duplicateCropView.setImageRect(selectedCropView.getImageRect());
+        });
 
     }
 
