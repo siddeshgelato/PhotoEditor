@@ -1488,16 +1488,15 @@ public class PhotoEditor implements BrushViewChangeListener {
         ImageView selectedImageView = selectedView.findViewById(R.id.imgPhotoEditorImage);
         ImageView duplicateImageView = duplicateMedia.findViewById(R.id.imgPhotoEditorImage);
         BitmapDrawable drawable = (BitmapDrawable) selectedImageView.getDrawable();
+        duplicateImageView.setLayoutParams(selectedImageView.getLayoutParams());
         duplicateImageView.setImageBitmap(drawable.getBitmap());
+        duplicateImageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
         CropView selectedCropView = selectedView.findViewById(R.id.cropZoomView);
         CropView duplicateCropView = duplicateMedia.findViewById(R.id.cropZoomView);
         BitmapDrawable drawableCrop = (BitmapDrawable) selectedCropView.getDrawable();
         duplicateCropView.of(drawableCrop.getBitmap()).asSquare().initialize(context);
-        duplicateCropView.post(() -> {
-            duplicateCropView.setImageRect(selectedCropView.getImageRect());
-        });
-
+        duplicateCropView.setImageRect(selectedCropView.getImageRect());
     }
 
     private void copyTextProperties(FrameLayout selectedView, FrameLayout duplicateMedia) {

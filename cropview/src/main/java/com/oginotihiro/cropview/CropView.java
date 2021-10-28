@@ -216,21 +216,26 @@ public class CropView extends ImageView implements ViewTreeObserver.OnGlobalLayo
     }
 
     public RectF getImageRect() {
-        return mDisplayRect;
+        if (mDisplayRect.left == mDisplayRect.right && mDisplayRect.top == mDisplayRect.bottom) {
+            return mExternalSuppliedRect; //First time case need to handle like this way
+        } else {
+            return mDisplayRect;
+        }
     }
 
     public void setImageRect(RectF cropRect) {
-        if(cropRect != null) {
+        if (cropRect != null) {
+            mDisplayRect = cropRect;
             mExternalSuppliedRect = new RectF(cropRect);
             createSuppMatrix();
         } else {
-            if(mExternalSuppliedRect != null) {
+            if (mExternalSuppliedRect != null) {
                 createSuppMatrix();
             }
         }
     }
 
-    private void createSuppMatrix(){
+    private void createSuppMatrix() {
         float scaleX = mExternalSuppliedRect.width() / mBitmapDisplayed.getWidth();
         float scaleY = mExternalSuppliedRect.height() / mBitmapDisplayed.getHeight();
         mSuppMatrix.setScale(scaleX, scaleY);
@@ -280,7 +285,7 @@ public class CropView extends ImageView implements ViewTreeObserver.OnGlobalLayo
 
         if (top != mIvTop || bottom != mIvBottom || left != mIvLeft || right != mIvRight) {
             updateBaseMatrix();
-
+            setImageRect(null);
             mIvTop = top;
             mIvBottom = bottom;
             mIvLeft = left;
