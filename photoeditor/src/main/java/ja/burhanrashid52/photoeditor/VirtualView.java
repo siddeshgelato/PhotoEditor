@@ -1,6 +1,7 @@
 package ja.burhanrashid52.photoeditor;
 
 import android.graphics.Bitmap;
+import android.graphics.RectF;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -11,6 +12,9 @@ public class VirtualView {
     public String uuid;
     public float x;
     public float y;
+    public RectF pictureCoordinateRect;
+    public float url;
+    public float imageId;
     public float scaleX;
     public float scaleY;
     public float z;
@@ -25,5 +29,6 @@ public class VirtualView {
     public int textAlign;
 
     public Bitmap bitmap;
+    public Bitmap croppedBitmap;
     public FrameLayout.LayoutParams params;
 }

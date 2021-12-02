@@ -1,10 +1,13 @@
 package ja.burhanrashid52.photoeditor;
 
 import android.content.Context;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.util.Pair;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +16,10 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.core.view.ViewCompat;
+
+import com.oginotihiro.cropview.CropView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,11 +100,15 @@ public class UndoRedoController {
     }
 
     private VirtualView getVirtualViewFromView(View view, boolean isDeleted, boolean isRemoved) {
+
         ImageView imageView = view.findViewById(R.id.imgPhotoEditorImage);
         VirtualView virtualView = new VirtualView();
+
         virtualView.x = view.getX();
         virtualView.y = view.getY();
         virtualView.z = view.getZ();
+
+        Log.i("UNDOREDO", "VirtualViewFromView view.getX(): " + view.getX() + " view.getY(): " + view.getY());
         virtualView.scaleX = view.getScaleX();
         virtualView.scaleY = view.getScaleY();
         virtualView.rotation = view.getRotation();
@@ -110,9 +121,13 @@ public class UndoRedoController {
         virtualView.isDeleted = isDeleted;
         virtualView.isRemoved = isRemoved;
         if (imageView != null) {
+            CropView cropView = view.findViewById(R.id.cropZoomView);
+            virtualView.pictureCoordinateRect = new RectF(cropView.getImageRect());
             virtualView.isText = false;
             BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
-            virtualView.bitmap = drawable.getBitmap();
+            BitmapDrawable cropDrawable = (BitmapDrawable) cropView.getDrawable();
+            virtualView.bitmap = cropDrawable.getBitmap();
+            virtualView.croppedBitmap = drawable.getBitmap();
         } else {
             virtualView.isText = true;
             TextView textView = view.findViewById(R.id.tvPhotoEditorText);
@@ -150,6 +165,9 @@ public class UndoRedoController {
                 final TextView textView = view.findViewById(R.id.tvPhotoEditorText);
                 EditText editText = view.findViewById(R.id.etPhotoEditorText);
                 editText.addTextChangedListener(getTextWatcher(textView));
+            } else {
+                CropView cropView = view.findViewById(R.id.cropZoomView);
+                cropView.of(virtualView.bitmap).asSquare().initialize(cropView.getContext());
             }
 
             parentView.addView(view);
@@ -159,9 +177,23 @@ public class UndoRedoController {
             parentView.removeView(view);
         }
         if (view != null) {
+            View finalView1 = view;
+            FrameLayout frmBorder = view.findViewById(R.id.frmBorder);
+            Log.i("UNDOREDO", "ViewVirtualFromView virtualView.X: " + virtualView.x + " virtualView.Y: " + virtualView.y);
+            Pair<Float, Float> coordinates = new Pair<>(virtualView.x, virtualView.y);
+            frmBorder.setTag(coordinates);
+            view.post(new Runnable() {
+                @Override
+                public void run() {
+                    FrameLayout frmBorder = finalView1.findViewById(R.id.frmBorder);
+                    Pair<Float, Float> coordinates = (Pair<Float, Float>) frmBorder.getTag();
+                    finalView1.setX(coordinates.first);
+                    finalView1.setY(coordinates.second);
+                }
+            });
+
             view.setTag(virtualView.uuid);
-            view.setX(virtualView.x);
-            view.setY(virtualView.y);
+
             //view.setLayoutParams(virtualView.params);
             ViewGroup.LayoutParams params;
             if (virtualView.isText) {
@@ -200,10 +232,20 @@ public class UndoRedoController {
                 }
             } else {
                 ImageView imageView = view.findViewById(R.id.imgPhotoEditorImage);
-                imageView.setImageBitmap(virtualView.bitmap);
+                CropView cropView = view.findViewById(R.id.cropZoomView);
+
+                //imageView.setImageBitmap(virtualView.bitmap);
                 //TODO need to change logic as per new crop px, py
                /* final CropImageView cropImageView = view.findViewById(R.id.imgCropImage);
                 cropImageView.setImageBitmap(virtualView.bitmap);*/
+
+
+                imageView.setImageBitmap(virtualView.croppedBitmap);
+                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
+
+                //cropView.of(virtualView.bitmap).asSquare().initialize(cropView.getContext());
+                cropView.setExternalImageProperties(virtualView.pictureCoordinateRect);
 
             }
         }

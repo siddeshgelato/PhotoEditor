@@ -96,6 +96,8 @@ public class CropView extends ImageView implements ViewTreeObserver.OnGlobalLayo
     private int mOutputX;
     private int mOutputY;
 
+    private float pr = 0.0f;
+
     private int mSampleSize;
 
     public CropView of(Uri source) {
@@ -123,6 +125,11 @@ public class CropView extends ImageView implements ViewTreeObserver.OnGlobalLayo
     public CropView withOutputSize(int width, int height) {
         mOutputX = width;
         mOutputY = height;
+        return this;
+    }
+
+    public CropView withRotation(int pr) {
+        // this.pr = pr;
         return this;
     }
 
@@ -223,7 +230,15 @@ public class CropView extends ImageView implements ViewTreeObserver.OnGlobalLayo
         }
     }
 
-    public void setImageRect(RectF cropRect) {
+    public void setExternalImageProperties(RectF cropRect) {
+        setExternalImageProperties(cropRect, 0);
+    }
+
+
+    public void setExternalImageProperties(RectF cropRect, float pr) {
+        if (pr != 0.0f) {
+            this.pr = pr;
+        }
         if (cropRect != null) {
             mDisplayRect = cropRect;
             mExternalSuppliedRect = new RectF(cropRect);
@@ -235,6 +250,60 @@ public class CropView extends ImageView implements ViewTreeObserver.OnGlobalLayo
         }
     }
 
+   /* private void createSuppMatrix() {
+        mSuppMatrix.reset();
+        float scaleX = mExternalSuppliedRect.width() / mBitmapDisplayed.getWidth();
+        float scaleY = mExternalSuppliedRect.height() / mBitmapDisplayed.getHeight();
+       // mSuppMatrix.setScale(scaleX, scaleY);
+
+        float cx = mBitmapDisplayed.getWidth() / 2.0f;
+        float cy = mBitmapDisplayed.getHeight() / 2.0f;
+       // mSuppMatrix.setTranslate(-cx , -cy);
+        mSuppMatrix.setRotate(pr, cx, cy);
+        //mSuppMatrix.postTranslate(cx, cy);
+
+
+
+
+       /* float[] points={0f,0f,1f,1f};
+        mSuppMatrix.mapPoints(points);
+        float scalenewX=points[2]-points[0];
+        float scalenewY=points[3]-points[1];
+
+        float dx = scaleX - scalenewX;
+        float dy = scaleY - scalenewY;*//*
+
+     *//* float[] v = new float[9];
+        mSuppMatrix.getValues(v);
+        float tx = v[Matrix.MTRANS_X];
+        float ty = v[Matrix.MTRANS_Y];*//*
+
+
+        mSuppMatrix.preScale(scaleX, scaleY);
+
+       *//* float[] values = new float[9];
+        mSuppMatrix.getValues(values);*//*
+
+     *//* Matrix mat = new Matrix();  //mat is identity
+        mat.postRotate(-pr);  //mat is a rotation matrix of ROTATE_ANGLE degrees
+        mat.postScale(scaleX, scaleY);
+        float point[] = {mExternalSuppliedRect.top, mExternalSuppliedRect.left};  //create a new float array representing the point (10, 20)
+        mat.mapPoints(point);*//*
+
+        RectF rectF = new RectF(mExternalSuppliedRect);
+        mSuppMatrix.mapRect(rectF, mExternalSuppliedRect);
+
+        *//*float x = (float)(mExternalSuppliedRect.left*(Math.cos(pr) + Math.sin(pr))) / scaleX;
+        float y = (float)(mExternalSuppliedRect.top*(Math.cos(pr) - Math.sin(pr))) / scaleY;
+        mSuppMatrix.postTranslate(x, y);*//*
+
+     *//*TODO need to find why there is difference of 30 px here*//*
+         mSuppMatrix.postTranslate(rectF.left   *//*-30*//*,rectF.top  *//*-30*//*);
+        // mSuppMatrix.postRotate(pr, mExternalSuppliedRect.centerX(), mExternalSuppliedRect.centerY());
+        checkAndDisplayMatrix();
+
+    }*/
+
     private void createSuppMatrix() {
         float scaleX = mExternalSuppliedRect.width() / mBitmapDisplayed.getWidth();
         float scaleY = mExternalSuppliedRect.height() / mBitmapDisplayed.getHeight();
@@ -242,6 +311,20 @@ public class CropView extends ImageView implements ViewTreeObserver.OnGlobalLayo
         mSuppMatrix.postTranslate(mExternalSuppliedRect.left, mExternalSuppliedRect.top);
         checkAndDisplayMatrix();
     }
+
+  /*  private void createSuppMatrix() {
+        float cx = mBitmapDisplayed.getWidth() / 2.0f;
+        float cy = mBitmapDisplayed.getHeight() / 2.0f;
+        float scaleX = mExternalSuppliedRect.width() / mBitmapDisplayed.getWidth();
+        float scaleY = mExternalSuppliedRect.height() / mBitmapDisplayed.getHeight();
+        mSuppMatrix.setRotate(pr, cx, cy);
+        mSuppMatrix.preScale(scaleX, scaleY);
+        RectF rectF = new RectF(mExternalSuppliedRect);
+        mSuppMatrix.mapRect(rectF, mExternalSuppliedRect);
+        mSuppMatrix.postTranslate(mExternalSuppliedRect.left, mExternalSuppliedRect.top);
+        checkAndDisplayMatrix();
+    }*/
+
 
     @Override
     protected void onDetachedFromWindow() {
@@ -285,7 +368,7 @@ public class CropView extends ImageView implements ViewTreeObserver.OnGlobalLayo
 
         if (top != mIvTop || bottom != mIvBottom || left != mIvLeft || right != mIvRight) {
             updateBaseMatrix();
-            setImageRect(null);
+            setExternalImageProperties(null);
             mIvTop = top;
             mIvBottom = bottom;
             mIvLeft = left;
@@ -359,6 +442,7 @@ public class CropView extends ImageView implements ViewTreeObserver.OnGlobalLayo
         Bitmap old = mBitmapDisplayed.getBitmap();
 
         mBitmapDisplayed = bitmap;
+        mBitmapDisplayed.setRotation((int)pr);
         setImageBitmap(bitmap.getBitmap());
 
         /*if (old != null) {
@@ -444,7 +528,10 @@ public class CropView extends ImageView implements ViewTreeObserver.OnGlobalLayo
     }
 
     private boolean checkMatrixBounds() {
+
         final RectF rect = getDisplayRect(getDrawMatrix());
+
+
         if (null == rect) {
             return false;
         }
