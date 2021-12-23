@@ -215,7 +215,6 @@ public class PhotoEditor implements BrushViewChangeListener {
                 clearHelperBox();
                 if (frmBorder != null) {
                     frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
-                    frmBorder.setTag(true);
                 }
                 viewState.setCurrentSelectedView(rootView);
                 if (elementSelectionListener != null) {
@@ -299,7 +298,6 @@ public class PhotoEditor implements BrushViewChangeListener {
 
         if (height > 0.0 && width > 0.0) {
             params.height = (int) height + DEFAULT_EXTRA_WIDTH_HEIGHT;
-            ;
             params.width = (int) width;
         }
 
@@ -507,7 +505,6 @@ public class PhotoEditor implements BrushViewChangeListener {
                 clearHelperBox();
                 frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
                 //imgClose.setVisibility(View.VISIBLE);
-                frmBorder.setTag(true);
 
                 // Change the in-focus view
                 viewState.setCurrentSelectedView(emojiRootView);
@@ -597,10 +594,10 @@ public class PhotoEditor implements BrushViewChangeListener {
         parentView.addView(rootView);
         rootView.setZ(zIndexCount);
         zIndexCount++;
+        FrameLayout frmBorder = rootView.findViewById(R.id.frmBorder);
         if (posX != -1 && posY != -1) {
             //params.setMargins(posX, posY, posX + rootView.getMeasuredWidth(), posY + rootView.getMeasuredHeight());
 
-            FrameLayout frmBorder = rootView.findViewById(R.id.frmBorder);
 
             int leftMargin = ((FrameLayout.LayoutParams) frmBorder.getLayoutParams()).leftMargin;
             int topMargin = ((FrameLayout.LayoutParams) frmBorder.getLayoutParams()).topMargin;
@@ -623,6 +620,9 @@ public class PhotoEditor implements BrushViewChangeListener {
 
 
         } else {
+
+            Pair<Float, Float> coordinates = new Pair<>((float) ((parentView.getWidth() / 2.0) - (rootView.getWidth() / 2.0)), (float) ((parentView.getHeight() / 2.0) - (rootView.getHeight() / 2.0)));
+            frmBorder.setTag(coordinates);
 
             //  rootView.measure(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
@@ -647,6 +647,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
 
         }
+        undoRedoController.addAddedView(rootView);
 
         // Need to shift image code here since undo redo issue
         ImageView imageView = rootView.findViewById(R.id.imgPhotoEditorImage);
@@ -659,7 +660,7 @@ public class PhotoEditor implements BrushViewChangeListener {
                         cropZoomView.setExternalImageProperties(null);
                         Bitmap croppedBitmap = cropZoomView.getOutput();
                         imageView.setImageBitmap(croppedBitmap);
-                        undoRedoController.addAddedView(rootView);
+                        //   undoRedoController.addAddedView(rootView);
                     }
                     cropZoomView.setVisibility(View.INVISIBLE);
                     imageView.setVisibility(View.VISIBLE);
@@ -667,7 +668,7 @@ public class PhotoEditor implements BrushViewChangeListener {
                 }
             });
         } else {
-            undoRedoController.addAddedView(rootView);
+            //   undoRedoController.addAddedView(rootView);
         }
 
 

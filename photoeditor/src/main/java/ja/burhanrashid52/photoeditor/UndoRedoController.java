@@ -104,8 +104,22 @@ public class UndoRedoController {
         ImageView imageView = view.findViewById(R.id.imgPhotoEditorImage);
         VirtualView virtualView = new VirtualView();
 
-        virtualView.x = view.getX();
-        virtualView.y = view.getY();
+        // This is trick to bypass the issue where element gives getX as 0
+        FrameLayout frmBorder = view.findViewById(R.id.frmBorder);
+        Pair<Float, Float> coordinates = (Pair<Float, Float>) frmBorder.getTag();
+
+        if(view.getX() == 0.0 && coordinates != null) {
+            virtualView.x = coordinates.first;
+        } else {
+            virtualView.x = view.getX();
+        }
+
+        if(view.getY() == 0.0 && coordinates != null) {
+            virtualView.y = coordinates.second;
+        } else {
+            virtualView.y = view.getY();
+        }
+
         virtualView.z = view.getZ();
 
         Log.i("UNDOREDO", "VirtualViewFromView view.getX(): " + view.getX() + " view.getY(): " + view.getY());
@@ -285,7 +299,6 @@ public class UndoRedoController {
         photoEditor.clearHelperBox();
         final FrameLayout frmBorder = view.findViewById(R.id.frmBorder);
         frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
-        frmBorder.setTag(true);
         viewState.setCurrentSelectedView(view);
         if (photoEditor.getElementSelectionListener() != null) {
             photoEditor.getElementSelectionListener().onElementSelectedDeselected(view, true);
