@@ -139,7 +139,7 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param desiredImage bitmap image you want to add
      */
-    public void addImage(Bitmap desiredImage, float x, float y, String uuid, float height, float width, float rotation, float px, float py, RectF cropRect,float pr) {
+    public void addImage(Bitmap desiredImage, float x, float y, String uuid, float height, float width, float rotation, float px, float py, RectF cropRect,float pr, boolean isTouchable) {
         posX = x;
         posY = y;
         this.px = px;
@@ -196,7 +196,10 @@ public class PhotoEditor implements BrushViewChangeListener {
         cropZoomView.setExternalImageProperties(cropRect, pr);
 
 
-        imageRootView.setOnTouchListener(getMultiTouchListener(imageRootView));
+
+        if(isTouchable) {
+            imageRootView.setOnTouchListener(getMultiTouchListener(imageRootView));
+        }
 
         clearHelperBox();
         addViewToParent(imageRootView, ViewType.IMAGE, cropRect);
@@ -231,7 +234,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     }
 
     public void addImage(Bitmap desiredImage) {
-        addImage(desiredImage, -1, -1, "" + System.currentTimeMillis(), desiredImage.getHeight(), desiredImage.getWidth(), 0, 0.0f, 0.0f, null, 0.0f);
+        addImage(desiredImage, -1, -1, "" + System.currentTimeMillis(), desiredImage.getHeight(), desiredImage.getWidth(), 0, 0.0f, 0.0f, null, 0.0f, true);
     }
 
 
