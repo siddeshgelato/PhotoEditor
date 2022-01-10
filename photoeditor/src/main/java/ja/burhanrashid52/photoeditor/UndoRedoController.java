@@ -134,6 +134,7 @@ public class UndoRedoController {
         virtualView.width = view.getMeasuredWidth();
         virtualView.isDeleted = isDeleted;
         virtualView.isRemoved = isRemoved;
+
         if (imageView != null) {
             CropView cropView = view.findViewById(R.id.cropZoomView);
             virtualView.pictureCoordinateRect = new RectF(cropView.getImageRect());
@@ -142,6 +143,8 @@ public class UndoRedoController {
             BitmapDrawable cropDrawable = (BitmapDrawable) cropView.getDrawable();
             virtualView.bitmap = cropDrawable.getBitmap();
             virtualView.croppedBitmap = drawable.getBitmap();
+            virtualView.flipHorizontal = imageView.getScaleX();
+            virtualView.flipVertical = imageView.getScaleY();
         } else {
             virtualView.isText = true;
             TextView textView = view.findViewById(R.id.tvPhotoEditorText);
@@ -256,6 +259,9 @@ public class UndoRedoController {
 
                 imageView.setImageBitmap(virtualView.croppedBitmap);
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
+                imageView.setScaleX(virtualView.flipHorizontal);
+                imageView.setScaleY(virtualView.flipVertical);
 
 
                 //cropView.of(virtualView.bitmap).asSquare().initialize(cropView.getContext());

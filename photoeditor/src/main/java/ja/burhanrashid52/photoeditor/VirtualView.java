@@ -31,4 +31,6 @@ public class VirtualView {
     public Bitmap bitmap;
     public Bitmap croppedBitmap;
     public FrameLayout.LayoutParams params;
+    public float flipHorizontal = 1;
+    public float flipVertical = 1;
 }
