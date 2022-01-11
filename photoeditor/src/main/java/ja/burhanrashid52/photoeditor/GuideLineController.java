@@ -572,7 +572,7 @@ public class GuideLineController {
         }
 
 
-        int yAxisTop = 0;
+        int yAxisTop = parentView.getBleedThickness();
         if (Math.round(ViewUtil.getTransformedY(view)) <= yAxisTop + MARGIN_MAGNET_MAIN_GUIDELINES && Math.round(ViewUtil.getTransformedY(view)) >= yAxisTop - MARGIN_MAGNET_MAIN_GUIDELINES) {
             ViewUtil.setTransformedY(view,yAxisTop);
             parentView.setVisibilityOfGuideLines(GuidelineVisibility.TOP);
@@ -580,7 +580,7 @@ public class GuideLineController {
             parentView.setVisibilityOfGuideLines(GuidelineVisibility.TOP_GONE);
         }
 
-        int yAxisBottom = Math.round(parentView.getHeight());
+        int yAxisBottom = Math.round(parentView.getHeight()) -  parentView.getBleedThickness();
         if (Math.round(ViewUtil.getTransformedY(view) + ViewUtil.getTransformedHeight(view)) >= yAxisBottom - MARGIN_MAGNET_MAIN_GUIDELINES && Math.round(ViewUtil.getTransformedY(view)) + ViewUtil.getTransformedHeight(view) <= yAxisBottom + MARGIN_MAGNET_MAIN_GUIDELINES) {
             ViewUtil.setTransformedY(view,yAxisBottom - ViewUtil.getTransformedHeight(view));
             parentView.setVisibilityOfGuideLines(GuidelineVisibility.BOTTOM);
@@ -588,7 +588,7 @@ public class GuideLineController {
             parentView.setVisibilityOfGuideLines(GuidelineVisibility.BOTTOM_GONE);
         }
 
-        int xAxisLeft = 0;
+        int xAxisLeft = parentView.getBleedThickness();
         if (Math.round(ViewUtil.getTransformedX(view)) <= xAxisLeft + MARGIN_MAGNET_MAIN_GUIDELINES && Math.round(ViewUtil.getTransformedX(view)) >= xAxisLeft - MARGIN_MAGNET_MAIN_GUIDELINES) {
             ViewUtil.setTransformedX(view,xAxisLeft);
             parentView.setVisibilityOfGuideLines(GuidelineVisibility.LEFT);
@@ -597,7 +597,7 @@ public class GuideLineController {
         }
 
 
-        int xAxisRight = Math.round(parentView.getWidth());
+        int xAxisRight = Math.round(parentView.getWidth()) - parentView.getBleedThickness();
         if (Math.round(ViewUtil.getTransformedX(view) + ViewUtil.getTransformedWidth(view)) >= xAxisRight - MARGIN_MAGNET_MAIN_GUIDELINES && Math.round(ViewUtil.getTransformedX(view)) + ViewUtil.getTransformedWidth(view) <= xAxisRight + MARGIN_MAGNET_MAIN_GUIDELINES) {
             ViewUtil.setTransformedX(view,xAxisRight - ViewUtil.getTransformedWidth(view));
             parentView.setVisibilityOfGuideLines(GuidelineVisibility.RIGHT);

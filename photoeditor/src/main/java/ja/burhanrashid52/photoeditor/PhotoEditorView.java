@@ -46,6 +46,7 @@ public class PhotoEditorView extends FrameLayout {
     public View mBottomGuideLine = new View(getContext());
     public View mLeftGuideLine = new View(getContext());
     public View mRightGuideLine = new View(getContext());
+    private int bleedThickness = 0;
 
     public PhotoEditorView(Context context) {
         super(context);
@@ -269,5 +270,13 @@ public class PhotoEditorView extends FrameLayout {
         mImageFilterView.setVisibility(VISIBLE);
         mImageFilterView.setSourceBitmap(mImgSource.getBitmap());
         mImageFilterView.setFilterEffect(customEffect);
+    }
+
+    public int getBleedThickness() {
+        return bleedThickness;
+    }
+
+    public void setBleedThickness(int bleedThickness) {
+        this.bleedThickness = bleedThickness;
     }
 }

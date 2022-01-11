@@ -1105,6 +1105,10 @@ public class PhotoEditor implements BrushViewChangeListener {
         parentView.setFilterEffect(filterType);
     }
 
+    public void setBleedThickness(int bleedThickness) {
+        parentView.setBleedThickness(bleedThickness);
+    }
+
     /**
      * A callback to save the edited image asynchronously
      */
