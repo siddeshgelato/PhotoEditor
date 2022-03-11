@@ -286,7 +286,7 @@ public class UndoRedoController {
     }
 
     private MultiTouchListener getMultiTouchListener(final View finalView) {
-        MultiTouchListener multiTouchListener = photoEditor.getMultiTouchListener(true);
+        MultiTouchListener multiTouchListener = photoEditor.getMultiTouchListener(true, true);
         multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
             @Override
             public void onClick() {
@@ -307,7 +307,7 @@ public class UndoRedoController {
         frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
         viewState.setCurrentSelectedView(view);
         if (photoEditor.getElementSelectionListener() != null) {
-            photoEditor.getElementSelectionListener().onElementSelectedDeselected(view, true);
+            photoEditor.getElementSelectionListener().onElementSelectedDeselected(view, true, false);
         }
     }
 

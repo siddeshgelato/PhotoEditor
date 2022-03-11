@@ -5,11 +5,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -123,12 +121,13 @@ public class PhotoEditor implements BrushViewChangeListener {
         if (view != null) {
             final TextView textInputTv = view.findViewById(R.id.tvPhotoEditorText);
             final EditText textInputEt = view.findViewById(R.id.etPhotoEditorText);
-            if (textInputTv != null && textInputEt != null) {
+            if (textInputTv != null && textInputEt != null && textInputEt.getVisibility() == View.VISIBLE) {
                 InputMethodManager imm = (InputMethodManager) view.getContext()
                         .getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 textInputEt.setVisibility(View.GONE);
                 textInputTv.setVisibility(View.VISIBLE);
+                mOnPhotoEditorListener.endEditText();
             }
         }
     }
@@ -139,7 +138,7 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param desiredImage bitmap image you want to add
      */
-    public void addImage(Bitmap desiredImage, float x, float y, String uuid, float height, float width, float rotation, float px, float py, RectF cropRect,float pr, boolean isTouchable) {
+    public void addImage(Bitmap desiredImage, float x, float y, String uuid, float height, float width, float rotation, float px, float py, RectF cropRect, float pr, boolean isMovable) {
         posX = x;
         posY = y;
         this.px = px;
@@ -187,31 +186,28 @@ public class PhotoEditor implements BrushViewChangeListener {
         CropView cropZoomView = imageRootView.findViewById(R.id.cropZoomView);
         cropZoomView.setVisibility(View.VISIBLE);
         imageView.setVisibility(View.INVISIBLE);
-        cropZoomView.of(desiredImage).asSquare().withRotation((int)pr).initialize(context);
+        cropZoomView.of(desiredImage).asSquare().withRotation((int) pr).initialize(context);
+        // TODO this impacting crop feature
         ViewGroup.LayoutParams cropParams = cropZoomView.getLayoutParams();
-        params.height = desiredImage.getHeight();
-        params.width = desiredImage.getWidth();
-        cropZoomView.setLayoutParams(cropParams);
+       /* params.height = desiredImage.getHeight();
+        params.width = desiredImage.getWidth();*/
+        cropZoomView.setLayoutParams(params);
         imageView.setImageBitmap(desiredImage);
         cropZoomView.setExternalImageProperties(cropRect, pr);
 
-
-
-        if(isTouchable) {
-            imageRootView.setOnTouchListener(getMultiTouchListener(imageRootView));
-        }
+        imageRootView.setOnTouchListener(getMultiTouchListener(imageRootView, isMovable));
 
         clearHelperBox();
         addViewToParent(imageRootView, ViewType.IMAGE, cropRect);
         viewState.setCurrentSelectedView(imageRootView);
         if (elementSelectionListener != null) {
-            elementSelectionListener.onElementSelectedDeselected(imageRootView, true);
+            elementSelectionListener.onElementSelectedDeselected(imageRootView, true, false);
         }
     }
 
-    private MultiTouchListener getMultiTouchListener(View rootView) {
+    private MultiTouchListener getMultiTouchListener(View rootView, boolean isMovable) {
         final FrameLayout frmBorder = rootView.findViewById(R.id.frmBorder);
-        MultiTouchListener multiTouchListener = getMultiTouchListener(true);
+        MultiTouchListener multiTouchListener = getMultiTouchListener(true, isMovable);
         multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
             @Override
             public void onClick() {
@@ -221,7 +217,7 @@ public class PhotoEditor implements BrushViewChangeListener {
                 }
                 viewState.setCurrentSelectedView(rootView);
                 if (elementSelectionListener != null) {
-                    elementSelectionListener.onElementSelectedDeselected(rootView, true);
+                    elementSelectionListener.onElementSelectedDeselected(rootView, true, true);
                 }
             }
 
@@ -279,10 +275,10 @@ public class PhotoEditor implements BrushViewChangeListener {
      */
     @SuppressLint("ClickableViewAccessibility")
     public void addText(String text, @Nullable TextStyleBuilder styleBuilder) {
-        addText(text, styleBuilder, -1, -1, "" + System.currentTimeMillis(), 0, 0.0f, 0.0f, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        addText(text, styleBuilder, -1, -1, "" + System.currentTimeMillis(), 0, 0.0f, 0.0f, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
     }
 
-    public void addText(String text, TextStyleBuilder styleBuilder, float x, float y, String uuid, float rotation, float px, float py, float height, float width) {
+    public void addText(String text, TextStyleBuilder styleBuilder, float x, float y, String uuid, float rotation, float px, float py, float height, float width, boolean isMovable) {
         posX = x;
         posY = y;
         this.rotation = rotation;
@@ -299,8 +295,13 @@ public class PhotoEditor implements BrushViewChangeListener {
 
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) textInputTv.getLayoutParams();
 
-        if (height > 0.0 && width > 0.0) {
+        if (height > 0.0) {
             params.height = (int) height + DEFAULT_EXTRA_WIDTH_HEIGHT;
+        } else {
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        }
+
+        if (width > 0.0) {
             params.width = (int) width;
         }
 
@@ -317,7 +318,7 @@ public class PhotoEditor implements BrushViewChangeListener {
             styleBuilder.applyStyle(textInputEt);
         }
 
-        MultiTouchListener multiTouchListener = getMultiTouchListener(textRootView);
+        MultiTouchListener multiTouchListener = getMultiTouchListener(textRootView, isMovable);
 
 
         textInputEt.addTextChangedListener(getTextWatcher(textInputTv));
@@ -338,7 +339,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         // Change the in-focus view
         viewState.setCurrentSelectedView(textRootView);
         if (elementSelectionListener != null) {
-            elementSelectionListener.onElementSelectedDeselected(textRootView, true);
+            elementSelectionListener.onElementSelectedDeselected(textRootView, true, false);
         }
     }
 
@@ -409,6 +410,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     }
 
     public void editText(View view) {
+        mOnPhotoEditorListener.beginEditText();
         final TextView textInputTv = view.findViewById(R.id.tvPhotoEditorText);
         final EditText textInputEt = view.findViewById(R.id.etPhotoEditorText);
         textInputEt.setText(textInputTv.getText());
@@ -501,7 +503,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         }
         emojiTextView.setTextSize(56);
         emojiTextView.setText(emojiName);
-        MultiTouchListener multiTouchListener = getMultiTouchListener(true);
+        MultiTouchListener multiTouchListener = getMultiTouchListener(true, true);
         multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
             @Override
             public void onClick() {
@@ -512,7 +514,7 @@ public class PhotoEditor implements BrushViewChangeListener {
                 // Change the in-focus view
                 viewState.setCurrentSelectedView(emojiRootView);
                 if (elementSelectionListener != null) {
-                    elementSelectionListener.onElementSelectedDeselected(emojiRootView, true);
+                    elementSelectionListener.onElementSelectedDeselected(emojiRootView, true, true);
                 }
             }
 
@@ -527,15 +529,14 @@ public class PhotoEditor implements BrushViewChangeListener {
         // Change the in-focus view
         viewState.setCurrentSelectedView(emojiRootView);
         if (elementSelectionListener != null) {
-            elementSelectionListener.onElementSelectedDeselected(emojiRootView, true);
+            elementSelectionListener.onElementSelectedDeselected(emojiRootView, true, false);
         }
     }
 
 
     /**
      * Add to root view from image,emoji and text to our parent view
-     *
-     * @param rootView rootview of image,text and emoji
+     *  @param rootView rootview of image,text and emoji
      * @param cropRect
      */
     private void addViewToParent(View rootView, ViewType viewType, RectF cropRect) {
@@ -614,6 +615,8 @@ public class PhotoEditor implements BrushViewChangeListener {
                     Pair<Float, Float> coordinates = (Pair<Float, Float>) frmBorder.getTag();
                     rootView.setX(coordinates.first - leftMargin);
                     rootView.setY(coordinates.second - topMargin);
+                    if (mOnPhotoEditorListener != null)
+                        mOnPhotoEditorListener.onAddViewListener(viewType);
                 }
             });
 
@@ -634,6 +637,8 @@ public class PhotoEditor implements BrushViewChangeListener {
                 public void run() {
                     rootView.setX((float) ((parentView.getWidth() / 2.0) - (rootView.getWidth() / 2.0)));
                     rootView.setY((float) ((parentView.getHeight() / 2.0) - (rootView.getHeight() / 2.0)));
+                    if (mOnPhotoEditorListener != null)
+                        mOnPhotoEditorListener.onAddViewListener(viewType);
                 }
             });
 
@@ -654,7 +659,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
         // Need to shift image code here since undo redo issue
         ImageView imageView = rootView.findViewById(R.id.imgPhotoEditorImage);
-        if(imageView != null) {
+        if (imageView != null) {
             CropView cropZoomView = rootView.findViewById(R.id.cropZoomView);
             rootView.post(new Runnable() {
                 @Override
@@ -663,6 +668,17 @@ public class PhotoEditor implements BrushViewChangeListener {
                         cropZoomView.setExternalImageProperties(null);
                         Bitmap croppedBitmap = cropZoomView.getOutput();
                         imageView.setImageBitmap(croppedBitmap);
+
+                        //Try made to apply px, py, ph, pw directly
+                     /*   Matrix m = imageView.getImageMatrix();
+                        float scaleX = cropRect.width() / rootView.getWidth();
+                        float scaleY = cropRect.height() / rootView.getHeight();
+                        m.postScale(scaleX, scaleY);
+                        m.postTranslate(cropRect.left,cropRect.top);
+                        imageView.setScaleType(ImageView.ScaleType.MATRIX);
+                        imageView.setImageMatrix(m);*/
+
+
                         //   undoRedoController.addAddedView(rootView);
                     }
                     cropZoomView.setVisibility(View.INVISIBLE);
@@ -676,8 +692,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
 
         viewState.addAddedView(rootView);
-        if (mOnPhotoEditorListener != null)
-            mOnPhotoEditorListener.onAddViewListener(viewType, viewState.getAddedViewsCount());
+
 
     }
 
@@ -750,7 +765,7 @@ public class PhotoEditor implements BrushViewChangeListener {
      * @return scalable multitouch listener
      */
     @NonNull
-    public MultiTouchListener getMultiTouchListener(final boolean isPinchScalable) {
+    public MultiTouchListener getMultiTouchListener(final boolean isPinchScalable, final boolean isMovable) {
         MultiTouchListener multiTouchListener = new MultiTouchListener(
                 deleteView,
                 parentView,
@@ -758,7 +773,8 @@ public class PhotoEditor implements BrushViewChangeListener {
                 isPinchScalable,
                 mOnPhotoEditorListener,
                 this.viewState,
-                this.undoRedoController);
+                this.undoRedoController,
+                isMovable);
 
         //multiTouchListener.setOnMultiTouchListener(this);
 
@@ -1081,7 +1097,7 @@ public class PhotoEditor implements BrushViewChangeListener {
             }*/
         }
         if (elementSelectionListener != null) {
-            elementSelectionListener.onElementSelectedDeselected(viewState.getCurrentSelectedView(), false);
+            elementSelectionListener.onElementSelectedDeselected(viewState.getCurrentSelectedView(), false, false);
         }
         viewState.clearCurrentSelectedView();
 
@@ -1333,8 +1349,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         viewState.addAddedView(brushDrawingView);
         if (mOnPhotoEditorListener != null) {
             mOnPhotoEditorListener.onAddViewListener(
-                    ViewType.BRUSH_DRAWING,
-                    viewState.getAddedViewsCount()
+                    ViewType.BRUSH_DRAWING
             );
         }
     }
@@ -1361,14 +1376,14 @@ public class PhotoEditor implements BrushViewChangeListener {
     @Override
     public void onStartDrawing() {
         if (mOnPhotoEditorListener != null) {
-            mOnPhotoEditorListener.onStartViewChangeListener(ViewType.BRUSH_DRAWING);
+            mOnPhotoEditorListener.onStartViewChangeListener("");
         }
     }
 
     @Override
     public void onStopDrawing() {
         if (mOnPhotoEditorListener != null) {
-            mOnPhotoEditorListener.onStopViewChangeListener(ViewType.BRUSH_DRAWING);
+            mOnPhotoEditorListener.onStopViewChangeListener("");
         }
     }
 
@@ -1469,6 +1484,18 @@ public class PhotoEditor implements BrushViewChangeListener {
         return viewState.getCurrentSelectedView();
     }
 
+    public void setSelectedView(View view) {
+        clearHelperBox();
+        if(view != null) {
+            viewState.setCurrentSelectedView(view);
+            final FrameLayout frmBorder = view.findViewById(R.id.frmBorder);
+            if (frmBorder != null) {
+                frmBorder.setBackgroundResource(R.drawable.rounded_border_tv);
+            }
+        }
+    }
+
+
     public void addToUndoList(View view) {
         undoRedoController.addAddedView(view);
     }
@@ -1496,7 +1523,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) selectedView.getLayoutParams();
         duplicateMedia.setLayoutParams(params);
-        duplicateMedia.setOnTouchListener(getMultiTouchListener(duplicateMedia));
+        duplicateMedia.setOnTouchListener(getMultiTouchListener(duplicateMedia, true));
         clearHelperBox();
         viewState.setCurrentSelectedView(duplicateMedia);
         parentView.addView(duplicateMedia);
@@ -1511,7 +1538,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         viewState.addAddedView(duplicateMedia);
         undoRedoController.addAddedView(duplicateMedia);
         if (elementSelectionListener != null) {
-            elementSelectionListener.onElementSelectedDeselected(duplicateMedia, true);
+            elementSelectionListener.onElementSelectedDeselected(duplicateMedia, true, false);
         }
 
     }
@@ -1570,7 +1597,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         ViewUtil.setTransformedY(selectedView, (float) ((parentView.getHeight() / 2.0) - (ViewUtil.getTransformedHeight(selectedView) / 2.0)));
     }
 
-    public ViewGroup getParent() {
+    public PhotoEditorView getParent() {
         return parentView;
     }
 

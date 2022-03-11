@@ -54,6 +54,8 @@ class MultiTouchListener implements OnTouchListener {
     private final UndoRedoController undoRedoController;
     private GuideLineController guideLineController;
 
+    private boolean isMovable = true;
+
     private float prevX = -1, prevY = -1;
 
     MultiTouchListener(@Nullable View deleteView,
@@ -62,8 +64,8 @@ class MultiTouchListener implements OnTouchListener {
                        boolean isPinchScalable,
                        OnPhotoEditorListener onPhotoEditorListener,
                        PhotoEditorViewState viewState,
-                       UndoRedoController undoRedoController
-    ) {
+                       UndoRedoController undoRedoController,
+                       boolean isMovable) {
         mIsPinchScalable = isPinchScalable;
         mScaleGestureDetector = new ScaleGestureDetector(new ScaleGestureListener());
         mGestureListener = new GestureDetector(new GestureListener());
@@ -72,6 +74,7 @@ class MultiTouchListener implements OnTouchListener {
         this.photoEditImageView = photoEditImageView;
         this.mOnPhotoEditorListener = onPhotoEditorListener;
         this.undoRedoController = undoRedoController;
+        this.isMovable = isMovable;
         if (deleteView != null) {
             outRect = new Rect(deleteView.getLeft(), deleteView.getTop(),
                     deleteView.getRight(), deleteView.getBottom());
@@ -171,12 +174,13 @@ class MultiTouchListener implements OnTouchListener {
                 if (deleteView != null) {
                     deleteView.setVisibility(View.VISIBLE);
                 }
-                //view.bringToFront();
+                prevX = view.getX();
+                prevY = view.getY();
                 firePhotoEditorSDKListener(view, true);
                 break;
             case MotionEvent.ACTION_MOVE:
                 // Only enable dragging on focused stickers.
-                if (view == viewState.getCurrentSelectedView()) {
+                if (view == viewState.getCurrentSelectedView() && isMovable) {
                     isMoving = true;
                     int pointerIndexMove = event.findPointerIndex(mActivePointerId);
                     if (pointerIndexMove != -1) {
@@ -207,7 +211,9 @@ class MultiTouchListener implements OnTouchListener {
                 if (deleteView != null) {
                     deleteView.setVisibility(View.GONE);
                 }
-                firePhotoEditorSDKListener(view, false);
+                if ((prevX != view.getX() && prevY != view.getY())) {
+                    firePhotoEditorSDKListener(view, false);
+                }
                 parentView.setVisibilityOfGuideLines(GuidelineVisibility.NONE);
                 VirtualView virtualView = null;
                 if (undoRedoController.getFreqOfItemInAddedViews(view.getTag().toString()) == 1) {
@@ -239,11 +245,11 @@ class MultiTouchListener implements OnTouchListener {
 
     private void firePhotoEditorSDKListener(View view, boolean isStart) {
         Object viewTag = view.getTag();
-        if (mOnPhotoEditorListener != null && viewTag != null && viewTag instanceof ViewType) {
+        if (mOnPhotoEditorListener != null && viewTag != null ) {
             if (isStart)
-                mOnPhotoEditorListener.onStartViewChangeListener(((ViewType) view.getTag()));
+                mOnPhotoEditorListener.onStartViewChangeListener(view.getTag().toString());
             else
-                mOnPhotoEditorListener.onStopViewChangeListener(((ViewType) view.getTag()));
+                mOnPhotoEditorListener.onStopViewChangeListener(view.getTag().toString());
         }
     }
 
@@ -270,6 +276,7 @@ class MultiTouchListener implements OnTouchListener {
             mPivotX = detector.getFocusX();
             mPivotY = detector.getFocusY();
             mPrevSpanVector.set(detector.getCurrentSpanVector());
+            mOnPhotoEditorListener.onTransformationStarted();
             return mIsPinchScalable;
         }
 
@@ -295,6 +302,12 @@ class MultiTouchListener implements OnTouchListener {
                 move(view, info);
             }
             return !mIsPinchScalable;
+        }
+
+        @Override
+        public void onScaleEnd(View view, ScaleGestureDetector detector) {
+            super.onScaleEnd(view, detector);
+            mOnPhotoEditorListener.onTransformationEnd();
         }
     }
 
