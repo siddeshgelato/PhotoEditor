@@ -216,15 +216,15 @@ class MultiTouchListener implements OnTouchListener {
                 }
                 parentView.setVisibilityOfGuideLines(GuidelineVisibility.NONE);
                 VirtualView virtualView = null;
-                if (undoRedoController.getFreqOfItemInAddedViews(view.getTag().toString()) == 1) {
+               /* if (undoRedoController.getFreqOfItemInAddedViews(view.getTag().toString()) == 1) {
                     virtualView = undoRedoController.getVirtualViewFromAddedViews(view.getTag().toString());
-                }
-                if (prevX != -1 && prevY != -1 && (prevX == view.getX() && prevY == view.getY()) ||
+                }*/
+               /* if (prevX != -1 && prevY != -1 && (prevX == view.getX() && prevY == view.getY()) ||
                         (virtualView != null && virtualView.x == view.getX() && virtualView.y == view.getY())) {
                     //Dont add
                 } else {
-                    undoRedoController.addAddedView(view);
-                }
+                   // undoRedoController.addAddedView(view);
+                }*/
                 prevX = view.getX();
                 prevY = view.getY();
                 guideLineController.hideAllGuidelines();
@@ -270,6 +270,7 @@ class MultiTouchListener implements OnTouchListener {
         private float mPivotY;
         private Vector2D mPrevSpanVector = new Vector2D();
         private static final int SPAN_SLOP = 7;
+
 
         @Override
         public boolean onScaleBegin(View view, ScaleGestureDetector detector) {

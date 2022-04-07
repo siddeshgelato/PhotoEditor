@@ -62,7 +62,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     private PhotoEditorView parentView;
     private PhotoEditorViewState viewState;
     public UndoRedoController undoRedoController;
-    private ImageView imageView;
+    private ImageView backgroundImageView;
     private View deleteView;
     private BrushDrawingView brushDrawingView;
     private OnPhotoEditorListener mOnPhotoEditorListener;
@@ -81,14 +81,14 @@ public class PhotoEditor implements BrushViewChangeListener {
     protected PhotoEditor(Builder builder) {
         this.context = builder.context;
         this.parentView = builder.parentView;
-        this.imageView = builder.imageView;
+        this.backgroundImageView = builder.imageView;
         this.deleteView = builder.deleteView;
         this.brushDrawingView = builder.brushDrawingView;
         this.isTextPinchScalable = builder.isTextPinchScalable;
         this.mDefaultTextTypeface = builder.textTypeface;
         this.mDefaultEmojiTypeface = builder.emojiTypeface;
         this.viewState = new PhotoEditorViewState();
-        this.undoRedoController = new UndoRedoController(viewState, this);
+        //  this.undoRedoController = new UndoRedoController(viewState, this);
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         brushDrawingView.setBrushViewChangeListener(this);
 
@@ -106,7 +106,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         );
 
 
-        imageView.setOnTouchListener(new View.OnTouchListener() {
+        backgroundImageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 HideEditTextWhileBlur();
@@ -127,6 +127,10 @@ public class PhotoEditor implements BrushViewChangeListener {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 textInputEt.setVisibility(View.GONE);
                 textInputTv.setVisibility(View.VISIBLE);
+                view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+                int height = view.getMeasuredHeight();
+                int width = view.getMeasuredWidth();
+                view.setLayoutParams(new FrameLayout.LayoutParams(width, height));
                 mOnPhotoEditorListener.endEditText();
             }
         }
@@ -411,6 +415,12 @@ public class PhotoEditor implements BrushViewChangeListener {
 
     public void editText(View view) {
         mOnPhotoEditorListener.beginEditText();
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        view.setLayoutParams(params);
+
         final TextView textInputTv = view.findViewById(R.id.tvPhotoEditorText);
         final EditText textInputEt = view.findViewById(R.id.etPhotoEditorText);
         textInputEt.setText(textInputTv.getText());
@@ -421,6 +431,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         textInputEt.setVisibility(View.VISIBLE);
         textInputTv.setVisibility(View.GONE);
         textInputEt.requestFocus();
+        textInputTv.setLayoutParams(params);
         InputMethodManager imm = (InputMethodManager) textInputEt.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(textInputEt, InputMethodManager.SHOW_IMPLICIT);
     }
@@ -597,6 +608,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
         parentView.addView(rootView);
         rootView.setZ(zIndexCount);
+        rootView.setVisibility(View.INVISIBLE);
         zIndexCount++;
         FrameLayout frmBorder = rootView.findViewById(R.id.frmBorder);
         if (posX != -1 && posY != -1) {
@@ -615,6 +627,7 @@ public class PhotoEditor implements BrushViewChangeListener {
                     Pair<Float, Float> coordinates = (Pair<Float, Float>) frmBorder.getTag();
                     rootView.setX(coordinates.first - leftMargin);
                     rootView.setY(coordinates.second - topMargin);
+                    rootView.setVisibility(View.VISIBLE);
                     if (mOnPhotoEditorListener != null)
                         mOnPhotoEditorListener.onAddViewListener(viewType);
                 }
@@ -637,6 +650,7 @@ public class PhotoEditor implements BrushViewChangeListener {
                 public void run() {
                     rootView.setX((float) ((parentView.getWidth() / 2.0) - (rootView.getWidth() / 2.0)));
                     rootView.setY((float) ((parentView.getHeight() / 2.0) - (rootView.getHeight() / 2.0)));
+                    rootView.setVisibility(View.VISIBLE);
                     if (mOnPhotoEditorListener != null)
                         mOnPhotoEditorListener.onAddViewListener(viewType);
                 }
@@ -655,7 +669,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
 
         }
-        undoRedoController.addAddedView(rootView);
+        //undoRedoController.addAddedView(rootView);
 
         // Need to shift image code here since undo redo issue
         ImageView imageView = rootView.findViewById(R.id.imgPhotoEditorImage);
@@ -769,7 +783,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         MultiTouchListener multiTouchListener = new MultiTouchListener(
                 deleteView,
                 parentView,
-                this.imageView,
+                this.backgroundImageView,
                 isPinchScalable,
                 mOnPhotoEditorListener,
                 this.viewState,
@@ -957,7 +971,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
     public void deleteSelectedView() {
         //viewUndo(viewState.getCurrentSelectedView(), null);
-        undoRedoController.addAddedView(viewState.getCurrentSelectedView(), true, false);
+        // undoRedoController.addAddedView(viewState.getCurrentSelectedView(), true, false);
         parentView.removeView(viewState.getCurrentSelectedView());
         clearHelperBox();
     }
@@ -987,7 +1001,7 @@ public class PhotoEditor implements BrushViewChangeListener {
             View redoView = undoRedoController.getRedoView(
                     undoRedoController.getRedoViewsCount() - 1, parentView);
             VirtualView virtualView = undoRedoController.popRedoView();
-            undoRedoController.addAddedView(redoView, virtualView.isRemoved, true);
+            // undoRedoController.addAddedView(redoView, virtualView.isRemoved, true);
         }
     }
 
@@ -1497,10 +1511,10 @@ public class PhotoEditor implements BrushViewChangeListener {
 
 
     public void addToUndoList(View view) {
-        undoRedoController.addAddedView(view);
+        //undoRedoController.addAddedView(view);
     }
 
-    public void duplicateMedia(int uuid) {
+    public void duplicateMedia(String uuid) {
         boolean isText;
         FrameLayout selectedView = (FrameLayout) viewState.getCurrentSelectedView();
         ImageView imageView = selectedView.findViewById(R.id.imgPhotoEditorImage);
@@ -1536,14 +1550,14 @@ public class PhotoEditor implements BrushViewChangeListener {
         });
 
         viewState.addAddedView(duplicateMedia);
-        undoRedoController.addAddedView(duplicateMedia);
+        //undoRedoController.addAddedView(duplicateMedia);
         if (elementSelectionListener != null) {
             elementSelectionListener.onElementSelectedDeselected(duplicateMedia, true, false);
         }
 
     }
 
-    private void copyCommonProperties(int uuid, FrameLayout selectedView, FrameLayout duplicateMedia) {
+    private void copyCommonProperties(String uuid, FrameLayout selectedView, FrameLayout duplicateMedia) {
         duplicateMedia.setX(selectedView.getX() + MARGIN);
         duplicateMedia.setY(selectedView.getY() + MARGIN);
         duplicateMedia.setZ(zIndexCount++);

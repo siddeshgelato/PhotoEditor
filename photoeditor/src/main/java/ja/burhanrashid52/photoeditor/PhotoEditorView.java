@@ -82,8 +82,9 @@ public class PhotoEditorView extends FrameLayout {
             TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.PhotoEditorView);
             Drawable imgSrcDrawable = a.getDrawable(R.styleable.PhotoEditorView_photo_src);
             if (imgSrcDrawable != null) {
-                mImgSource.setImageDrawable(imgSrcDrawable);
-                mImgSource.setScaleType(ImageView.ScaleType.FIT_XY);
+                /*mImgSource.setImageDrawable(imgSrcDrawable);
+                mImgSource.setScaleType(ImageView.ScaleType.FIT_XY);*/
+                mImgSource.setBackgroundColor(Color.TRANSPARENT);
             }
         }
 
@@ -105,7 +106,7 @@ public class PhotoEditorView extends FrameLayout {
 
         //Align brush to the size of image view
         LayoutParams imgFilterParam = new LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         //  imgFilterParam.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         //  imgFilterParam.addRule(RelativeLayout.ALIGN_TOP, imgSrcId);
         //  imgFilterParam.addRule(RelativeLayout.ALIGN_BOTTOM, imgSrcId);
@@ -230,6 +231,11 @@ public class PhotoEditorView extends FrameLayout {
      */
     public ImageView getSource() {
         return mImgSource;
+    }
+
+    public void setImage(Drawable bitmap){
+        mImgSource.setImageDrawable(bitmap);
+        mImgSource.setScaleType(ImageView.ScaleType.FIT_XY);
     }
 
     BrushDrawingView getBrushDrawingView() {
