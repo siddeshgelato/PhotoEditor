@@ -5,6 +5,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
@@ -197,6 +199,19 @@ public class PhotoEditor implements BrushViewChangeListener {
         params.width = desiredImage.getWidth();*/
         cropZoomView.setLayoutParams(params);
         imageView.setImageBitmap(desiredImage);
+
+        FrameLayout.LayoutParams parms = new FrameLayout.LayoutParams((int) cropRect.width(), (int) cropRect.height());
+        imageView.setLayoutParams(parms);
+        imageView.setRotation(pr);
+
+        imageView.post(new Runnable() {
+            @Override
+            public void run() {
+                ViewUtil.setTransformedX(imageView, px);
+                ViewUtil.setTransformedY(imageView, py);
+            }
+        });
+
         cropZoomView.setExternalImageProperties(cropRect, pr);
 
         imageRootView.setOnTouchListener(getMultiTouchListener(imageRootView, isMovable));
@@ -547,7 +562,8 @@ public class PhotoEditor implements BrushViewChangeListener {
 
     /**
      * Add to root view from image,emoji and text to our parent view
-     *  @param rootView rootview of image,text and emoji
+     *
+     * @param rootView rootview of image,text and emoji
      * @param cropRect
      */
     private void addViewToParent(View rootView, ViewType viewType, RectF cropRect) {
@@ -679,9 +695,16 @@ public class PhotoEditor implements BrushViewChangeListener {
                 @Override
                 public void run() {
                     if (cropRect != null) {
-                        cropZoomView.setExternalImageProperties(null);
+
+                       /* cropZoomView.setExternalImageProperties(null);
                         Bitmap croppedBitmap = cropZoomView.getOutput();
-                        imageView.setImageBitmap(croppedBitmap);
+                        imageView.setImageBitmap(croppedBitmap);*/
+
+/*
+                        FrameLayout.LayoutParams parms = new FrameLayout.LayoutParams((int)cropRect.width(),(int)cropRect.height());
+                        imageView.setLayoutParams(parms);
+                        imageView.setX(cropRect.left);
+                        imageView.setY(cropRect.top);*/
 
                         //Try made to apply px, py, ph, pw directly
                      /*   Matrix m = imageView.getImageMatrix();
@@ -1500,7 +1523,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
     public void setSelectedView(View view) {
         clearHelperBox();
-        if(view != null) {
+        if (view != null) {
             viewState.setCurrentSelectedView(view);
             final FrameLayout frmBorder = view.findViewById(R.id.frmBorder);
             if (frmBorder != null) {
