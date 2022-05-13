@@ -1,7 +1,6 @@
 package ja.burhanrashid52.photoeditor;
 
 import android.content.Context;
-import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.text.Editable;
@@ -16,10 +15,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.core.view.ViewCompat;
-
-import com.oginotihiro.cropview.CropView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,13 +103,13 @@ public class UndoRedoController {
         FrameLayout frmBorder = view.findViewById(R.id.frmBorder);
         Pair<Float, Float> coordinates = (Pair<Float, Float>) frmBorder.getTag();
 
-        if(view.getX() == 0.0 && coordinates != null) {
+        if (view.getX() == 0.0 && coordinates != null) {
             virtualView.x = coordinates.first;
         } else {
             virtualView.x = view.getX();
         }
 
-        if(view.getY() == 0.0 && coordinates != null) {
+        if (view.getY() == 0.0 && coordinates != null) {
             virtualView.y = coordinates.second;
         } else {
             virtualView.y = view.getY();
@@ -136,12 +131,8 @@ public class UndoRedoController {
         virtualView.isRemoved = isRemoved;
 
         if (imageView != null) {
-            CropView cropView = view.findViewById(R.id.cropZoomView);
-            virtualView.pictureCoordinateRect = new RectF(cropView.getImageRect());
             virtualView.isText = false;
             BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
-            BitmapDrawable cropDrawable = (BitmapDrawable) cropView.getDrawable();
-            virtualView.bitmap = cropDrawable.getBitmap();
             virtualView.croppedBitmap = drawable.getBitmap();
             virtualView.flipHorizontal = imageView.getScaleX();
             virtualView.flipVertical = imageView.getScaleY();
@@ -183,8 +174,7 @@ public class UndoRedoController {
                 EditText editText = view.findViewById(R.id.etPhotoEditorText);
                 editText.addTextChangedListener(getTextWatcher(textView));
             } else {
-                CropView cropView = view.findViewById(R.id.cropZoomView);
-                cropView.of(virtualView.bitmap).asSquare().initialize(cropView.getContext());
+
             }
 
             parentView.addView(view);
@@ -249,7 +239,6 @@ public class UndoRedoController {
                 }
             } else {
                 ImageView imageView = view.findViewById(R.id.imgPhotoEditorImage);
-                CropView cropView = view.findViewById(R.id.cropZoomView);
 
                 //imageView.setImageBitmap(virtualView.bitmap);
                 //TODO need to change logic as per new crop px, py
@@ -265,7 +254,6 @@ public class UndoRedoController {
 
 
                 //cropView.of(virtualView.bitmap).asSquare().initialize(cropView.getContext());
-                cropView.setExternalImageProperties(virtualView.pictureCoordinateRect);
 
             }
         }

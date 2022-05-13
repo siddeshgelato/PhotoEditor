@@ -19,11 +19,6 @@
             android:padding="1dp"
             android:contentDescription="@string/app_name" />
 
-        <com.oginotihiro.cropview.CropView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-           android:id="@+id/cropZoomView"/>
     </FrameLayout>
 
 </FrameLayout>
