@@ -5,6 +5,8 @@ import android.graphics.Rect;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -14,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.Calendar;
 
 /**
  * Created on 18/01/2017.
@@ -53,6 +57,8 @@ class MultiTouchListener implements OnTouchListener {
     private final PhotoEditorViewState viewState;
     private final UndoRedoController undoRedoController;
     private GuideLineController guideLineController;
+    private static final int MAX_CLICK_DURATION = 200;
+    private long startClickTime;
 
     private boolean isMovable = true;
 
@@ -152,8 +158,13 @@ class MultiTouchListener implements OnTouchListener {
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
-        mScaleGestureDetector.onTouchEvent(view, event);
         mGestureListener.onTouchEvent(event);
+
+        if(viewState.getCurrentSelectedView() != null) {
+            mScaleGestureDetector.onTouchEvent(view, event);
+        } else {
+            ((ZoomableViewGroup)view.getParent().getParent().getParent().getParent()).onTouchEvent(event);
+        }
 
         if (!isTranslateEnabled) {
             return true;
@@ -240,6 +251,7 @@ class MultiTouchListener implements OnTouchListener {
                 }
                 break;
         }
+
         return true;
     }
 

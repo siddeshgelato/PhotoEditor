@@ -109,8 +109,8 @@ public class PhotoEditor implements BrushViewChangeListener {
         backgroundImageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                HideEditTextWhileBlur();
-                clearHelperBox();
+               /* HideEditTextWhileBlur();
+                clearHelperBox();*/
                 return mDetector.onTouchEvent(event);
             }
         });
