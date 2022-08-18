@@ -4,6 +4,12 @@ import android.view.View;
 
 public class ViewUtil {
 
+    public static double scale;
+
+    public static void setScale(double s) {
+        scale = s;
+    }
+
     public static int getTransformedX(View view)  {
         View parent  =(View) view.getParent();
         int[] coordinatesParent = new int[2];
@@ -12,7 +18,7 @@ public class ViewUtil {
         int[] coordinatesChild = new int[2];
         view.getLocationOnScreen(coordinatesChild);
 
-        return coordinatesChild[0] - coordinatesParent[0];
+        return (int) ((coordinatesChild[0] - coordinatesParent[0]) / scale);
     }
 
     public static int getTransformedY(View view)  {
@@ -23,7 +29,7 @@ public class ViewUtil {
         int[] coordinatesChild = new int[2];
         view.getLocationOnScreen(coordinatesChild);
 
-        return coordinatesChild[1] - coordinatesParent[1];
+        return (int) ((coordinatesChild[1] - coordinatesParent[1]) / scale);
     }
 
     public static void setTransformedX(View view, float givenX) {

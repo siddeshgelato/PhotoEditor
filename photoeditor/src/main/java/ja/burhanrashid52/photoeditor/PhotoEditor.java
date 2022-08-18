@@ -76,6 +76,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     private float px = -1;
     private float py = -1;
     private float zIndexCount = ZINDEX_MEDIA;
+    private double editorScale = 1.0;
 
 
     protected PhotoEditor(Builder builder) {
@@ -83,6 +84,7 @@ public class PhotoEditor implements BrushViewChangeListener {
         this.parentView = builder.parentView;
         this.backgroundImageView = builder.imageView;
         this.deleteView = builder.deleteView;
+        this.editorScale = builder.editorScale;
         this.brushDrawingView = builder.brushDrawingView;
         this.isTextPinchScalable = builder.isTextPinchScalable;
         this.mDefaultTextTypeface = builder.textTypeface;
@@ -979,6 +981,11 @@ public class PhotoEditor implements BrushViewChangeListener {
         parentView.setBleedThickness(bleedThickness);
     }
 
+    public void setEditorScale(double smallestScaleFactor) {
+        this.editorScale = smallestScaleFactor;
+        ViewUtil.setScale(smallestScaleFactor);
+    }
+
     /**
      * A callback to save the edited image asynchronously
      */
@@ -1256,6 +1263,8 @@ public class PhotoEditor implements BrushViewChangeListener {
         private Typeface emojiTypeface;
         // By default, pinch-to-scale is enabled for text
         private boolean isTextPinchScalable = true;
+        private double editorScale = 1.0;
+
 
         /**
          * Building a PhotoEditor which requires a Context and PhotoEditorView
@@ -1273,6 +1282,11 @@ public class PhotoEditor implements BrushViewChangeListener {
 
         Builder setDeleteView(View deleteView) {
             this.deleteView = deleteView;
+            return this;
+        }
+
+        Builder setEditorScale(double scale) {
+            this.editorScale = scale;
             return this;
         }
 
