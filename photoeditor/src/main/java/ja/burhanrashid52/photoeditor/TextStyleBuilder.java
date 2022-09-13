@@ -178,10 +178,10 @@ public class TextStyleBuilder {
     }
 
     private void applyFontFamilyWithFile(TextView textView, String filename) {
-        textView.setTypeface(Typeface.createFromAsset(
+       /* textView.setTypeface(Typeface.createFromAsset(
                 textView.getContext().getAssets(),
                 "fonts/" + filename+ ".ttf"
-        ));
+        ));*/
         textView.setTag(filename);
     }
 
