@@ -35,6 +35,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
 import androidx.annotation.UiThread;
+import androidx.core.content.ContextCompat;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -166,7 +167,9 @@ public class PhotoEditor implements BrushViewChangeListener {
         }
 
         imageRootView.setLayoutParams(params);
-        imageView.setImageBitmap(desiredImage);
+        if(desiredImage != null) {
+            imageView.setImageBitmap(desiredImage);
+        }
 
         if(cropRect != null) {
             FrameLayout.LayoutParams parms = new FrameLayout.LayoutParams((int) cropRect.width(), (int) cropRect.height());
@@ -189,6 +192,25 @@ public class PhotoEditor implements BrushViewChangeListener {
         viewState.setCurrentSelectedView(imageRootView);
         if (elementSelectionListener != null) {
             elementSelectionListener.onElementSelectedDeselected(imageRootView, true, false);
+        }
+
+        imageRootView.post(new Runnable() {
+            @Override
+            public void run() {
+                handleDefaultImage(imageRootView);
+            }
+        });
+    }
+
+    public void handleDefaultImage(View imageRootView) {
+        ImageView imageView = imageRootView.findViewById(R.id.imgPhotoEditorImage);
+        FrameLayout defaultImageFrameLayout = imageRootView.findViewById(R.id.defaultImageFrameLayout);
+        if(imageView.getDrawable() == null) {
+            defaultImageFrameLayout.setVisibility(View.VISIBLE);
+            ImageView defaultImageView = imageRootView.findViewById(R.id.imagePhotoEditorDefaultImage);
+            defaultImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_default_image));
+        } else {
+            defaultImageFrameLayout.setVisibility(View.GONE);
         }
     }
 
