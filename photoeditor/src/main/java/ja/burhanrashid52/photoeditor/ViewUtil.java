@@ -4,7 +4,7 @@ import android.view.View;
 
 public class ViewUtil {
 
-    public static double scale;
+    public static double scale = 1.0;
 
     public static void setScale(double s) {
         scale = s;
