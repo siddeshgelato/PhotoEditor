@@ -145,7 +145,7 @@ public class PhotoEditor implements BrushViewChangeListener {
      *
      * @param desiredImage bitmap image you want to add
      */
-    public void addImage(Bitmap desiredImage, float x, float y, String uuid, float height, float width, float rotation, float px, float py, RectF cropRect, float pr, boolean isMovable) {
+    public void addImage(Bitmap desiredImage, float x, float y, String uuid, float height, float width, float rotation, float px, float py, RectF cropRect, float pr, boolean isMovable, RectF mediaBox) {
         posX = x;
         posY = y;
         this.px = px;
@@ -167,11 +167,11 @@ public class PhotoEditor implements BrushViewChangeListener {
         }
 
         imageRootView.setLayoutParams(params);
-        if(desiredImage != null) {
+        if (desiredImage != null) {
             imageView.setImageBitmap(desiredImage);
         }
 
-        if(cropRect != null) {
+        if (cropRect != null && (!(cropRect.height() == height && cropRect.width() == width && cropRect.left == 0.0 && cropRect.top == 0.0))) {
             FrameLayout.LayoutParams parms = new FrameLayout.LayoutParams((int) cropRect.width(), (int) cropRect.height());
             imageView.setLayoutParams(parms);
             imageView.setRotation(pr);
@@ -183,12 +183,17 @@ public class PhotoEditor implements BrushViewChangeListener {
                     ViewUtil.setTransformedY(imageView, py);
                 }
             });
+        } else {
+            FrameLayout.LayoutParams parms = new FrameLayout.LayoutParams((int) width, (int) height);
+            imageView.setLayoutParams(parms);
+            imageView.setX(0.0f);
+            imageView.setY(0.0f);
         }
 
         imageRootView.setOnTouchListener(getMultiTouchListener(imageRootView, isMovable));
 
         clearHelperBox();
-        addViewToParent(imageRootView, ViewType.IMAGE, cropRect);
+        addViewToParent(imageRootView, ViewType.IMAGE, mediaBox);
         viewState.setCurrentSelectedView(imageRootView);
         if (elementSelectionListener != null) {
             elementSelectionListener.onElementSelectedDeselected(imageRootView, true, false);
@@ -205,7 +210,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     public void handleDefaultImage(View imageRootView) {
         ImageView imageView = imageRootView.findViewById(R.id.imgPhotoEditorImage);
         FrameLayout defaultImageFrameLayout = imageRootView.findViewById(R.id.defaultImageFrameLayout);
-        if(imageView.getDrawable() == null) {
+        if (imageView.getDrawable() == null) {
             defaultImageFrameLayout.setVisibility(View.VISIBLE);
             ImageView defaultImageView = imageRootView.findViewById(R.id.imagePhotoEditorDefaultImage);
             defaultImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_default_image));
@@ -239,7 +244,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     }
 
     public void addImage(Bitmap desiredImage) {
-        addImage(desiredImage, -1, -1, "" + System.currentTimeMillis(), desiredImage.getHeight(), desiredImage.getWidth(), 0, 0.0f, 0.0f, null, 0.0f, true);
+        addImage(desiredImage, -1, -1, "" + System.currentTimeMillis(), desiredImage.getHeight(), desiredImage.getWidth(), 0, 0.0f, 0.0f, null, 0.0f, true, null);
     }
 
 
@@ -284,10 +289,10 @@ public class PhotoEditor implements BrushViewChangeListener {
      */
     @SuppressLint("ClickableViewAccessibility")
     public void addText(String text, @Nullable TextStyleBuilder styleBuilder) {
-        addText(text, styleBuilder, -1, -1, "" + System.currentTimeMillis(), 0, 0.0f, 0.0f, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        addText(text, styleBuilder, -1, -1, "" + System.currentTimeMillis(), 0, 0.0f, 0.0f, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true, null);
     }
 
-    public void addText(String text, TextStyleBuilder styleBuilder, float x, float y, String uuid, float rotation, float px, float py, float height, float width, boolean isMovable) {
+    public void addText(String text, TextStyleBuilder styleBuilder, float x, float y, String uuid, float rotation, float px, float py, float height, float width, boolean isMovable, RectF mediaBox) {
         posX = x;
         posY = y;
         this.rotation = rotation;
@@ -334,7 +339,7 @@ public class PhotoEditor implements BrushViewChangeListener {
 
         textRootView.setOnTouchListener(multiTouchListener);
         clearHelperBox();
-        addViewToParent(textRootView, ViewType.TEXT, null);
+        addViewToParent(textRootView, ViewType.TEXT, mediaBox);
 
         textRootView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         if (height == ViewGroup.LayoutParams.WRAP_CONTENT) {
@@ -511,9 +516,8 @@ public class PhotoEditor implements BrushViewChangeListener {
      * Add to root view from image,emoji and text to our parent view
      *
      * @param rootView rootview of image,text and emoji
-     * @param cropRect
      */
-    private void addViewToParent(View rootView, ViewType viewType, RectF cropRect) {
+    private void addViewToParent(View rootView, ViewType viewType, RectF mediaBox) {
         if (px != -1 || py != -1) {
             rootView.setPivotX(px);
             rootView.setPivotY(py);
@@ -561,7 +565,19 @@ public class PhotoEditor implements BrushViewChangeListener {
             rootView.post(new Runnable() {
                 @Override
                 public void run() {
-                    rootView.setX((float) ((parentView.getWidth() / 2.0) - (rootView.getWidth() / 2.0)));
+                    if (mediaBox != null && mediaBox.width() < parentView.getWidth()) {
+                        if (mediaBox.left > 0) {
+                            //Right visible area
+                            rootView.setX((float) ((mediaBox.width() / 2.0) - (rootView.getWidth() / 2.0)) + mediaBox.left);
+                        } else {
+                            //Left visible area
+                            rootView.setX((float) ((mediaBox.width() / 2.0) - (rootView.getWidth() / 2.0)));
+                        }
+                    } else {
+                        rootView.setX((float) ((parentView.getWidth() / 2.0) - (rootView.getWidth() / 2.0)));
+
+                    }
+
                     rootView.setY((float) ((parentView.getHeight() / 2.0) - (rootView.getHeight() / 2.0)));
                     rootView.setVisibility(View.VISIBLE);
                     if (mOnPhotoEditorListener != null)
