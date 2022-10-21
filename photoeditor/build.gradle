@@ -5,7 +5,7 @@ android {
     compileSdkVersion 30
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 23
         targetSdkVersion 30
         versionCode 3
         versionName "1.1.2"
@@ -23,6 +23,10 @@ android {
         unitTests {
             includeAndroidResources = true
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     tasks.withType(Javadoc) {
@@ -47,6 +51,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.23.0'
     testImplementation 'org.robolectric:robolectric:4.5.1'
+
+
+    implementation 'androidx.core:core-ktx:1.6.0'
+
 }
 
 
@@ -55,5 +63,7 @@ ext {
     PUBLISH_VERSION = '1.1.2'
     PUBLISH_ARTIFACT_ID = 'photoeditor'
 }
+repositories {
+    mavenCentral()
+}
 
-apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"

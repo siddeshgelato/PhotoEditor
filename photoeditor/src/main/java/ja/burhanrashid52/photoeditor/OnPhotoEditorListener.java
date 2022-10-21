@@ -28,10 +28,9 @@ public interface OnPhotoEditorListener {
      * brush,text or sticker i.e bitmap on parent view
      *
      * @param viewType           enum which define type of view is added
-     * @param numberOfAddedViews number of views currently added
      * @see ViewType
      */
-    void onAddViewListener(ViewType viewType, int numberOfAddedViews);
+    void onAddViewListener(ViewType viewType);
 
     /**
      * This is a callback when user remove any view on the {@link PhotoEditorView} it happens when usually
@@ -46,16 +45,22 @@ public interface OnPhotoEditorListener {
      * A callback when user start dragging a view which can be
      * any of {@link ViewType}
      *
-     * @param viewType enum which define type of view is added
      */
-    void onStartViewChangeListener(ViewType viewType);
+    void onStartViewChangeListener(String tag);
 
 
     /**
      * A callback when user stop/up touching a view which can be
      * any of {@link ViewType}
      *
-     * @param viewType enum which define type of view is added
      */
-    void onStopViewChangeListener(ViewType viewType);
+    void onStopViewChangeListener(String tag);
+
+    void onTransformationStarted();
+
+    void onTransformationEnd();
+
+    void beginEditText();
+
+    void endEditText();
 }
