@@ -7,8 +7,7 @@
     <FrameLayout
         android:id="@+id/frmBorder"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/rounded_border_tv">
+        android:layout_height="match_parent">
 
         <FrameLayout
             android:id="@+id/defaultImageFrameLayout"
@@ -32,9 +31,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:contentDescription="@string/app_name"
-            android:padding="1dp"
             android:scaleType="fitXY" />
 
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/border"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/rounded_border_tv">
     </FrameLayout>
 
 </FrameLayout>

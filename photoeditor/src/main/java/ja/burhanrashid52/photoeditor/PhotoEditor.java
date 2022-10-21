@@ -220,7 +220,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     }
 
     private MultiTouchListener getMultiTouchListener(View rootView, boolean isMovable) {
-        final FrameLayout frmBorder = rootView.findViewById(R.id.frmBorder);
+        final FrameLayout frmBorder = rootView.findViewById(R.id.border);
         MultiTouchListener multiTouchListener = getMultiTouchListener(true, isMovable);
         multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
             @Override
@@ -981,7 +981,7 @@ public class PhotoEditor implements BrushViewChangeListener {
     public void clearHelperBox() {
         for (int i = 0; i < parentView.getChildCount(); i++) {
             View childAt = parentView.getChildAt(i);
-            FrameLayout frmBorder = childAt.findViewById(R.id.frmBorder);
+            FrameLayout frmBorder = childAt.findViewById(R.id.border);
             if (frmBorder != null) {
                 frmBorder.setBackgroundResource(0);
             }
